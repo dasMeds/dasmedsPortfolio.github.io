@@ -1,0 +1,3 @@
+Hi, I'm Kristian, and this is my personal portfolio website, developed as a project for a subject in my Information Technology program. I built this site from scratch using HTML5, CSS3, and vanilla JavaScript to serve as a digital resume. It’s designed to highlight both my technical foundation in web development and my deep creative passion for multimedia design.
+
+Building this project allowed me to perfectly combine my analytical IT coursework with my creative hobbies. By coding everything without heavy external frameworks, I was able to deeply explore CSS styling and JavaScript DOM manipulation to deliver a polished, responsive, and highly personal web experience.
