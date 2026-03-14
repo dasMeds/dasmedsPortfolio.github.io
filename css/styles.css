@@ -690,27 +690,83 @@ footer {
     }
 }
 
+/* ========================================= burger menu ========================================= */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-main);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
 /* responsive */
 @media (max-width: 768px) {
-    /* i adjusted my layout for mobile screens here */
+    /* layout adjustments */
     .hero-title { font-size: 3.5rem; }
     .hero-content, .about-grid, .hero-stats { grid-template-columns: 1fr; }
     .hero-stats { border-left: none; padding-left: 0; padding-top: 2rem; border-top: 1px solid var(--border-color); }
     .stack-grid { grid-template-columns: 1fr 1fr; }
     .job-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
     .projects-grid { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
     .footer-title { font-size: 2.5rem; }
     .footer-email { font-size: 1.25rem; }
-    
     .slider-arrow { display: none; }
     
+    /* Modal */
     .modal-content { flex-direction: column; }
     .modal-image-container { height: 50vh; }
     .modal-info {
         border-left: none;
         border-top: 1px solid var(--border-color);
         padding: 1.5rem;
+    }
+
+    /* navbar * burger */
+    .menu-toggle { display: flex; }
+    .btn-outline { display: none; } /* hides "get in touch" to save space */
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(11, 15, 25, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-color);
+        flex-direction: column;
+        padding: 2rem 0;
+        gap: 1.5rem;
+        clip-path: inset(0 0 100% 0); 
+        transition: clip-path 0.4s ease-in-out;
+        display: flex; 
+    }
+
+    .nav-links.active {
+        clip-path: inset(0 0 0 0);
+    }
+
+    /* hamburger animation (turns into an X) */
+    .menu-toggle.active span:nth-child(1) {
+        transform: translateY(8.5px) rotate(45deg);
+    }
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+        transform: translateY(-8.5px) rotate(-45deg);
     }
 }
 

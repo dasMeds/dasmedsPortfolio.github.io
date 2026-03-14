@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ========================================= SCROLL HIJACK LOGIC ========================================= */
+    /* ========================================= scroll logic ========================================= */
     // handles seamless page transitions using the mouse wheel.
     const pages = ['index.html', 'about.html', 'experience.html', 'portfolio.html'];
     
@@ -331,3 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initFizzyGrid();
 });
+
+/* ========================================= mobile logic ========================================= */
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinksContainer = document.querySelector('.nav-links');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navLinksContainer.classList.toggle('active');
+        });
+    }
