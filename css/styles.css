@@ -725,7 +725,7 @@ footer {
     .footer-email { font-size: 1.25rem; }
     .slider-arrow { display: none; }
     
-    /* Modal */
+    /* modal */
     .modal-content { flex-direction: column; }
     .modal-image-container { height: 50vh; }
     .modal-info {
@@ -768,7 +768,19 @@ footer {
     .menu-toggle.active span:nth-child(3) {
         transform: translateY(-8.5px) rotate(-45deg);
     }
+
+    #magic-bg-grid {
+        display: none !important;
+    }
+
+    @media (max-width: 1024px) {
+    #magic-bg-grid {
+        display: none !important;
+        }
+    }
 }
+
+
 
 /* ========================================= fizziness ========================================= */
 #magic-bg-grid {
