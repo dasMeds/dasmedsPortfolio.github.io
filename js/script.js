@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createGrid();
 
         window.addEventListener('mousemove', (e) => {
-            if (window.innerWidth <= 1024) return; // disable on mobile
+            if (window.innerWidth <= 768) return; // disable on mobile
 
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // periodically emits fizz from tiles near the mouse
         setInterval(() => {
-            if (window.innerWidth <= 1024) return; // stops particle emitions on mobile for performance
+            if (window.innerWidth <= 768) return; // stops particle emitions on mobile for performance
 
             const outerFizzRadius = 140; 
             const proximityRadius = 180;
