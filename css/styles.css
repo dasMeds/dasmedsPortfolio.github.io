@@ -1,0 +1,765 @@
+:root {
+    /* the main color palette here for easy access */
+    --bg-color: #0b0f19;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #1e293b;
+    --accent-color: #6366f1;
+    --card-bg: #111827;
+}
+
+* {
+    /* reset all margins and padding so i can control everything myself */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    /* smooth scrolling for internal jumps */
+    scroll-behavior: smooth;
+}
+
+/* base styling kept on the body */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+.container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: block;
+}
+
+h2.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* nav bar */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    background: rgba(11, 15, 25, 0.7);
+    backdrop-filter: blur(12px);    /* blur effect */
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 0;
+}
+
+.nav-inner {
+    /* flexbox here to push my logo and links apart */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+}
+
+.logo span {
+    color: var(--accent-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    /* links slightly muted until hovered */
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.nav-links a:hover, .nav-links a.active {
+    /* light up the links when they are active or hovered */
+    color: var(--text-main);
+}
+
+.btn-outline {
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    padding: 8px 20px;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background-color: var(--text-main);
+    color: var(--bg-color);
+}
+
+/* hero section */
+#home {
+    padding-top: 160px;
+    padding-bottom: 100px;
+}
+
+.hero-title {
+    font-size: 5rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1.1;
+    margin-bottom: 3rem;
+    background: linear-gradient(to right, #ffffff, #64748b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+}
+
+.hero-desc {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+}
+
+.btn-solid {
+    background-color: var(--text-main);
+    color: var(--bg-color);
+    padding: 12px 32px;
+    border-radius: 9999px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.btn-solid:hover {
+    background-color: #e2e8f0;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    border-left: 1px solid var(--border-color);
+    padding-left: 2rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* about section */
+section {
+    padding: 100px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+}
+
+.about-text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.stack-grid {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+}
+
+.stack-category h4 {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.stack-list {
+    list-style: none;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 2;
+}
+
+.stack-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+    margin-bottom: 12px; 
+}
+
+.tech-icon {
+    /* consistent frame for the icons */
+    width: 45px;
+    height: 45px;
+    object-fit: contain; 
+    padding: 3px; 
+    background-color: rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px; 
+}
+
+.icon-invert {
+    /* i use this to make dark icons visible on my dark theme */
+    filter: invert(1) brightness(2);
+}
+
+/* experience section */
+.job-item {
+    /* flexbox to push job titles and dates to opposite sides */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.job-item:hover {
+    border-color: var(--border-color);
+}
+
+.job-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    transition: color 0.3s ease;
+}
+
+.job-item:hover .job-title {
+    color: var(--accent-color);
+}
+
+.job-role {
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.job-date {
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+/* projects and videos */
+.projects-grid {
+    /* my projects in a two-column layout */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.project-card {
+    /* cards have a subtle background and rounded corners */
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    border-color: #475569;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.project-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.video-card {
+    padding: 0 !important; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1); 
+    border-color: #ffffff;
+}
+
+.video-info {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; 
+    gap: 0.75rem;
+}
+
+.video-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: auto; 
+    padding-top: 1rem;
+}
+
+.tag {
+    background-color: transparent; 
+    color: #ffffff; 
+    border: 1px solid #ffffff; 
+    padding: 5px 15px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+/* poster slider animation */
+.slider-container {
+    /* this container is for the marquee and arrows */
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.slider-arrow {
+    /* a custom circular arrows with a backdrop blur */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(11, 15, 25, 0.7);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.slider-arrow:hover {
+    /* the arrow colors when i hover over them */
+    background: var(--text-main);
+    color: var(--bg-color);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.left-arrow { left: -20px; }
+.right-arrow { right: -20px; }
+
+.marquee-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    position: relative;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.marquee-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.marquee-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+}
+
+.poster-card {
+    width: 300px;
+    flex-shrink: 0;
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.poster-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.poster-card:hover img {
+    /* zoom effect to the image on hover */
+    transform: scale(1.05);
+}
+
+/* pop-up window */
+.modal {
+    /* to cover the whole screen when active */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.active {
+    /* reveal the modal by switching visibility and opacity */
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-backdrop {
+    /* a dark, blurred backdrop to dim the rest of the site */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(11, 15, 25, 0.5); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    /* styled the main modal box with a dark background and shadows */
+    position: relative;
+    z-index: 1001;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    display: flex;
+    max-width: 900px;
+    width: 90%;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1002;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--text-main);
+    border-color: var(--text-main);
+}
+
+.modal-image-container {
+    flex: 1.2;
+    background-color: #000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    position: relative;
+    z-index: 2;
+}
+
+.modal-img-blur {
+    /* a blurred background version of the image */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    filter: blur(20px) brightness(0.5); 
+    transform: scale(1.1); 
+    z-index: 1;
+}
+
+.modal-info {
+    flex: 1;
+    padding: 3rem 2rem;
+    background-color: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.modal-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.modal-info p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-wrap; 
+}
+
+/* footer */
+footer {
+    border-top: 1px solid var(--border-color);
+    padding: 60px 0 40px; 
+    text-align: center;
+}
+
+.footer-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.footer-contact-text {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.footer-email {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.footer-email:hover {
+    color: var(--text-main);
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 4rem auto 0; 
+    width: fit-content;
+}
+
+.social-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: var(--text-muted); 
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: fit-content;
+}
+
+.social-item:hover {
+    color: var(--text-main); 
+    transform: translateX(5px); 
+}
+
+.social-item .tech-icon {
+    /* used the same icon style here as in my about section for consistency */
+    width: 44px;
+    height: 44px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px;
+    object-fit: contain;
+}
+
+.copyright {
+    margin-top: 40px; 
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* ========================================= page transition ========================================= */
+#page-wrapper {
+
+    position: relative;
+    z-index: 1; 
+    animation: cinematicEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; 
+    transform-origin: center top;
+}
+
+@keyframes cinematicEnter {
+    /* this to fade in, scale up, and unblur simultaneously */
+    0% { 
+        opacity: 0; 
+        transform: translateY(60px) scale(0.97); 
+        filter: blur(10px); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: none; 
+        filter: blur(0);
+    }
+}
+
+#page-wrapper.slide-out-up {
+    /* use this animation when moving to a page 'below' the current one */
+    animation: cinematicExitUp 0.6s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes cinematicExitUp {
+    /* i made the content slide up and vanish into a blur */
+    0% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+        filter: blur(0);
+    }
+    100% { 
+        opacity: 0; 
+        transform: translateY(-80px) scale(0.95); 
+        filter: blur(8px);
+    }
+}
+
+#page-wrapper.slide-out-down {
+    /* this animation when moving to a page 'above' the current one */
+    animation: cinematicExitDown 0.6s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes cinematicExitDown {
+    /* i made the content slide down and vanish into a blur */
+    0% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+        filter: blur(0);
+    }
+    100% { 
+        opacity: 0; 
+        transform: translateY(80px) scale(0.95); 
+        filter: blur(8px);
+    }
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    /* i adjusted my layout for mobile screens here */
+    .hero-title { font-size: 3.5rem; }
+    .hero-content, .about-grid, .hero-stats { grid-template-columns: 1fr; }
+    .hero-stats { border-left: none; padding-left: 0; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+    .stack-grid { grid-template-columns: 1fr 1fr; }
+    .job-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .footer-title { font-size: 2.5rem; }
+    .footer-email { font-size: 1.25rem; }
+    
+    .slider-arrow { display: none; }
+    
+    .modal-content { flex-direction: column; }
+    .modal-image-container { height: 50vh; }
+    .modal-info {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding: 1.5rem;
+    }
+}
+
+/* ========================================= fizziness ========================================= */
+#magic-bg-grid {
+    /* made it a fixed grid to the background and gave it a soft base blur */
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    pointer-events: none;
+    overflow: hidden;
+    filter: blur(7px); /* base background blur */
+}
+
+.magic-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.magic-tile::before {
+    /* tiny background dots that form the grid */
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 3px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.4); 
+    transition: transform 0.2s ease-out; 
+}
+
+.magic-tile.glowing::before {
+    /* made the dots glow and grow when my mouse is nearby */
+    background: rgba(99, 102, 241, 0.15);
+    backdrop-filter: blur(19px); /* Decreased from 21px */
+    -webkit-backdrop-filter: blur(19px);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+/* fizzy spew with gradual fade */
+.magic-particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+    opacity: 0;
+    /* 3.5 second gradual fade */
+    transition: transform 3.5s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 3.5s linear;
+}
