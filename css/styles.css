@@ -177,6 +177,31 @@ nav {
     margin-top: 0.5rem;
 }
 
+/* demoreel */
+#demoreel-card {
+    grid-column: 1 / -1;
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    width: 100%;
+}
+
+#demoreel-card .video-info {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#demoreel-card .project-title {
+    margin-bottom: 0;
+    font-size: 1.25rem;
+}
+
+#demoreel-card .video-tags {
+    margin-top: 0;
+    padding-top: 0;
+}
+
 /* about section */
 section {
     padding: 100px 0;
@@ -270,6 +295,46 @@ section {
 .job-date {
     color: var(--text-muted);
     font-family: monospace;
+}
+
+/* certification */
+.certification-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem !important; 
+}
+
+.cert-image-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000; /* contrast for white certifi */
+    border: 1px solid var(--border-color);
+    line-height: 0;
+}
+
+.cert-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.certification-item:hover .cert-img {
+    transform: scale(1.03); /* zoom similar to posters */
+}
+
+.certification-item .project-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+/* mobile Tweak */
+@media (max-width: 768px) {
+    .certification-item {
+        padding: 1rem !important;
+    }
 }
 
 /* projects and videos */

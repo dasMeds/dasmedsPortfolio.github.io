@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ========================================= scroll logic ========================================= */
+    /* scroll logic  */
     // handles seamless page transitions using the mouse wheel.
     const pages = ['index.html', 'about.html', 'experience.html', 'portfolio.html'];
     
@@ -32,18 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // if scrolling down at the bottom, move to the next page
         if (e.deltaY > 0 && atBottom) {
-            if (currentIndex < pages.length - 1) {
-                isNavigating = true;
-                document.getElementById('page-wrapper').classList.add('slide-out-up'); 
-                
-                // delay redirect to allow slide-out-up animation to play
-                setTimeout(() => {
-                    window.location.href = pages[currentIndex + 1];
-                }, 700); 
+            isNavigating = true;
+            document.getElementById('page-wrapper').classList.add('slide-out-up'); 
+            
+            // calculate the next page 
+            // if it goes past the end of the array, loop back to 0 (index.html)
+            let nextIndex = currentIndex + 1;
+            if (nextIndex >= pages.length) {
+                nextIndex = 0;
             }
+            
+            // delay redirect to allow slide-out-up animation to play
+            setTimeout(() => {
+                window.location.href = pages[nextIndex];
+            }, 700); 
         } 
         // scrolling up move to the previous page
         else if (e.deltaY < 0 && atTop) {
+            // limit here so scrolling up on the home page doesn't skip to the end
             if (currentIndex > 0) {
                 isNavigating = true;
                 document.getElementById('page-wrapper').classList.add('slide-out-down'); 
@@ -72,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* ========================================= pop-up window logic ========================================= */
+    /* pop-up window logic */
 
     const modal = document.getElementById('poster-modal'); 
     
@@ -124,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalBackdrop.addEventListener('click', closeModal);
     }
 
-    /* ========================================= moving slider logic ========================================= */
+    /*  moving slider logic */
     // auto-scrolling track loops.
     const sliderContainer = document.querySelector('.slider-container');
     
@@ -179,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startScroll();
     }
 
-    /* ========================================= videos showcase ========================================= */
+    /* videos showcase */
     // hover-to-play and intelligent pausing.
     const videoCards = document.querySelectorAll('.video-card');
     
@@ -225,7 +231,49 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ========================================= background fx ========================================= */
+    /* demoreel */
+    const demoreelCard = document.getElementById('demoreel-card');
+    
+    if (demoreelCard) {
+        const video = document.getElementById('demoreel-video');
+
+        demoreelCard.classList.remove('video-card');
+
+        // unmute automatically when entered fullscreen should be similar to the video showcase in portfolio page
+        const handleFullscreen = () => {
+            if (document.fullscreenElement === video || document.webkitFullscreenElement === video) {
+                video.muted = false;
+            }
+        };
+        video.addEventListener('fullscreenchange', handleFullscreen);
+        video.addEventListener('webkitfullscreenchange', handleFullscreen); 
+
+        // play on mouse enter
+        demoreelCard.addEventListener('mouseenter', () => {
+            if (video.paused) {
+
+                video.muted = true; 
+                let playPromise = video.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        // fallback: if browser blocks the sound, play it muted
+                        console.log("Browser blocked sound. Falling back to muted autoplay.");
+                        video.muted = true;
+                        video.play().catch(e => console.log("User interaction required for autoplay."));
+                    });
+                }
+            }
+        });
+
+        // stop and reset video when mouse leaves. same with the video showcase in portfolio page
+        demoreelCard.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0; 
+        });
+    }
+
+    /* background fx */
     function initFizzyGrid() {
         // the Background Container
         const grid = document.createElement('div');
@@ -336,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFizzyGrid();
 });
 
-/* ========================================= mobile logic ========================================= */
+/* mobile logic */
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links');
 
