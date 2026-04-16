@@ -561,28 +561,33 @@ section {
 .left-arrow { left: -20px; }
 .right-arrow { right: -20px; }
 
+/* Update the wrapper to ensure it takes up all space between arrows */
 .marquee-wrapper {
     overflow-x: auto;
     width: 100%;
+    flex: 1; /* ADD THIS: ensures the arrows don't squash the container */
     position: relative;
     padding: 1rem 0;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
-.marquee-wrapper::-webkit-scrollbar {
-    display: none;
-}
-
+/* Update the track to allow infinite width */
 .marquee-track {
     display: flex;
-    gap: 2rem;
-    width: max-content;
+    gap: 2rem; /* Matches your 32px gap */
+    width: max-content !important; /* Force the track to be as wide as all cards combined */
 }
 
+/* Update the card to lock its size */
 .poster-card {
-    width: 300px;
-    flex-shrink: 0;
+    /* Use flex-basis (300px) and disable shrinking/growing */
+    flex: 0 0 300px !important; 
+    width: 300px !important;
+    
+    /* ADD THIS: Forces a vertical poster shape (2:3 ratio) */
+    aspect-ratio: 2 / 3; 
+    
     padding: 0 !important;
     overflow: hidden;
     display: flex;
@@ -592,7 +597,7 @@ section {
 
 .poster-card img {
     width: 100%;
-    height: auto;
+    height: 100%; /* Changed from auto to 100% to fill the aspect-ratio box */
     object-fit: cover;
     transition: transform 0.4s ease;
 }
@@ -733,6 +738,11 @@ section {
     font-size: 1rem;
     line-height: 1.6;
     white-space: pre-wrap; 
+}
+
+#github-projects .cert-image-container {
+    max-width: 400px; /* Adjust this value to your preferred size */
+    margin: 0 auto;  /* Centers the icon container within the card */
 }
 
 /* footer */
