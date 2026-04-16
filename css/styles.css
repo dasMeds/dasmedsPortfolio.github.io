@@ -116,6 +116,120 @@ nav {
     color: var(--bg-color);
 }
 
+/* --- contact --- */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #e0e0e0; 
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #333; 
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05); 
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #fff; /* border highlightwhen typing */
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #888;
+}
+
+.contact-form input, 
+.contact-form textarea, 
+.contact-form button {
+    box-sizing: border-box;
+}
+
+/* --- contact right --- */
+.contact-split-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; 
+}
+
+.contact-left {
+    flex: 1;
+    max-width: 600px; 
+}
+
+.contact-right {
+    flex: 1;
+    max-width: 400px;
+    padding-top: 1rem; /* aligns with the form */
+}
+
+.side-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.side-email a {
+    color: var(--accent-color);
+    text-decoration: none;
+    text-underline-offset: 4px;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.side-email a:hover {
+    color: var(--text-main);
+}
+
+/* stacking of socials */
+.side-social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.side-social-links .social-item {
+    display: inline-flex; 
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%; 
+}
+
+/* desktop layout */
+@media (min-width: 850px) {
+    .contact-split-layout {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 3rem;
+    }
+    
+    .contact-right {
+        margin-top: 10rem; 
+    }
+}
+
 /* hero section */
 #home {
     padding-top: 160px;
@@ -693,7 +807,7 @@ footer {
     font-size: 0.8rem;
 }
 
-/* ========================================= page transition ========================================= */
+/* page transition */
 #page-wrapper {
 
     position: relative;
@@ -755,7 +869,7 @@ footer {
     }
 }
 
-/* ========================================= burger menu ========================================= */
+/* burger menu  */
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -845,9 +959,7 @@ footer {
     }
 }
 
-
-
-/* ========================================= fizziness ========================================= */
+/* fizziness  */
 #magic-bg-grid {
     /* made it a fixed grid to the background and gave it a soft base blur */
     position: fixed;
