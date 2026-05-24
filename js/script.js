@@ -277,6 +277,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* contact form logic */
+    // Using the class name instead of an ID just to be safe
+    const contactForm = document.querySelector('.contact-form');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            // Stop the default redirect
+            e.preventDefault(); 
+            console.log("Form submission intercepted!"); // Check your browser console for this
+
+            // Gather the data
+            const formData = new FormData(this);
+
+            // Send to Formspree
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert("Thanks! Your message has been sent.");
+                    contactForm.reset(); 
+                } else {
+                    response.json().then(data => {
+                        console.error("Formspree Error:", data);
+                        alert("Oops! There was a problem sending your message.");
+                    });
+                }
+            }).catch(error => {
+                console.error("Fetch Error:", error);
+                alert("Oops! There was a problem sending your message.");
+            });
+        });
+    }
+
     /* background fx */
     function initFizzyGrid() {
         // the Background Container
