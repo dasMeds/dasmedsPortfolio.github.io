@@ -221,20 +221,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (document.querySelector('.scroll-guide')) {
+        document.body.classList.add('has-scroll-guide');
+    }
+
     const loader = document.createElement('div');
     loader.className = 'site-loader';
     loader.setAttribute('role', 'status');
     loader.setAttribute('aria-label', 'Loading portfolio');
-    loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p></div>';
+    loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p><p class="loader-progress" aria-hidden="true"><span id="loader-percent">00</span>% <span>→</span> 100%</p><p class="loader-log" id="loader-log" aria-live="polite">INITIALIZING_SYSTEMS...</p></div>';
     document.body.prepend(loader);
 
     let loaderDismissed = false;
+    const loaderStart = performance.now();
+    const loaderPercent = document.getElementById('loader-percent');
+    const loaderLog = document.getElementById('loader-log');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const minimumLoaderTime = reducedMotion ? 180 : 1200;
+    const loaderLogMessages = ['INITIALIZING_SYSTEMS...', 'MAPPING_PORTFOLIO...', 'CALIBRATING_VISUALS...', 'SYSTEM_READY'];
+
+    const progressTimer = window.setInterval(() => {
+        const progress = Math.min(99, Math.floor(((performance.now() - loaderStart) / minimumLoaderTime) * 100));
+        loaderPercent.textContent = String(progress).padStart(2, '0');
+        loaderLog.textContent = loaderLogMessages[Math.min(loaderLogMessages.length - 1, Math.floor(progress / 30))];
+    }, 40);
+
     const dismissLoader = () => {
         if (loaderDismissed) return;
         loaderDismissed = true;
+        window.clearInterval(progressTimer);
+        loaderPercent.textContent = '100';
+        loaderLog.textContent = loaderLogMessages[loaderLogMessages.length - 1];
         loader.classList.add('is-hidden');
         window.setTimeout(() => loader.remove(), 400);
     };
 
-    window.addEventListener('load', () => window.setTimeout(dismissLoader, 300), { once: true });
-    window.setTimeout(dismissLoader, 1500);
+    const finishLoader = () => {
+        window.setTimeout(dismissLoader, Math.max(0, minimumLoaderTime - (performance.now() - loaderStart)));
+    };
+
+    if (document.readyState === 'complete') {
+        finishLoader();
+    } else {
+        window.addEventListener('load', finishLoader, { once: true });
+    }
+    window.setTimeout(dismissLoader, 1450);
+
+    const manilaClock = document.getElementById('manila-clock');
+    const utcClock = document.getElementById('utc-clock');
+
+    if (manilaClock && utcClock) {
+        const updateClocks = () => {
+            const now = new Date();
+            manilaClock.dateTime = now.toISOString();
+            manilaClock.textContent = new Intl.DateTimeFormat('en-PH', {
+                timeZone: 'Asia/Manila',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            utcClock.textContent = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'UTC',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+        };
+
+        updateClocks();
+        window.setInterval(updateClocks, 1000);
+    }
