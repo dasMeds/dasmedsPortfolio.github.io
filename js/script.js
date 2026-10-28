@@ -254,10 +254,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderKey = 'dasmeds-portfolio-loader-seen';
     let showLoader = true;
     try {
-        showLoader = window.localStorage.getItem(loaderKey) !== 'true';
-        if (showLoader) window.localStorage.setItem(loaderKey, 'true');
+        showLoader = window.sessionStorage.getItem(loaderKey) !== 'true';
+        if (showLoader) window.sessionStorage.setItem(loaderKey, 'true');
     } catch (error) {
-        console.warn('Pre-loader visit state could not be saved; this visit will still continue.', error);
+        console.warn('Pre-loader session state could not be saved; this visit will still continue.', error);
     }
 
     if (showLoader) {
