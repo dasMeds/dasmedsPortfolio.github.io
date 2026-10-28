@@ -1092,7 +1092,15 @@ textarea:focus-visible {
 .container {
     width: min(100% - 48px, var(--content-width));
     max-width: var(--content-width);
+    margin-inline: auto;
     padding: 0;
+}
+
+.container > section[id],
+.continuous-sections > section[id],
+#github-projects {
+    width: 100%;
+    margin-inline: auto;
 }
 
 nav {
@@ -1118,6 +1126,10 @@ nav {
 
 .nav-links {
     gap: clamp(1rem, 2.2vw, 2rem);
+}
+
+.mobile-contact-link {
+    display: none;
 }
 
 .nav-links a {
@@ -1641,6 +1653,11 @@ footer {
     opacity: 0;
 }
 
+.site-loader.dismissed {
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .loader-mark {
     width: 74px;
     height: 74px;
@@ -1713,6 +1730,7 @@ footer {
         padding: 13px 0;
         font-size: .9rem;
     }
+    .nav-links .mobile-contact-link { display: block; }
     .nav-links a:last-child { border-bottom: 0; }
     .nav-links a::after { display: none; }
     .menu-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -1830,7 +1848,8 @@ footer {
     scroll-snap-type: y proximity;
 }
 
-.scroll-story > section[id] {
+.scroll-story > section[id],
+.continuous-sections > section[id] {
     scroll-margin-top: 88px;
     scroll-snap-align: start;
 }
@@ -1930,6 +1949,12 @@ footer {
     .scroll-story {
         scroll-snap-type: none;
     }
+
+    .kinetic-heading .kinetic-word {
+        transform: none;
+        transition: none;
+        will-change: auto;
+    }
 }
 
 :root {
@@ -2001,6 +2026,26 @@ h2.section-title,
     position: relative;
     z-index: 1;
     text-shadow: 0 1px 0 rgba(230, 198, 151, .08);
+}
+
+.kinetic-heading .kinetic-mask {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: bottom;
+    padding-bottom: .12em;
+    margin-bottom: -.12em;
+}
+
+.kinetic-heading .kinetic-word {
+    display: inline-block;
+    transform: translate3d(0, 110%, 0);
+    transition: transform .72s cubic-bezier(.2, .75, .25, 1);
+    transition-delay: calc(var(--word-index, 0) * 40ms);
+    will-change: transform;
+}
+
+.kinetic-heading.is-revealed .kinetic-word {
+    transform: translate3d(0, 0, 0);
 }
 
 .hero-title br {

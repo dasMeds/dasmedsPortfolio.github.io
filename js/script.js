@@ -225,47 +225,93 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('has-scroll-guide');
     }
 
-    const loader = document.createElement('div');
-    loader.className = 'site-loader';
-    loader.setAttribute('role', 'status');
-    loader.setAttribute('aria-label', 'Loading portfolio');
-    loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p><p class="loader-progress" aria-hidden="true"><span id="loader-percent">00</span>% <span>→</span> 100%</p><p class="loader-log" id="loader-log" aria-live="polite">INITIALIZING_SYSTEMS...</p></div>';
-    document.body.prepend(loader);
+    if (document.body.classList.contains('continuous-portfolio') && 'IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver(entries => {
+            const activeEntry = entries
+                .filter(entry => entry.isIntersecting)
+                .sort((left, right) => {
+                    const marker = window.innerHeight * 0.4;
+                    return Math.abs(left.boundingClientRect.top - marker) -
+                        Math.abs(right.boundingClientRect.top - marker);
+                })[0];
 
-    let loaderDismissed = false;
-    const loaderStart = performance.now();
-    const loaderPercent = document.getElementById('loader-percent');
-    const loaderLog = document.getElementById('loader-log');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const minimumLoaderTime = reducedMotion ? 180 : 1200;
-    const loaderLogMessages = ['INITIALIZING_SYSTEMS...', 'MAPPING_PORTFOLIO...', 'CALIBRATING_VISUALS...', 'SYSTEM_READY'];
+            if (!activeEntry || !activeEntry.target.id) return;
+            const nextHash = `#${activeEntry.target.id}`;
+            if (window.location.hash !== nextHash) {
+                window.history.replaceState(
+                    window.history.state,
+                    '',
+                    `${window.location.pathname}${window.location.search}${nextHash}`
+                );
+            }
+        }, { threshold: 0, rootMargin: '-40% 0px -59% 0px' });
 
-    const progressTimer = window.setInterval(() => {
-        const progress = Math.min(99, Math.floor(((performance.now() - loaderStart) / minimumLoaderTime) * 100));
-        loaderPercent.textContent = String(progress).padStart(2, '0');
-        loaderLog.textContent = loaderLogMessages[Math.min(loaderLogMessages.length - 1, Math.floor(progress / 30))];
-    }, 40);
-
-    const dismissLoader = () => {
-        if (loaderDismissed) return;
-        loaderDismissed = true;
-        window.clearInterval(progressTimer);
-        loaderPercent.textContent = '100';
-        loaderLog.textContent = loaderLogMessages[loaderLogMessages.length - 1];
-        loader.classList.add('is-hidden');
-        window.setTimeout(() => loader.remove(), 400);
-    };
-
-    const finishLoader = () => {
-        window.setTimeout(dismissLoader, Math.max(0, minimumLoaderTime - (performance.now() - loaderStart)));
-    };
-
-    if (document.readyState === 'complete') {
-        finishLoader();
-    } else {
-        window.addEventListener('load', finishLoader, { once: true });
+        document.querySelectorAll('.continuous-sections section[id], #home, #demoreel-card').forEach(section => {
+            sectionObserver.observe(section);
+        });
     }
-    window.setTimeout(dismissLoader, 1450);
+
+    const loaderKey = 'dasmeds-portfolio-loader-seen';
+    let showLoader = true;
+    try {
+        showLoader = window.localStorage.getItem(loaderKey) !== 'true';
+        if (showLoader) window.localStorage.setItem(loaderKey, 'true');
+    } catch (error) {
+        console.warn('Pre-loader visit state could not be saved; this visit will still continue.', error);
+    }
+
+    if (showLoader) {
+        const loader = document.createElement('div');
+        loader.id = 'preloader';
+        loader.className = 'site-loader';
+        loader.setAttribute('role', 'status');
+        loader.setAttribute('aria-label', 'Loading portfolio');
+        loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p><p class="loader-progress" aria-hidden="true"><span id="loader-percent">00</span>% <span>→</span> 100%</p><p class="loader-log" id="loader-log" aria-live="polite">INITIALIZING_SYSTEMS...</p></div>';
+        document.body.prepend(loader);
+
+        let dismissed = false;
+        const loaderStart = performance.now();
+        const loaderPercent = document.getElementById('loader-percent');
+        const loaderLog = document.getElementById('loader-log');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const minimumLoaderTime = reducedMotion ? 180 : 1100;
+        const loaderLogMessages = ['INITIALIZING_SYSTEMS...', 'MAPPING_PORTFOLIO...', 'CALIBRATING_VISUALS...', 'COMPILING_VECTORS...', 'SYSTEM_READY'];
+
+        const progressTimer = window.setInterval(() => {
+            const progress = Math.min(99, Math.floor(((performance.now() - loaderStart) / minimumLoaderTime) * 100));
+            loaderPercent.textContent = String(progress).padStart(2, '0');
+            loaderLog.textContent = loaderLogMessages[Math.min(loaderLogMessages.length - 1, Math.floor(progress / 25))];
+        }, 40);
+
+        const dismissPreloader = () => {
+            if (dismissed) return;
+            dismissed = true;
+            window.clearInterval(progressTimer);
+            loaderPercent.textContent = '100';
+            loaderLog.textContent = loaderLogMessages[loaderLogMessages.length - 1];
+            loader.classList.add('dismissed', 'is-hidden');
+            loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
+            window.setTimeout(() => {
+                loader.style.display = 'none';
+                loader.remove();
+            }, 600);
+        };
+
+        const finishAfterMinimumTime = () => {
+            window.setTimeout(
+                dismissPreloader,
+                Math.max(0, minimumLoaderTime - (performance.now() - loaderStart))
+            );
+        };
+
+        if (document.readyState === 'complete') {
+            finishAfterMinimumTime();
+        } else {
+            window.addEventListener('load', finishAfterMinimumTime, { once: true });
+        }
+        window.setTimeout(dismissPreloader, 2000);
+    }
 
     const manilaClock = document.getElementById('manila-clock');
     const utcClock = document.getElementById('utc-clock');
@@ -292,4 +338,113 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateClocks();
         window.setInterval(updateClocks, 1000);
+    }
+
+    const revealTargets = document.querySelectorAll(
+        '.hero-title, .section-title, .project-title, .job-title, .side-title'
+    );
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!reducedMotion && 'IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+        revealTargets.forEach((heading, headingIndex) => {
+            heading.setAttribute('aria-label', heading.innerText.replace(/\s+/g, ' ').trim());
+            heading.classList.add('kinetic-heading');
+
+            const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
+            const textNodes = [];
+            while (walker.nextNode()) {
+                if (walker.currentNode.textContent.trim()) textNodes.push(walker.currentNode);
+            }
+
+            let wordIndex = 0;
+            textNodes.forEach(textNode => {
+                const fragment = document.createDocumentFragment();
+                textNode.textContent.split(/(\s+)/).forEach(part => {
+                    if (!part.trim()) {
+                        fragment.append(document.createTextNode(part));
+                        return;
+                    }
+
+                    const mask = document.createElement('span');
+                    mask.className = 'kinetic-mask';
+                    const word = document.createElement('span');
+                    word.className = 'kinetic-word';
+                    word.style.setProperty('--word-index', String(wordIndex++ + headingIndex % 3));
+                    word.setAttribute('aria-hidden', 'true');
+                    word.textContent = part;
+                    mask.append(word);
+                    fragment.append(mask);
+                });
+                textNode.replaceWith(fragment);
+            });
+
+            revealObserver.observe(heading);
+        });
+    } else {
+        revealTargets.forEach(heading => heading.classList.add('is-revealed'));
+    }
+
+    const showcaseVideos = document.querySelectorAll('#demoreel-video, .video-card video');
+    if (showcaseVideos.length && 'IntersectionObserver' in window) {
+        const videoObserver = new IntersectionObserver(() => {
+            const viewportCenter = window.innerHeight / 2;
+            const activeVideo = [...showcaseVideos]
+                .map(video => {
+                    const bounds = video.getBoundingClientRect();
+                    const visibleHeight = Math.max(0, Math.min(bounds.bottom, window.innerHeight) - Math.max(bounds.top, 0));
+                    const visibleWidth = Math.max(0, Math.min(bounds.right, window.innerWidth) - Math.max(bounds.left, 0));
+                    const visibleRatio = (visibleHeight * visibleWidth) / Math.max(1, bounds.width * bounds.height);
+                    return { video, bounds, visibleRatio };
+                })
+                .filter(item => item.visibleRatio >= 0.5)
+                .sort((left, right) =>
+                    Math.abs((left.bounds.top + left.bounds.bottom) / 2 - viewportCenter) -
+                    Math.abs((right.bounds.top + right.bounds.bottom) / 2 - viewportCenter)
+                )[0]?.video;
+
+            showcaseVideos.forEach(video => {
+                if (video !== activeVideo) {
+                    video.pause();
+                    video.autoplay = false;
+                    return;
+                }
+
+                video.muted = true;
+                video.playsInline = true;
+                video.autoplay = true;
+                const source = video.querySelector('source[data-src]');
+                if (source && !source.getAttribute('src')) {
+                    source.src = source.dataset.src;
+                    video.load();
+                }
+                if (video.paused) {
+                    const playback = video.play();
+                    if (playback) {
+                        playback.catch(error => {
+                            if (error.name !== 'AbortError') {
+                                console.warn('Showcase video autoplay was blocked by the browser.', error);
+                            }
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        showcaseVideos.forEach(video => videoObserver.observe(video));
+    } else {
+        showcaseVideos.forEach(video => {
+            const source = video.querySelector('source[data-src]');
+            if (!source) return;
+            source.src = source.dataset.src;
+            video.preload = 'none';
+            video.autoplay = false;
+        });
     }
