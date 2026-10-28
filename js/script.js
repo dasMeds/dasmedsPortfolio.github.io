@@ -1,83 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* scroll logic  */
-    // handles seamless page transitions using the mouse wheel.
-    const pages = ['index.html', 'about.html', 'experience.html', 'portfolio.html'];
-    
-    // gets the current file name from the url path
-    let path = window.location.pathname;
-    let currentPage = path.split('/').pop();
-    
-    // default to index.html if the path is empty (root)
-    if (currentPage === '' || currentPage === '/') {
-        currentPage = 'index.html';
-    }
-
-    let currentIndex = pages.indexOf(currentPage);
-    
-    // fallback: if current page isn't in the array, assumes its at the start
-    if (currentIndex === -1) {
-        currentIndex = 0;
-    }
-
-    // to prevent multiple triggers during a single animation/transition
-    let isNavigating = false;
-
-    window.addEventListener('wheel', (e) => {
-        if (isNavigating) return;
-
-        // the very bottom or very top of the current page?
-        const atBottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 10;
-        const atTop = window.scrollY <= 10;
-
-        // if scrolling down at the bottom, move to the next page
-        if (e.deltaY > 0 && atBottom) {
-            isNavigating = true;
-            document.getElementById('page-wrapper').classList.add('slide-out-up'); 
-            
-            // calculate the next page 
-            // if it goes past the end of the array, loop back to 0 (index.html)
-            let nextIndex = currentIndex + 1;
-            if (nextIndex >= pages.length) {
-                nextIndex = 0;
-            }
-            
-            // delay redirect to allow slide-out-up animation to play
-            setTimeout(() => {
-                window.location.href = pages[nextIndex];
-            }, 700); 
-        } 
-        // scrolling up move to the previous page
-        else if (e.deltaY < 0 && atTop) {
-            // limit here so scrolling up on the home page doesn't skip to the end
-            if (currentIndex > 0) {
-                isNavigating = true;
-                document.getElementById('page-wrapper').classList.add('slide-out-down'); 
-                
-                setTimeout(() => {
-                    window.location.href = pages[currentIndex - 1];
-                }, 700);
-            }
-        }
-    });
-
-    // handles standard navbar links to maintain the slide-out animation theme
-    const navLinks = document.querySelectorAll('.nav-links a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetUrl = this.getAttribute('href');
-            if(targetUrl && targetUrl.includes('.html') && !targetUrl.includes('#')) {
-                e.preventDefault();
-                isNavigating = true;
-                document.getElementById('page-wrapper').classList.add('slide-out-up');
-                
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 700);
-            }
-        });
-    });
-
     /* pop-up window logic */
 
     const modal = document.getElementById('poster-modal'); 
@@ -91,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeModalBtn = document.querySelector('.close-modal'); 
         const modalBackdrop = document.querySelector('.modal-backdrop');  
         const posterCards = document.querySelectorAll('.poster-card');  
+        let lastFocusedPoster;
+
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'modal-title');
 
         const posterDescriptions = {
             "F-2 Viper Zero": `A precision-timed, highly detailed cinematic edit focusing on the Mitsubishi F-2 multirole fighter. The sequence highlights its striking aerodynamic design, advanced maneuverability, and versatile maritime strike capabilities in contested skies.\n\nREAL-LIFE CONTEXT:\nThe Mitsubishi F-2, commonly referred to as the "Viper Zero," is a 4.5-generation multirole fighter co-developed by Mitsubishi Heavy Industries and Lockheed Martin for the Japan Air Self-Defense Force (JASDF). Based heavily on the F-16 Fighting Falcon, the F-2 features a 25% larger wing area made from advanced radar-absorbing composite materials, allowing for a heavier payload of anti-ship missiles. Notably, it was the first operational military aircraft in the world to be equipped with an Active Electronically Scanned Array (AESA) radar system.\n\nREFERENCE:\nJapan Air Self-Defense Force. (n.d.). Equipment: F-2 close-up. Ministry of Defense. Retrieved March 11, 2026, from https://www.mod.go.jp/asdf/english/equipment/`,
@@ -110,8 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "Masterpiece Sportswear Design Board": `A dynamic, multi-asset design board created to establish a cohesive brand identity for Masterpiece Sportswear. The layout utilizes aggressive sans-serif typography and a strictly monochromatic palette to convey the brand’s "Move Powerful, Play Proud" philosophy through a professional, high-performance lens.\n\nPROJECT CONTEXT:\nThis project serves as a comprehensive exploration of visual strategy in athletic branding. It integrates product renderings, social media posts UI concepts, and logo variations to demonstrate a scalable design ecosystem. The board emphasizes technical precision, highlighting moisture-wicking textures and ergonomic tailoring through a clean, grid-based presentation.\n\nREFERENCE:\nGraphic Design & Branding Project. (2026). Visual Identity Systems: Masterpiece Sportswear.`
             };
 
-        posterCards.forEach(card => {
-            card.addEventListener('click', () => {
+        const openPoster = card => {
                 const img = card.querySelector('img');
                 modalImg.src = img.src;
                 modalImgBg.src = img.src; // background blur image
@@ -122,16 +48,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden'; // lock scroll while viewing
+                lastFocusedPoster = card;
+                closeModalBtn.focus();
+        };
+
+        posterCards.forEach(card => {
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.addEventListener('click', () => openPoster(card));
+            card.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openPoster(card);
+                }
             });
         });
 
         const closeModal = () => {
             modal.classList.remove('active');
             document.body.style.overflow = ''; // restore scroll
+            lastFocusedPoster?.focus();
         };
 
         closeModalBtn.addEventListener('click', closeModal);
         modalBackdrop.addEventListener('click', closeModal);
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
     }
 
     /*  moving slider logic */
@@ -143,32 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const track = document.querySelector('.marquee-track'); 
         const leftArrow = document.querySelector('.left-arrow'); 
         const rightArrow = document.querySelector('.right-arrow'); 
-
-        let isHovered = false;
-        let scrollInterval;
-        const scrollSpeed = 1; // pixels per frame
-
-        // if the scroll position hits the halfway point, snap back to 0
-        const resetScrollPosition = () => {
-            if (wrapper.scrollLeft >= track.scrollWidth / 2) { 
-                wrapper.scrollLeft = 0; 
-            } else if (wrapper.scrollLeft <= 0) { 
-                wrapper.scrollLeft = track.scrollWidth / 2; 
-            }
-        };
-
-        function startScroll() {
-            scrollInterval = setInterval(() => {
-                if (!isHovered) {
-                    wrapper.scrollLeft += scrollSpeed;
-                    resetScrollPosition();
-                }
-            }, 20); // update rate
-        }
-
-        // pause when interacting with the slider
-        sliderContainer.addEventListener('mouseenter', () => isHovered = true);
-        sliderContainer.addEventListener('mouseleave', () => isHovered = false);
 
         const scrollAmount = 332; 
 
@@ -185,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         });
-
-        startScroll();
     }
 
     /* videos showcase */
@@ -216,65 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
             video.addEventListener('webkitfullscreenchange', handleFullscreen); 
         });
 
-        videoCards.forEach(card => {
-            const video = card.querySelector('video');
-            
-            // mMute and play on mouse enter
-            card.addEventListener('mouseenter', () => {
-                if (video.paused) {
-                    video.muted = true;
-                    video.play().catch(error => console.log("User interaction required for autoplay.")); 
-                }
-            });
-
-            // stop and reset video when mouse leaves
-            card.addEventListener('mouseleave', () => {
-                video.pause();
-                video.currentTime = 0; 
-            });
-        });
-    }
-
-    /* demoreel */
-    const demoreelCard = document.getElementById('demoreel-card');
-    
-    if (demoreelCard) {
-        const video = document.getElementById('demoreel-video');
-
-        demoreelCard.classList.remove('video-card');
-
-        // unmute automatically when entered fullscreen should be similar to the video showcase in portfolio page
-        const handleFullscreen = () => {
-            if (document.fullscreenElement === video || document.webkitFullscreenElement === video) {
-                video.muted = false;
-            }
-        };
-        video.addEventListener('fullscreenchange', handleFullscreen);
-        video.addEventListener('webkitfullscreenchange', handleFullscreen); 
-
-        // play on mouse enter
-        demoreelCard.addEventListener('mouseenter', () => {
-            if (video.paused) {
-
-                video.muted = true; 
-                let playPromise = video.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        // fallback: if browser blocks the sound, play it muted
-                        console.log("Browser blocked sound. Falling back to muted autoplay.");
-                        video.muted = true;
-                        video.play().catch(e => console.log("User interaction required for autoplay."));
-                    });
-                }
-            }
-        });
-
-        // stop and reset video when mouse leaves. same with the video showcase in portfolio page
-        demoreelCard.addEventListener('mouseleave', () => {
-            video.pause();
-            video.currentTime = 0; 
-        });
     }
 
     /* contact form logic */
@@ -314,124 +172,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* background fx */
-    function initFizzyGrid() {
-        // the Background Container
-        const grid = document.createElement('div');
-        grid.id = 'magic-bg-grid';
-        document.body.insertBefore(grid, document.body.firstChild);
-
-        const tileSize = 60; // size of each reactive zone
-        let cols = Math.ceil(window.innerWidth / tileSize);
-        let rows = Math.ceil(window.innerHeight / tileSize);
-        let tiles = [];
-
-        let mouseX = -1000;
-        let mouseY = -1000;
-
-        // the tile array
-        function createGrid() {
-            grid.innerHTML = '';
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            tiles = Array.from({ length: cols * rows }, (_, i) => {
-                const tile = document.createElement('div');
-                tile.className = 'magic-tile';
-                grid.appendChild(tile);
-                //the center coordinates for calculations
-                return {
-                    el: tile,
-                    x: (i % cols) * tileSize + tileSize / 2,
-                    y: Math.floor(i / cols) * tileSize + tileSize / 2
-                };
-            });
-        }
-        createGrid();
-
-        window.addEventListener('mousemove', (e) => {
-            if (window.innerWidth <= 768) return; // disable on mobile
-
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            updateScaling();
-        });
-
-        // scale up as the mouse gets closer
-        function updateScaling() {
-            const radius = 180; 
-            tiles.forEach(tile => {
-                // Pythagorean distance formula: sqrt(a^2 + b^2)
-                const dist = Math.sqrt((mouseX - tile.x) ** 2 + (mouseY - tile.y) ** 2);
-                if (dist < radius) {
-                    // tiles closer to mouse get bigger (max 13x)
-                    const scale = 1 + (1 - dist / radius) * 12; 
-                    tile.el.style.transform = `scale(${scale})`;
-                    tile.el.classList.add('glowing');
-                } else {
-                    tile.el.style.transform = 'scale(1)';
-                    tile.el.classList.remove('glowing');
-                }
-            });
-        }
-
-        // periodically emits fizz from tiles near the mouse
-        setInterval(() => {
-            if (window.innerWidth <= 768) return; // stops particle emitions on mobile for performance
-
-            const outerFizzRadius = 140; 
-            const proximityRadius = 180;
-
-            tiles.forEach(tile => {
-                const dist = Math.sqrt((mouseX - tile.x) ** 2 + (mouseY - tile.y) ** 2);
-                // trigger particles only around the cursor
-                if (dist < proximityRadius && dist > outerFizzRadius && !tile.el.dataset.fizzing) {
-                    tile.el.dataset.fizzing = "true";
-                    createFizz(tile.el);
-                    // cooldown 
-                    setTimeout(() => delete tile.el.dataset.fizzing, 800); 
-                }
-            });
-        }, 400); 
-
-        // article animation
-        function createFizz(parentTile) {
-            for (let i = 0; i < 3; i++) { 
-                const p = document.createElement('div');
-                p.className = 'magic-particle';
-                const size = Math.random() * 2 + 1;
-                p.style.width = `${size}px`;
-                p.style.height = `${size}px`;
-                parentTile.appendChild(p);
-
-                // calculates a random outward trajectory
-                const angle = Math.random() * Math.PI * 2;
-                const destX = Math.cos(angle) * (Math.random() * 60 + 20);
-                const destY = Math.sin(angle) * (Math.random() * 60 + 20);
-                
-                const duration = 2500 + Math.random() * 1500;
-
-                p.animate([
-                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                    { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
-                ], {
-                    duration: duration,
-                    easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)',
-                    fill: 'forwards'
-                });
-                
-                setTimeout(() => p.remove(), duration);
-            }
-        }
-    }
-    initFizzyGrid();
 });
 
 /* mobile logic */
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links');
 
-    if (menuToggle) {
+    if (menuToggle && navLinksContainer) {
+        menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navLinksContainer.classList.toggle('active');
+            const isOpen = menuToggle.classList.toggle('active');
+            navLinksContainer.classList.toggle('active', isOpen);
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        navLinksContainer.addEventListener('click', event => {
+            if (event.target.closest('a')) {
+                menuToggle.classList.remove('active');
+                navLinksContainer.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                menuToggle.classList.remove('active');
+                navLinksContainer.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
         });
     }
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.btn-solid, .btn-outline').forEach(button => {
+            button.addEventListener('pointermove', event => {
+                if (event.pointerType !== 'mouse') return;
+                const bounds = button.getBoundingClientRect();
+                const offsetX = (event.clientX - bounds.left - bounds.width / 2) * 0.08;
+                const offsetY = (event.clientY - bounds.top - bounds.height / 2) * 0.08;
+                button.style.setProperty('--mag-x', `${offsetX.toFixed(1)}px`);
+                button.style.setProperty('--mag-y', `${offsetY.toFixed(1)}px`);
+            });
+
+            button.addEventListener('pointerleave', () => {
+                button.style.setProperty('--mag-x', '0px');
+                button.style.setProperty('--mag-y', '0px');
+            });
+        });
+    }
+
+    const loader = document.createElement('div');
+    loader.className = 'site-loader';
+    loader.setAttribute('role', 'status');
+    loader.setAttribute('aria-label', 'Loading portfolio');
+    loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p></div>';
+    document.body.prepend(loader);
+
+    let loaderDismissed = false;
+    const dismissLoader = () => {
+        if (loaderDismissed) return;
+        loaderDismissed = true;
+        loader.classList.add('is-hidden');
+        window.setTimeout(() => loader.remove(), 400);
+    };
+
+    window.addEventListener('load', () => window.setTimeout(dismissLoader, 300), { once: true });
+    window.setTimeout(dismissLoader, 1500);
