@@ -3484,6 +3484,17 @@ body,
     pointer-events: none;
 }
 
+.continuous-portfolio > .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1.25rem;
+    z-index: 100;
+    border-color: var(--border-color);
+    background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
 .story-canvas {
     z-index: -10;
     opacity: .12;
@@ -3527,6 +3538,10 @@ body,
     max-width: 800px;
     height: 100%;
     object-fit: contain;
+}
+
+#certifications {
+    padding-bottom: clamp(12rem, 24vh, 18rem);
 }
 
 @media (max-width: 768px) {
@@ -3573,6 +3588,11 @@ body,
     #demoreel-card {
         width: min(100% - 36px, var(--content-width));
         margin-bottom: 5rem;
+    }
+
+    .continuous-portfolio > .theme-toggle {
+        top: .75rem;
+        right: .75rem;
     }
 
     #about,
