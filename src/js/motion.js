@@ -222,6 +222,7 @@ function initMediaStacks() {
 
     [posterCards, videoCards].forEach(cards => {
         cards.slice(1).forEach((card, index) => {
+            const cardTop = () => card.offsetTop;
             gsap.fromTo(cards[index], {
                 scale: 1,
                 autoAlpha: 1
@@ -231,9 +232,10 @@ function initMediaStacks() {
                 ease: 'none',
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 85%',
-                    end: 'top 12%',
-                    scrub: 1
+                    start: () => cardTop() - window.innerHeight * 0.85,
+                    end: () => cardTop() - window.innerHeight * 0.12,
+                    scrub: 1,
+                    invalidateOnRefresh: true
                 }
             });
         });

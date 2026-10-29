@@ -2544,6 +2544,12 @@ section {
 
 html,
 body {
+    width: 100%;
+    overflow-x: clip;
+}
+
+#page-wrapper {
+    width: 100%;
     overflow-x: clip;
 }
 
@@ -3182,5 +3188,148 @@ body {
         position: relative;
         top: auto;
         margin-bottom: 2rem;
+    }
+}
+
+/* Clip horizontal bleed without creating a scrolling ancestor for sticky media. */
+html,
+body,
+#page-wrapper {
+    width: 100%;
+    overflow-x: clip;
+}
+
+#posters,
+#videos,
+#posters .slider-container,
+#posters .marquee-wrapper,
+#posters .marquee-track,
+#videos .video-grid {
+    overflow: visible;
+}
+
+#posters .poster-card {
+    aspect-ratio: 2 / 3;
+}
+
+#videos .video-card video,
+#demoreel-video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    #home.hero-stage {
+        display: grid;
+        width: 100%;
+        min-height: 100svh;
+        grid-template-columns: minmax(0, 1fr);
+        align-content: start;
+        gap: 1.25rem;
+        margin: 72px 0 0;
+        padding: 2rem 1.5rem 3rem;
+        overflow: clip;
+    }
+
+    .hero-stage .coordinate-label,
+    .hero-stage .hero-title,
+    .hero-stage .hero-copy .hero-desc,
+    .hero-stage .hero-copy .btn-solid,
+    .hero-stage .hero-stat,
+    .hero-stage .hero-index {
+        position: relative;
+        inset: auto;
+        width: auto;
+        max-width: 100%;
+        margin: 0;
+        text-align: left;
+    }
+
+    .hero-stage .coordinate-label {
+        z-index: 2;
+        font-size: .58rem;
+        line-height: 1.5;
+    }
+
+    .hero-stage .hero-coordinate-lines {
+        inset: 18% 0 auto;
+        height: 55%;
+        opacity: .35;
+    }
+
+    .hero-stage .hero-title {
+        z-index: 2;
+        width: 100%;
+        max-width: 100%;
+        font-size: clamp(3rem, 14vw, 5rem);
+        line-height: .82;
+        overflow-wrap: anywhere;
+    }
+
+    .hero-stage .hero-content,
+    .hero-stage .hero-copy,
+    .hero-stage .hero-stats {
+        display: grid;
+    }
+
+    .hero-stage .hero-copy {
+        gap: 1rem;
+    }
+
+    .hero-stage .hero-copy .hero-desc {
+        width: 100%;
+        font-size: .94rem;
+        line-height: 1.65;
+    }
+
+    .hero-stage .hero-copy .btn-solid {
+        justify-self: start;
+    }
+
+    .hero-stage .hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: .5rem;
+    }
+
+    .hero-stage .hero-stat {
+        min-width: 0;
+        max-width: none;
+        overflow-wrap: anywhere;
+    }
+
+    .hero-stage .hero-stat .stat-number {
+        font-size: clamp(2rem, 10vw, 2.6rem);
+    }
+
+    .hero-stage .hero-stat .stat-label {
+        max-width: 100%;
+        font-size: .68rem;
+    }
+
+    .hero-stage .hero-index {
+        justify-self: end;
+        font-size: .58rem;
+        line-height: 1.5;
+    }
+
+    #about .about-marquee {
+        width: 100%;
+        margin-left: 0;
+        overflow: clip;
+    }
+
+    #about .about-marquee-track {
+        font-size: clamp(2.5rem, 12vw, 4rem);
+    }
+
+    #posters .poster-card {
+        width: min(78vw, 360px) !important;
+    }
+
+    #videos .video-card {
+        width: 100%;
     }
 }
