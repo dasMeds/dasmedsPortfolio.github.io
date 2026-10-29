@@ -6,8 +6,8 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 
 - **Multi-page static site:** semantic HTML pages styled with modular CSS and small JavaScript modules.
 - **Vite:** local development server and optimized multi-page production build. Static files in `public/` are published at the site root.
-- **GSAP and ScrollTrigger:** reduced-motion-aware kinetic headings, scroll reveals, and subtle parallax.
-- **Three.js:** a lightweight, decorative 3D wireframe field that responds gently to pointer movement and scrolling.
+- **GSAP and ScrollTrigger:** reduced-motion-aware text-scramble reveals, clip-path media transitions, a pinned horizontal repository sequence, and a multi-axis scroll-tied orb.
+- **Three.js:** a decorative architectural wireframe orb with light/dark contrast, continuous rotation, and a diagonal scroll trajectory.
 - **Theme control:** light is the default; the dark theme can be selected and is remembered between pages and visits.
 - **Media:** videos are muted, inline-capable MP4s; poster images preserve their full aspect ratio.
 

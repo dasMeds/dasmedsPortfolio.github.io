@@ -45,24 +45,47 @@ function wrapHeadingWords(heading, headingIndex) {
     heading.classList.add('kinetic-heading');
     const words = animateSplitText(heading, headingIndex);
 
-    gsap.fromTo(words, {
-        yPercent: 110,
-        rotation: 5,
-        filter: 'blur(12px)',
-        autoAlpha: 0
-    }, {
-        immediateRender: false,
-        yPercent: 0,
-        rotation: 0,
-        filter: 'blur(0px)',
-        autoAlpha: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.05,
+    const revealTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: heading,
             start: 'top 80%',
             once: true
+        }
+    });
+
+    words.forEach((word, index) => {
+        const originalText = word.textContent;
+        const scramble = { progress: 0 };
+        const scrambleCharacters = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+
+        revealTimeline.fromTo(word, {
+            yPercent: 110,
+            rotation: 5,
+            filter: 'blur(12px)',
+            autoAlpha: 0
+        }, {
+            yPercent: 0,
+            rotation: 0,
+            filter: 'blur(0px)',
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: 'power3.out'
+        }, index * 0.05);
+
+        if (heading.classList.contains('hero-title')) {
+            revealTimeline.to(scramble, {
+                progress: 1,
+                duration: 0.68,
+                ease: 'none',
+                onUpdate: () => {
+                    const settled = Math.floor(scramble.progress * originalText.length);
+                    const noise = Array.from({ length: originalText.length - settled }, () =>
+                        scrambleCharacters[Math.floor(Math.random() * scrambleCharacters.length)]
+                    ).join('');
+                    word.textContent = originalText.slice(0, settled) + noise;
+                },
+                onComplete: () => { word.textContent = originalText; }
+            }, index * 0.05);
         }
     });
 }
@@ -135,6 +158,8 @@ function wrapListItem(item, index) {
 export function initMotion() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    initHorizontalProjects();
+
     document.querySelectorAll(
         '.hero-title, .section-title, .project-title, .job-title, .side-title, .stat-number'
     ).forEach(wrapHeadingWords);
@@ -146,4 +171,58 @@ export function initMotion() {
 
     // Split each list item as one unit so icons and labels rise together behind a clipping mask.
     document.querySelectorAll('.stack-list li, .video-tags .tag').forEach(wrapListItem);
+
+    // Reveal large media with an expanding crop instead of a generic opacity fade.
+    document.querySelectorAll(
+        '.poster-card img, .cert-img, .about-grid img, #demoreel-video, .video-card video'
+    ).forEach(media => {
+        media.classList.add('media-reveal-ready');
+        gsap.fromTo(media, {
+            clipPath: 'inset(0 100% 0 0)'
+        }, {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 1.05,
+            ease: 'power3.inOut',
+            scrollTrigger: {
+                trigger: media,
+                start: 'top 80%',
+                once: true
+            }
+        });
+    });
+}
+
+function initHorizontalProjects() {
+    const section = document.querySelector('.horizontal-projects');
+    const viewport = section?.querySelector('.horizontal-projects-viewport');
+    const track = section?.querySelector('.horizontal-projects-track');
+    if (!section || !viewport || !track) return;
+
+    // Keep the repository sequence touch-scrollable on smaller screens where vertical context matters more.
+    ScrollTrigger.matchMedia({
+        '(min-width: 769px)': () => {
+            const horizontalDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top top',
+                    end: () => `+=${horizontalDistance()}`,
+                    pin: section,
+                    scrub: 1,
+                    invalidateOnRefresh: true,
+                    anticipatePin: 1
+                }
+            });
+
+            timeline.to(track, {
+                x: () => -horizontalDistance(),
+                ease: 'none'
+            });
+
+            return () => {
+                timeline.scrollTrigger?.kill();
+                gsap.set(track, { clearProps: 'transform' });
+            };
+        }
+    });
 }

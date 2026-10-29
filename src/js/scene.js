@@ -26,8 +26,10 @@ export function initScene() {
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 40);
     camera.position.z = 9;
 
+    const orb = new THREE.Group();
+    scene.add(orb);
     const sculpture = new THREE.Group();
-    scene.add(sculpture);
+    orb.add(sculpture);
     sculpture.scale.setScalar(1.45);
 
     const outer = new THREE.Mesh(
@@ -54,21 +56,20 @@ export function initScene() {
     const pointer = new THREE.Vector2();
     const targetPointer = new THREE.Vector2();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const scrollPosition = { progress: 0 };
     let frameId = 0;
     let scrollTween;
 
     const viewHalfWidth = () =>
         camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
 
-    const positionSphere = () => {
-        sculpture.position.x = viewHalfWidth() * (1 - scrollPosition.progress * 2);
-    };
+    const viewportWorld = () => ({
+        width: viewHalfWidth() * 2,
+        height: 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    });
 
     const renderFrame = () => {
         pointer.lerp(targetPointer, 0.035);
         sculpture.rotation.x += (pointer.y * 0.12 - sculpture.rotation.x) * 0.025;
-        sculpture.position.y = 0.25 + pointer.y * 0.1;
         renderer.render(scene, camera);
         frameId = window.requestAnimationFrame(renderFrame);
     };
@@ -82,32 +83,63 @@ export function initScene() {
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.updateProjectionMatrix();
-        positionSphere();
         ScrollTrigger.refresh();
         if (reducedMotion) renderStill();
     };
 
-    const updateTheme = () => {
+    const updateTheme = (animate = true) => {
         const styles = getComputedStyle(document.documentElement);
-        outer.material.color.set(styles.getPropertyValue('--accent-color').trim());
-        inner.material.color.set(styles.getPropertyValue('--accent-cool').trim());
+        const primary = new THREE.Color(styles.getPropertyValue('--orb-primary').trim());
+        const secondary = new THREE.Color(styles.getPropertyValue('--orb-secondary').trim());
+        if (animate && !reducedMotion) {
+            gsap.to(outer.material.color, {
+                r: primary.r, g: primary.g, b: primary.b,
+                duration: 0.5,
+                onUpdate: renderStill
+            });
+            gsap.to(inner.material.color, {
+                r: secondary.r, g: secondary.g, b: secondary.b,
+                duration: 0.5,
+                onUpdate: renderStill
+            });
+        } else {
+            outer.material.color.copy(primary);
+            inner.material.color.copy(secondary);
+        }
         if (reducedMotion) renderStill();
     };
 
     if (!reducedMotion) {
-        // A scrubbed progress value moves the oversized sphere from edge to edge with the story.
-        scrollTween = gsap.to(scrollPosition, {
-            progress: 1,
-            ease: 'none',
+        // Keyframes carry the oversized sphere along a diagonal path as the document scrolls.
+        const spherePath = gsap.timeline({
             scrollTrigger: {
                 trigger: document.documentElement,
                 start: 'top top',
                 end: () => `+=${ScrollTrigger.maxScroll(window)}`,
                 scrub: true,
-                onUpdate: positionSphere,
-                onRefresh: positionSphere
+                invalidateOnRefresh: true
             }
         });
+        const point = (xViewport, yViewport) => ({
+            x: () => xViewport * viewportWorld().width,
+            y: () => -yViewport * viewportWorld().height
+        });
+        spherePath
+            .set(orb.position, point(0.3, -0.1), 0)
+            .to(orb.position, { ...point(-0.4, 0.3), duration: 0.25, ease: 'none' }, 0)
+            .to(orb.position, { ...point(0.4, 0.6), duration: 0.25, ease: 'none' }, 0.25)
+            .to(orb.position, { ...point(0, 0.8), duration: 0.25, ease: 'none' }, 0.5)
+            .to(orb.position, { ...point(-0.3, 1.1), duration: 0.25, ease: 'none' }, 0.75);
+        spherePath.to(sculpture.scale, {
+            x: 2.5, y: 2.5, z: 2.5,
+            duration: 0.25,
+            ease: 'none'
+        }, 0.5).to(sculpture.scale, {
+            x: 1.8, y: 1.8, z: 1.8,
+            duration: 0.25,
+            ease: 'none'
+        }, 0.75);
+        scrollTween = spherePath.scrollTrigger;
 
         // Full rotations return to the same pose, keeping the wireframe turning without a visible reset.
         gsap.to(sculpture.rotation, {
@@ -133,7 +165,7 @@ export function initScene() {
     window.addEventListener('portfolio:theme-change', updateTheme);
     window.addEventListener('pagehide', () => {
         window.cancelAnimationFrame(frameId);
-        scrollTween?.scrollTrigger?.kill();
+        scrollTween?.kill();
         renderer.dispose();
         outer.geometry.dispose();
         inner.geometry.dispose();
@@ -142,5 +174,5 @@ export function initScene() {
     }, { once: true });
 
     resize();
-    updateTheme();
+    updateTheme(false);
 }
