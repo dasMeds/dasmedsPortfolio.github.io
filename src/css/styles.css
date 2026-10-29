@@ -2481,7 +2481,7 @@ section {
 
 .ambient-orbit {
     z-index: 0;
-    opacity: .36;
+    opacity: .12;
     animation: none;
 }
 
@@ -2503,6 +2503,35 @@ section {
     transform: none;
     transition: none;
     will-change: transform, opacity;
+}
+
+.kinetic-block-mask,
+.kinetic-item-mask {
+    display: block;
+    overflow: clip;
+}
+
+.kinetic-block-mask {
+    width: 100%;
+}
+
+.kinetic-text {
+    will-change: transform, filter, opacity;
+}
+
+.kinetic-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    will-change: transform, filter, opacity;
+}
+
+.stack-list li {
+    overflow: visible;
+}
+
+.story-canvas {
+    opacity: .6;
 }
 
 .theme-toggle {
