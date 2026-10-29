@@ -161,7 +161,6 @@ export function initMotion() {
     initHorizontalProjects();
     initHorizontalPosters();
     initAboutMarquee();
-    initMediaStacks();
 
     document.querySelectorAll(
         '.hero-title, .section-title, .project-title, .job-title, .side-title, .stat-number'
@@ -236,29 +235,6 @@ function initAboutMarquee() {
         settleSpeed?.kill();
         settleSpeed = gsap.delayedCall(0.2, () => setSpeed(1));
     }, { passive: true });
-}
-
-function initMediaStacks() {
-    const videoCards = [...document.querySelectorAll('#videos .video-card')];
-
-    videoCards.slice(1).forEach((card, index) => {
-        const cardTop = () => card.offsetTop;
-        gsap.fromTo(videoCards[index], {
-            scale: 1,
-            autoAlpha: 1
-        }, {
-            scale: 0.95,
-            autoAlpha: 0.5,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: card,
-                start: () => cardTop() - window.innerHeight * 0.85,
-                end: () => cardTop() - window.innerHeight * 0.12,
-                scrub: 1,
-                invalidateOnRefresh: true
-            }
-        });
-    });
 }
 
 function initHorizontalPosters() {

@@ -3784,6 +3784,32 @@ body,
     transform: scale(1.05);
 }
 
+.showcase-clearance {
+    height: clamp(7rem, 18vh, 12rem);
+    pointer-events: none;
+}
+
+#videos {
+    padding-block: clamp(5rem, 10vh, 8rem);
+}
+
+#videos .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    padding: 1rem 0 2rem;
+}
+
+#videos .video-card {
+    position: relative;
+    top: auto;
+    width: 100%;
+    margin: 0;
+    z-index: auto;
+    transform-origin: center;
+}
+
 @media (max-width: 768px) {
     #posters,
     #posters.is-horizontal-pinned {
@@ -3821,5 +3847,14 @@ body,
         height: auto !important;
         max-height: none;
         aspect-ratio: 2 / 3;
+    }
+
+    .showcase-clearance {
+        height: 2rem;
+    }
+
+    #videos .video-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
     }
 }
