@@ -130,7 +130,7 @@ export function initScene() {
                 trigger: document.documentElement,
                 start: 'top top',
                 end: () => `+=${ScrollTrigger.maxScroll(window)}`,
-                scrub: 3,
+                scrub: 1,
                 invalidateOnRefresh: true
             }
         });

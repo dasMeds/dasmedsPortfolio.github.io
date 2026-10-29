@@ -2915,15 +2915,15 @@ body {
     vector-effect: non-scaling-stroke;
 }
 
-.hero-title {
+.hero-stage .hero-title {
     position: absolute;
     z-index: 2;
-    bottom: -.045em;
-    left: -.035em;
-    width: max-content;
-    max-width: 110vw;
+    right: clamp(0rem, 2vw, 1.5rem);
+    bottom: clamp(1.5rem, 4vh, 4rem);
+    left: clamp(0rem, 2vw, 1.5rem);
+    width: auto;
     margin: 0;
-    font-size: clamp(6rem, 17vw, 17rem);
+    font-size: clamp(5rem, 15vw, 14rem);
     line-height: .72;
     mix-blend-mode: exclusion;
     pointer-events: none;
@@ -2989,8 +2989,9 @@ body {
 
 #about .about-marquee {
     width: 100vw;
-    margin: 2rem 0 1rem calc(50% - 50vw);
-    overflow: hidden;
+    position: relative;
+    margin: clamp(2rem, 5vh, 4rem) 0 1rem calc(50% - 50vw);
+    overflow: clip;
 }
 
 #about .about-marquee-track {
@@ -3101,9 +3102,9 @@ body {
         max-width: 80vw;
     }
 
-    .hero-title {
+    .hero-stage .hero-title {
         bottom: 12vh;
-        left: -.04em;
+        left: 0;
         font-size: clamp(4.5rem, 18vw, 7rem);
     }
 
