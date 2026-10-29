@@ -202,17 +202,39 @@ function initAboutMarquee() {
     const viewport = track?.closest('.about-marquee');
     if (!track || !viewport) return;
 
-    gsap.fromTo(track, { xPercent: 4 }, {
-        xPercent: -34,
+    const text = track.textContent.trim();
+    const segment = document.createElement('span');
+    segment.className = 'about-marquee-segment';
+    segment.textContent = `${text} `;
+    track.replaceChildren(segment, segment.cloneNode(true));
+
+    const loop = gsap.to(track, {
+        xPercent: -50,
+        duration: 32,
         ease: 'none',
-        scrollTrigger: {
-            trigger: viewport,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 3,
-            invalidateOnRefresh: true
-        }
+        repeat: -1
     });
+
+    const setSpeed = gsap.quickTo(loop, 'timeScale', {
+        duration: 0.25,
+        ease: 'power2.out'
+    });
+    let previousY = window.scrollY;
+    let previousTime = performance.now();
+    let settleSpeed;
+
+    window.addEventListener('scroll', () => {
+        const now = performance.now();
+        const currentY = window.scrollY;
+        const elapsed = Math.max(now - previousTime, 16);
+        const velocity = Math.abs(currentY - previousY) / elapsed;
+        previousY = currentY;
+        previousTime = now;
+
+        setSpeed(gsap.utils.clamp(1, 5, 1 + velocity * 2.5));
+        settleSpeed?.kill();
+        settleSpeed = gsap.delayedCall(0.2, () => setSpeed(1));
+    }, { passive: true });
 }
 
 function initMediaStacks() {
