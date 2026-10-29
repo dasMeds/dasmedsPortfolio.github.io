@@ -3035,67 +3035,6 @@ body {
     bottom: 1.5rem;
 }
 
-#posters .slider-arrow {
-    display: none;
-}
-
-#posters .slider-container,
-#posters .marquee-wrapper {
-    display: block;
-    width: 100%;
-    overflow: visible;
-}
-
-#posters .marquee-track {
-    display: flex;
-    width: 100% !important;
-    flex-direction: column;
-    align-items: center;
-    gap: 18vh;
-    padding: 2rem 0 20vh;
-}
-
-#posters .poster-card {
-    position: sticky;
-    top: 10vh;
-    z-index: 1;
-    width: min(34vw, 420px) !important;
-    height: auto;
-    aspect-ratio: 2 / 3;
-    flex: 0 0 auto;
-    margin: 0;
-}
-
-#posters .poster-card:nth-child(-n+8) {
-    z-index: 1;
-}
-
-#posters .poster-card:nth-child(n+9) {
-    display: none;
-}
-
-#posters .poster-card img {
-    object-fit: contain;
-}
-
-#videos .video-grid {
-    display: block;
-    padding: 1rem 0 15vh;
-}
-
-#videos .video-card {
-    position: sticky;
-    top: 10vh;
-    width: min(80vw, 1000px);
-    margin: 0 auto 30vh;
-    background: var(--bg-color);
-    transform-origin: center top;
-}
-
-#videos .video-card:nth-child(1) { z-index: 1; }
-#videos .video-card:nth-child(2) { z-index: 2; }
-#videos .video-card:nth-child(3) { z-index: 3; }
-
 @media (max-width: 768px) {
     #home.hero-stage {
         min-height: 100svh;
@@ -3501,45 +3440,6 @@ body,
     pointer-events: none;
 }
 
-#posters,
-#posters .slider-container,
-#posters .marquee-wrapper,
-#posters .marquee-track,
-#videos,
-#videos .video-grid {
-    overflow: visible;
-}
-
-#posters .marquee-track {
-    min-height: 300vh;
-    gap: clamp(5rem, 12vh, 10rem);
-    padding: 2rem 0 20vh;
-}
-
-#posters .poster-card {
-    position: sticky;
-    top: 10vh;
-    z-index: 1;
-    width: min(80vw, 800px) !important;
-    max-width: 800px;
-    height: auto;
-    display: block;
-    aspect-ratio: 2 / 3;
-    flex: 0 0 auto !important;
-    margin: 0;
-    background: var(--media-bg);
-}
-
-#posters .poster-card img {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    max-width: 800px;
-    height: 100%;
-    object-fit: contain;
-}
-
 #certifications {
     padding-bottom: clamp(12rem, 24vh, 18rem);
 }
@@ -3785,7 +3685,7 @@ body,
 }
 
 .showcase-clearance {
-    height: clamp(7rem, 18vh, 12rem);
+    height: clamp(18rem, 40vh, 28rem);
     pointer-events: none;
 }
 

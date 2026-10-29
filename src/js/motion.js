@@ -261,6 +261,7 @@ function initHorizontalPosters() {
                     start: 'top top',
                     end: () => `+=${horizontalDistance()}`,
                     pin: true,
+                    pinSpacing: true,
                     scrub: 1,
                     invalidateOnRefresh: true,
                     anticipatePin: 1,
@@ -308,6 +309,7 @@ function initHorizontalProjects() {
                     start: 'top top',
                     end: () => `+=${horizontalDistance()}`,
                     pin: section,
+                    pinSpacing: true,
                     scrub: 1,
                     invalidateOnRefresh: true,
                     anticipatePin: 1
