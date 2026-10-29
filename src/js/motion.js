@@ -159,6 +159,7 @@ export function initMotion() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     initHorizontalProjects();
+    initHorizontalPosters();
     initAboutMarquee();
     initMediaStacks();
 
@@ -179,7 +180,7 @@ export function initMotion() {
 
     // Reveal large media with an expanding crop instead of a generic opacity fade.
     document.querySelectorAll(
-        '.poster-card img, .cert-img, .about-grid img, #demoreel-video, .video-card video'
+        '.cert-img, .about-grid img, #demoreel-video, .video-card video'
     ).forEach(media => {
         media.classList.add('media-reveal-ready');
         gsap.fromTo(media, {
@@ -238,29 +239,80 @@ function initAboutMarquee() {
 }
 
 function initMediaStacks() {
-    const posterCards = [...document.querySelectorAll('#posters .poster-card')]
-        .filter((_, index) => index < 8);
     const videoCards = [...document.querySelectorAll('#videos .video-card')];
 
-    [posterCards, videoCards].forEach(cards => {
-        cards.slice(1).forEach((card, index) => {
-            const cardTop = () => card.offsetTop;
-            gsap.fromTo(cards[index], {
-                scale: 1,
-                autoAlpha: 1
-            }, {
-                scale: 0.95,
-                autoAlpha: 0.5,
-                ease: 'none',
+    videoCards.slice(1).forEach((card, index) => {
+        const cardTop = () => card.offsetTop;
+        gsap.fromTo(videoCards[index], {
+            scale: 1,
+            autoAlpha: 1
+        }, {
+            scale: 0.95,
+            autoAlpha: 0.5,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: card,
+                start: () => cardTop() - window.innerHeight * 0.85,
+                end: () => cardTop() - window.innerHeight * 0.12,
+                scrub: 1,
+                invalidateOnRefresh: true
+            }
+        });
+    });
+}
+
+function initHorizontalPosters() {
+    const section = document.querySelector('#posters');
+    const viewport = section?.querySelector('.poster-viewport');
+    const track = section?.querySelector('.poster-track');
+    const images = [...(section?.querySelectorAll('.poster-card img') ?? [])];
+    if (!section || !viewport || !track || images.length < 2) return;
+
+    ScrollTrigger.matchMedia({
+        '(min-width: 769px)': () => {
+            section.classList.add('is-horizontal-pinned');
+
+            const horizontalDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+            const skewSetters = images.map(image => gsap.quickTo(image, 'skewX', {
+                duration: 0.24,
+                ease: 'power2.out'
+            }));
+            let settleSkew;
+
+            const timeline = gsap.timeline({
                 scrollTrigger: {
-                    trigger: card,
-                    start: () => cardTop() - window.innerHeight * 0.85,
-                    end: () => cardTop() - window.innerHeight * 0.12,
+                    trigger: section,
+                    start: 'top top',
+                    end: () => `+=${horizontalDistance()}`,
+                    pin: true,
                     scrub: 1,
-                    invalidateOnRefresh: true
+                    invalidateOnRefresh: true,
+                    anticipatePin: 1,
+                    onUpdate: self => {
+                        const skew = gsap.utils.clamp(-5, 5, self.getVelocity() / 800);
+                        skewSetters.forEach(setSkew => setSkew(skew));
+                        settleSkew?.kill();
+                        settleSkew = gsap.delayedCall(0.12, () => {
+                            skewSetters.forEach(setSkew => setSkew(0));
+                        });
+                    }
                 }
             });
-        });
+
+            timeline.to(track, {
+                x: () => -horizontalDistance(),
+                ease: 'none'
+            });
+
+            return () => {
+                settleSkew?.kill();
+                timeline.scrollTrigger?.kill();
+                timeline.kill();
+                gsap.set(track, { clearProps: 'transform' });
+                gsap.set(images, { skewX: 0 });
+                section.classList.remove('is-horizontal-pinned');
+            };
+        }
     });
 }
 
