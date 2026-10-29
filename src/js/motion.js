@@ -159,13 +159,18 @@ export function initMotion() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     initHorizontalProjects();
+    initAboutMarquee();
+    initMediaStacks();
 
     document.querySelectorAll(
         '.hero-title, .section-title, .project-title, .job-title, .side-title, .stat-number'
-    ).forEach(wrapHeadingWords);
+    ).forEach((heading, index) => {
+        if (heading.closest('#home')) return;
+        wrapHeadingWords(heading, index);
+    });
 
     const textBlocks = document.querySelectorAll(
-        '.hero-desc, .about-text, .project-desc, .job-role, .section-label, .stat-label'
+        '.hero-desc, .about-text:not(.about-marquee-track), .project-desc, .job-role, .section-label, .stat-label'
     );
     textBlocks.forEach(wrapTextBlock);
 
@@ -188,6 +193,49 @@ export function initMotion() {
                 start: 'top 80%',
                 once: true
             }
+        });
+    });
+}
+
+function initAboutMarquee() {
+    const track = document.querySelector('.about-marquee-track');
+    const viewport = track?.closest('.about-marquee');
+    if (!track || !viewport) return;
+
+    gsap.fromTo(track, { xPercent: 4 }, {
+        xPercent: -34,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: viewport,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 3,
+            invalidateOnRefresh: true
+        }
+    });
+}
+
+function initMediaStacks() {
+    const posterCards = [...document.querySelectorAll('#posters .poster-card')]
+        .filter((_, index) => index < 8);
+    const videoCards = [...document.querySelectorAll('#videos .video-card')];
+
+    [posterCards, videoCards].forEach(cards => {
+        cards.slice(1).forEach((card, index) => {
+            gsap.fromTo(cards[index], {
+                scale: 1,
+                autoAlpha: 1
+            }, {
+                scale: 0.95,
+                autoAlpha: 0.5,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    end: 'top 12%',
+                    scrub: 1
+                }
+            });
         });
     });
 }

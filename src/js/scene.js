@@ -35,19 +35,19 @@ export function initScene() {
     const outer = new THREE.Mesh(
         new THREE.IcosahedronGeometry(2.15, 2),
         new THREE.MeshBasicMaterial({
-            color: 0x887459,
+            color: 0x0f172a,
             wireframe: true,
             transparent: true,
-            opacity: 0.16
+            opacity: 0.5
         })
     );
     const inner = new THREE.Mesh(
         new THREE.IcosahedronGeometry(1.35, 1),
         new THREE.MeshBasicMaterial({
-            color: 0x718496,
+            color: 0x334155,
             wireframe: true,
             transparent: true,
-            opacity: 0.12
+            opacity: 0.34
         })
     );
     inner.rotation.set(0.35, 0.6, 0.2);
@@ -91,9 +91,16 @@ export function initScene() {
         const styles = getComputedStyle(document.documentElement);
         const primary = new THREE.Color(styles.getPropertyValue('--orb-primary').trim());
         const secondary = new THREE.Color(styles.getPropertyValue('--orb-secondary').trim());
+        const primaryOpacity = Number.parseFloat(styles.getPropertyValue('--orb-primary-opacity'));
+        const secondaryOpacity = Number.parseFloat(styles.getPropertyValue('--orb-secondary-opacity'));
         if (animate && !reducedMotion) {
             gsap.to(outer.material.color, {
                 r: primary.r, g: primary.g, b: primary.b,
+                duration: 0.5,
+                onUpdate: renderStill
+            });
+            gsap.to(outer.material, {
+                opacity: primaryOpacity,
                 duration: 0.5,
                 onUpdate: renderStill
             });
@@ -102,9 +109,16 @@ export function initScene() {
                 duration: 0.5,
                 onUpdate: renderStill
             });
+            gsap.to(inner.material, {
+                opacity: secondaryOpacity,
+                duration: 0.5,
+                onUpdate: renderStill
+            });
         } else {
             outer.material.color.copy(primary);
             inner.material.color.copy(secondary);
+            outer.material.opacity = primaryOpacity;
+            inner.material.opacity = secondaryOpacity;
         }
         if (reducedMotion) renderStill();
     };
@@ -116,7 +130,7 @@ export function initScene() {
                 trigger: document.documentElement,
                 start: 'top top',
                 end: () => `+=${ScrollTrigger.maxScroll(window)}`,
-                scrub: true,
+                scrub: 3,
                 invalidateOnRefresh: true
             }
         });
@@ -125,11 +139,11 @@ export function initScene() {
             y: () => -yViewport * viewportWorld().height
         });
         spherePath
-            .set(orb.position, point(0.3, -0.1), 0)
-            .to(orb.position, { ...point(-0.4, 0.3), duration: 0.25, ease: 'none' }, 0)
-            .to(orb.position, { ...point(0.4, 0.6), duration: 0.25, ease: 'none' }, 0.25)
-            .to(orb.position, { ...point(0, 0.8), duration: 0.25, ease: 'none' }, 0.5)
-            .to(orb.position, { ...point(-0.3, 1.1), duration: 0.25, ease: 'none' }, 0.75);
+            .set(orb.position, point(0.12, -0.04), 0)
+            .to(orb.position, { ...point(-0.15, 0.12), duration: 0.25, ease: 'none' }, 0)
+            .to(orb.position, { ...point(0.15, 0.25), duration: 0.25, ease: 'none' }, 0.25)
+            .to(orb.position, { ...point(0, 0.38), duration: 0.25, ease: 'none' }, 0.5)
+            .to(orb.position, { ...point(-0.12, 0.48), duration: 0.25, ease: 'none' }, 0.75);
         spherePath.to(sculpture.scale, {
             x: 2.5, y: 2.5, z: 2.5,
             duration: 0.25,

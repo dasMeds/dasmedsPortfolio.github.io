@@ -2348,8 +2348,10 @@ h2.section-title,
     --accent-color: #806541;
     --accent-cool: #647988;
     --media-bg: #e8e6e0;
-    --orb-primary: #1a202c;
-    --orb-secondary: #475569;
+    --orb-primary: #0f172a;
+    --orb-secondary: #334155;
+    --orb-primary-opacity: .34;
+    --orb-secondary-opacity: .2;
 }
 
 :root[data-theme="dark"] {
@@ -2364,6 +2366,8 @@ h2.section-title,
     --media-bg: #15191e;
     --orb-primary: #e8e9ed;
     --orb-secondary: #ddc69b;
+    --orb-primary-opacity: .34;
+    --orb-secondary-opacity: .28;
 }
 
 html,
@@ -2868,5 +2872,315 @@ body {
 
     .horizontal-projects-track {
         transform: none !important;
+    }
+}
+
+/* The intro breaks out of the content column; coordinates remain lightweight overlays. */
+#home.hero-stage {
+    width: 100vw;
+    min-height: 100svh;
+    margin: 0 0 0 calc(50% - 50vw);
+    padding: 2rem clamp(1.5rem, 7vw, 8rem);
+    overflow: visible;
+}
+
+.hero-stage .coordinate-label {
+    position: absolute;
+    top: 14vh;
+    left: clamp(1.5rem, 7vw, 8rem);
+    z-index: 2;
+}
+
+.hero-coordinate-lines {
+    position: absolute;
+    inset: 12% 0 8%;
+    width: 100%;
+    height: 80%;
+    overflow: visible;
+    fill: var(--orb-primary);
+    opacity: .72;
+    pointer-events: none;
+}
+
+.hero-coordinate-lines path {
+    fill: none;
+    stroke: color-mix(in srgb, var(--orb-primary) 90%, transparent);
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+}
+
+.hero-title {
+    position: absolute;
+    z-index: 2;
+    bottom: -.045em;
+    left: -.035em;
+    width: max-content;
+    max-width: 110vw;
+    margin: 0;
+    font-size: clamp(6rem, 17vw, 17rem);
+    line-height: .72;
+    mix-blend-mode: exclusion;
+    pointer-events: none;
+}
+
+.hero-title-secondary {
+    color: #fff;
+}
+
+.hero-content,
+.hero-content .hero-copy,
+.hero-content .hero-stats {
+    display: contents;
+}
+
+.hero-copy .hero-desc {
+    position: absolute;
+    top: 24vh;
+    left: clamp(1.5rem, 8vw, 9rem);
+    z-index: 2;
+    width: min(34vw, 28rem);
+    margin: 0;
+}
+
+.hero-copy .btn-solid {
+    position: absolute;
+    top: 42vh;
+    left: clamp(1.5rem, 8vw, 9rem);
+    z-index: 2;
+}
+
+.hero-stat {
+    position: absolute;
+    z-index: 2;
+    width: max-content;
+    max-width: 13rem;
+    border: 0 !important;
+    padding: .3rem 0 !important;
+    background: transparent !important;
+}
+
+.hero-stat:nth-child(1) { top: 26vh; right: 17vw; }
+.hero-stat:nth-child(2) { top: 45vh; right: 8vw; }
+.hero-stat:nth-child(3) { top: 64vh; right: 25vw; }
+.hero-stat:nth-child(4) { top: 70vh; right: 7vw; }
+
+.hero-stat .stat-number {
+    font-size: clamp(2.5rem, 5vw, 5rem);
+}
+
+.hero-stat .stat-label,
+.hero-stat .system-card-footer {
+    color: var(--text-main);
+}
+
+.hero-index {
+    position: absolute;
+    right: clamp(1.5rem, 7vw, 8rem);
+    bottom: 1rem;
+    z-index: 3;
+    margin: 0;
+}
+
+#about .about-marquee {
+    width: 100vw;
+    margin: 2rem 0 1rem calc(50% - 50vw);
+    overflow: hidden;
+}
+
+#about .about-marquee-track {
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    color: var(--text-main);
+    font-family: "Anton", "Roboto", sans-serif;
+    font-size: clamp(3.25rem, 8vw, 9rem);
+    letter-spacing: -.035em;
+    line-height: .95;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+#experience .job-item {
+    position: relative;
+    width: min(68%, 800px);
+    min-height: 30vh;
+    margin: 20vh 0 0 12vw;
+    border: 0;
+    border-left: 1px solid var(--border-color);
+    padding: 1.5rem 2rem;
+}
+
+#experience .job-item:nth-of-type(even) {
+    margin-left: auto;
+    margin-right: 5vw;
+}
+
+#experience .job-date {
+    position: absolute;
+    right: 0;
+    bottom: 1.5rem;
+}
+
+#posters .slider-arrow {
+    display: none;
+}
+
+#posters .slider-container,
+#posters .marquee-wrapper {
+    display: block;
+    width: 100%;
+    overflow: visible;
+}
+
+#posters .marquee-track {
+    display: flex;
+    width: 100% !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 18vh;
+    padding: 2rem 0 20vh;
+}
+
+#posters .poster-card {
+    position: sticky;
+    top: 10vh;
+    z-index: 1;
+    width: min(34vw, 420px) !important;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+#posters .poster-card:nth-child(-n+8) {
+    z-index: 1;
+}
+
+#posters .poster-card:nth-child(n+9) {
+    display: none;
+}
+
+#posters .poster-card img {
+    object-fit: contain;
+}
+
+#videos .video-grid {
+    display: block;
+    padding: 1rem 0 15vh;
+}
+
+#videos .video-card {
+    position: sticky;
+    top: 10vh;
+    width: min(80vw, 1000px);
+    margin: 0 auto 30vh;
+    background: var(--bg-color);
+    transform-origin: center top;
+}
+
+#videos .video-card:nth-child(1) { z-index: 1; }
+#videos .video-card:nth-child(2) { z-index: 2; }
+#videos .video-card:nth-child(3) { z-index: 3; }
+
+@media (max-width: 768px) {
+    #home.hero-stage {
+        min-height: 100svh;
+        margin-top: 72px;
+        padding: 1.5rem;
+    }
+
+    .hero-stage .coordinate-label {
+        top: 11vh;
+        left: 1.5rem;
+        max-width: 80vw;
+    }
+
+    .hero-title {
+        bottom: 12vh;
+        left: -.04em;
+        font-size: clamp(4.5rem, 18vw, 7rem);
+    }
+
+    .hero-copy .hero-desc {
+        top: 19vh;
+        left: 1.5rem;
+        width: min(72vw, 30rem);
+        font-size: .94rem;
+    }
+
+    .hero-copy .btn-solid {
+        top: 45vh;
+        left: 1.5rem;
+    }
+
+    .hero-stat:nth-child(1) { top: 53vh; right: auto; left: 1.5rem; }
+    .hero-stat:nth-child(2) { top: 53vh; right: 1.5rem; }
+    .hero-stat:nth-child(3) { top: 62vh; right: auto; left: 1.5rem; }
+    .hero-stat:nth-child(4) { top: 62vh; right: 1.5rem; }
+
+    .hero-stat .stat-number {
+        font-size: 2.6rem;
+    }
+
+    .hero-stat .stat-label {
+        max-width: 9rem;
+        font-size: .68rem;
+    }
+
+    .hero-index {
+        right: 1.5rem;
+        bottom: .75rem;
+        max-width: 48vw;
+        text-align: right;
+    }
+
+    #experience .job-item {
+        width: 86%;
+        min-height: 25vh;
+        margin: 12vh 0 0 3vw;
+        padding: 1rem 1.25rem;
+    }
+
+    #experience .job-item:nth-of-type(even) {
+        margin-left: auto;
+        margin-right: 0;
+    }
+
+    #experience .job-date {
+        bottom: 1rem;
+        font-size: .75rem;
+    }
+
+    #posters .marquee-track {
+        gap: 12vh;
+        padding-bottom: 12vh;
+    }
+
+    #posters .poster-card {
+        width: min(78vw, 360px) !important;
+        top: 8vh;
+    }
+
+    #videos .video-card {
+        top: 8vh;
+        width: 92vw;
+        margin-bottom: 22vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #home.hero-stage {
+        min-height: 80svh;
+    }
+
+    #about .about-marquee-track {
+        transform: none !important;
+    }
+
+    #posters .poster-card,
+    #videos .video-card {
+        position: relative;
+        top: auto;
+        margin-bottom: 2rem;
     }
 }
