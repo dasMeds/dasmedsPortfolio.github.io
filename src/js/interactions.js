@@ -340,59 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
         window.setInterval(updateClocks, 1000);
     }
 
-    const revealTargets = document.querySelectorAll(
-        '.hero-title, .section-title, .project-title, .job-title, .side-title'
-    );
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!reducedMotion && 'IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('is-revealed');
-                observer.unobserve(entry.target);
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-
-        revealTargets.forEach((heading, headingIndex) => {
-            heading.setAttribute('aria-label', heading.innerText.replace(/\s+/g, ' ').trim());
-            heading.classList.add('kinetic-heading');
-
-            const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
-            const textNodes = [];
-            while (walker.nextNode()) {
-                if (walker.currentNode.textContent.trim()) textNodes.push(walker.currentNode);
-            }
-
-            let wordIndex = 0;
-            textNodes.forEach(textNode => {
-                const fragment = document.createDocumentFragment();
-                textNode.textContent.split(/(\s+)/).forEach(part => {
-                    if (!part.trim()) {
-                        fragment.append(document.createTextNode(part));
-                        return;
-                    }
-
-                    const mask = document.createElement('span');
-                    mask.className = 'kinetic-mask';
-                    const word = document.createElement('span');
-                    word.className = 'kinetic-word';
-                    word.style.setProperty('--word-index', String(wordIndex++ + headingIndex % 3));
-                    word.setAttribute('aria-hidden', 'true');
-                    word.textContent = part;
-                    mask.append(word);
-                    fragment.append(mask);
-                });
-                textNode.replaceWith(fragment);
-            });
-
-            revealObserver.observe(heading);
-        });
-    } else {
-        revealTargets.forEach(heading => heading.classList.add('is-revealed'));
-    }
-
     const showcaseVideos = document.querySelectorAll('#demoreel-video, .video-card video');
+    // Defer media requests and autoplay to the single video currently closest to the viewport center.
+    showcaseVideos.forEach(video => {
+        video.pause();
+        video.autoplay = false;
+        video.preload = 'none';
+        video.muted = true;
+        video.playsInline = true;
+    });
+
     if (showcaseVideos.length && 'IntersectionObserver' in window) {
         const videoObserver = new IntersectionObserver(() => {
             const viewportCenter = window.innerHeight / 2;
@@ -419,12 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 video.muted = true;
                 video.playsInline = true;
+                video.preload = 'metadata';
                 video.autoplay = true;
-                const source = video.querySelector('source[data-src]');
-                if (source && !source.getAttribute('src')) {
-                    source.src = source.dataset.src;
-                    video.load();
-                }
                 if (video.paused) {
                     const playback = video.play();
                     if (playback) {
@@ -441,10 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showcaseVideos.forEach(video => videoObserver.observe(video));
     } else {
         showcaseVideos.forEach(video => {
-            const source = video.querySelector('source[data-src]');
-            if (!source) return;
-            source.src = source.dataset.src;
-            video.preload = 'none';
             video.autoplay = false;
         });
     }

@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <title>dasmeds | Portfolio</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        try {
+            if (localStorage.getItem('dasmeds-theme') === 'dark') {
+                document.documentElement.dataset.theme = 'dark';
+            }
+        } catch (error) {
+            console.warn('Saved theme could not be read; using the light theme.', error);
+        }
+    </script>
+    <link rel="stylesheet" href="/src/css/styles.css">
 </head>
 <body>
 
@@ -28,6 +37,10 @@
             <a href="index.html#videos">Videos</a>
             <a class="mobile-contact-link" href="index.html#contact">Contact</a>
         </div>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"/></svg>
+            <span class="theme-toggle-label">Dark mode</span>
+        </button>
         <a href="index.html#contact" class="btn-outline">Get In Touch</a>
     </div>
 </nav>
@@ -103,53 +116,53 @@
                     <div class="marquee-wrapper">
                         <div class="marquee-track">
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-1.png" alt="F-2 Viper Zero" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-1.png" alt="F-2 Viper Zero" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-2.png" alt="F-2 Viper Zero Grounded" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-2.png" alt="F-2 Viper Zero Grounded" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-3.png" alt="F-15J Peace Eagle" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-3.png" alt="F-15J Peace Eagle" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-4.png" alt="Above You Behind You" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-4.png" alt="Above You Behind You" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-5.png" alt="M1A1 Abrams" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-5.png" alt="M1A1 Abrams" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-6.png" alt="SU-33 Flanker D" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-6.png" alt="SU-33 Flanker D" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-7.png" alt="Chicco Promotional Poster" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-7.png" alt="Chicco Promotional Poster" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-8.png" alt="Masterpiece Sportswear Design Board" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-8.png" alt="Masterpiece Sportswear Design Board" loading="lazy" decoding="async">
                             </div>
 
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-1.png" alt="F-2 Viper Zero" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-1.png" alt="F-2 Viper Zero" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-2.png" alt="F-2 Viper Zero Grounded" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-2.png" alt="F-2 Viper Zero Grounded" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-3.png" alt="F-15J Peace Eagle" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-3.png" alt="F-15J Peace Eagle" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-4.png" alt="Above You Behind You" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-4.png" alt="Above You Behind You" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-5.png" alt="M1A1 Abrams" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-5.png" alt="M1A1 Abrams" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-6.png" alt="SU-33 Flanker D" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-6.png" alt="SU-33 Flanker D" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-7.png" alt="Chicco Promotional Poster" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-7.png" alt="Chicco Promotional Poster" loading="lazy" decoding="async">
                             </div>
                             <div class="project-card poster-card">
-                                <img src="images/poster-showcase-8.png" alt="Masterpiece Sportswear Design Board" loading="lazy" decoding="async">
+                                <img src="/images/poster-showcase-8.png" alt="Masterpiece Sportswear Design Board" loading="lazy" decoding="async">
                             </div>
                         </div>
                     </div>
@@ -167,7 +180,7 @@
         
         <div class="project-card video-card">
             <video controls muted loop playsinline preload="none">
-                <source data-src="videos/video-showcase-1.mp4" type="video/mp4">
+                <source src="/videos/video-showcase-1.mp4" type="video/mp4">
             </video>
             <div class="video-info">
                 <h3 class="project-title">Mitsubishi F-2A | War Thunder Edit</h3>
@@ -179,7 +192,7 @@
 
         <div class="project-card video-card">
             <video controls muted loop playsinline preload="none">
-                <source data-src="videos/video-showcase-2.mp4" type="video/mp4">
+                <source src="/videos/video-showcase-2.mp4" type="video/mp4">
             </video>
             <div class="video-info">
                 <h3 class="project-title">McDonnell Douglas - Mitsubishi F-15J | War Thunder Edit</h3>
@@ -191,7 +204,7 @@
 
         <div class="project-card video-card">
             <video controls muted loop playsinline preload="none">
-                <source src="videos/video-showcase-3.mp4" type="video/mp4">
+                <source src="/videos/video-showcase-3.mp4" type="video/mp4">
             </video>
             <div class="video-info">
                 <h3 class="project-title">Sukhoi Su-30 | War Thunder Edit</h3>
@@ -259,7 +272,7 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script type="module" src="/src/js/main.js"></script>
 
 </body>
 </html>

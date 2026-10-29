@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <title>dasmeds | About</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        try {
+            if (localStorage.getItem('dasmeds-theme') === 'dark') {
+                document.documentElement.dataset.theme = 'dark';
+            }
+        } catch (error) {
+            console.warn('Saved theme could not be read; using the light theme.', error);
+        }
+    </script>
+    <link rel="stylesheet" href="/src/css/styles.css">
 </head>
 <body>
 
@@ -28,6 +37,10 @@
             <a href="index.html#videos">Videos</a>
             <a class="mobile-contact-link" href="index.html#contact">Contact</a>
         </div>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"/></svg>
+            <span class="theme-toggle-label">Dark mode</span>
+        </button>
         <a href="index.html#contact" class="btn-outline">Get In Touch</a>
     </div>
 </nav>
@@ -44,7 +57,7 @@
                         </p>
                     </div>
                     <div style="text-align: right;">
-                        <img src="images/profile-picture.jpg" alt="Pat Kristian Profile Picture" style="width: 100%; max-width: 350px; border-radius: 16px; border: 1px solid var(--border-color); object-fit: cover; aspect-ratio: 1/1; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <img src="/images/profile-picture.jpg" alt="Pat Kristian Profile Picture" style="width: 100%; max-width: 350px; border-radius: 16px; border: 1px solid var(--border-color); object-fit: cover; aspect-ratio: 1/1; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                     </div>
                 </div>
                 
@@ -108,7 +121,7 @@
             </div>
         </footer>
     </div>
-    <script src="js/script.js"></script>
+    <script type="module" src="/src/js/main.js"></script>
 
 </body>
 </html>
