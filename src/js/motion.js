@@ -177,9 +177,9 @@ export function initMotion() {
     // Split each list item as one unit so icons and labels rise together behind a clipping mask.
     document.querySelectorAll('.stack-list li, .video-tags .tag').forEach(wrapListItem);
 
-    // Reveal large media with an expanding crop instead of a generic opacity fade.
+    // Reveal large images with an expanding crop instead of a generic opacity fade.
     document.querySelectorAll(
-        '.cert-img, .about-grid img, #demoreel-video, .video-card video'
+        '.cert-img, .about-grid img'
     ).forEach(media => {
         media.classList.add('media-reveal-ready');
         gsap.fromTo(media, {

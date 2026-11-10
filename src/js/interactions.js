@@ -345,13 +345,13 @@ document.addEventListener('DOMContentLoaded', () => {
     showcaseVideos.forEach(video => {
         video.pause();
         video.autoplay = false;
-        video.preload = 'none';
+        video.preload = 'metadata';
         video.muted = true;
         video.playsInline = true;
     });
 
-    if (showcaseVideos.length && 'IntersectionObserver' in window) {
-        const videoObserver = new IntersectionObserver(() => {
+    if (showcaseVideos.length) {
+        const updateActiveVideo = () => {
             const viewportCenter = window.innerHeight / 2;
             const activeVideo = [...showcaseVideos]
                 .map(video => {
@@ -389,11 +389,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-        }, { threshold: 0.5 });
+        };
+        let updateFrame = 0;
+        const scheduleVideoUpdate = () => {
+            if (updateFrame) return;
+            updateFrame = window.requestAnimationFrame(() => {
+                updateFrame = 0;
+                updateActiveVideo();
+            });
+        };
 
-        showcaseVideos.forEach(video => videoObserver.observe(video));
-    } else {
-        showcaseVideos.forEach(video => {
-            video.autoplay = false;
-        });
+        if ('IntersectionObserver' in window) {
+            const videoObserver = new IntersectionObserver(scheduleVideoUpdate, {
+                threshold: [0, 0.5, 1]
+            });
+            showcaseVideos.forEach(video => videoObserver.observe(video));
+        }
+        window.addEventListener('scroll', scheduleVideoUpdate, { passive: true });
+        window.addEventListener('resize', scheduleVideoUpdate, { passive: true });
+        updateActiveVideo();
     }

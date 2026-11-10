@@ -1315,13 +1315,14 @@ section {
     border-radius: 4px;
 }
 
-#demoreel-video,
-.video-card video {
+.portfolio-video {
     display: block;
+    position: relative;
+    z-index: 1;
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #050607;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .project-card {
@@ -3157,8 +3158,7 @@ body,
     aspect-ratio: 2 / 3;
 }
 
-#videos .video-card video,
-#demoreel-video {
+.portfolio-video {
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
