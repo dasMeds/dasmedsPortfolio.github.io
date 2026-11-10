@@ -834,16 +834,11 @@ footer {
 }
 
 @keyframes cinematicEnter {
-    /* this to fade in, scale up, and unblur simultaneously */
-    0% { 
-        opacity: 0; 
-        transform: translateY(60px) scale(0.97); 
-        filter: blur(10px); 
+    0% {
+        opacity: 0;
     }
-    100% { 
-        opacity: 1; 
-        transform: none; 
-        filter: blur(0);
+    100% {
+        opacity: 1;
     }
 }
 
@@ -3757,4 +3752,32 @@ body,
         grid-template-columns: minmax(0, 1fr);
         gap: 1.5rem;
     }
+}
+
+section,
+.section-container,
+.portfolio-section {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    background-color: var(--bg-color, #0a0a0a);
+}
+
+.continuous-sections {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    background-color: var(--bg-color, #0a0a0a);
+}
+
+#github-projects,
+#videos {
+    background-color: var(--bg-color, #0a0a0a);
+}
+
+.story-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
 }
