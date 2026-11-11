@@ -75,30 +75,4 @@ export function initPosterBento() {
             });
         });
     }
-
-    if (finePointer && !reducedMotion) {
-        const loupe = document.createElement('div');
-        loupe.className = 'poster-loupe';
-        loupe.setAttribute('aria-hidden', 'true');
-        document.body.append(loupe);
-
-        posters.forEach(poster => {
-            const image = poster.querySelector('img');
-            if (!image) return;
-            poster.addEventListener('pointerenter', () => {
-                loupe.style.backgroundImage = `url("${image.currentSrc || image.src}")`;
-                loupe.classList.add('is-visible');
-            });
-            poster.addEventListener('pointermove', event => {
-                const bounds = image.getBoundingClientRect();
-                if (!bounds.width || !bounds.height) return;
-                const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
-                const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-                loupe.style.left = `${event.clientX + 18}px`;
-                loupe.style.top = `${event.clientY + 18}px`;
-                loupe.style.backgroundPosition = `${x * 100}% ${y * 100}%`;
-            });
-            poster.addEventListener('pointerleave', () => loupe.classList.remove('is-visible'));
-        });
-    }
 }

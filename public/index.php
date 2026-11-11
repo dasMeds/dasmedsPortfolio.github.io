@@ -240,21 +240,33 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
                 <span class="editor-status" aria-live="polite">SOURCE / READY</span>
             </div>
             <div class="signal-frame">
-                <video id="timeline-player" class="portfolio-video" autoplay muted loop playsinline preload="metadata" poster="<?= htmlspecialchars($portfolioData['videos'][0]['poster'], ENT_QUOTES, 'UTF-8') ?>">
-                    <source src="<?= htmlspecialchars($portfolioData['videos'][0]['src'], ENT_QUOTES, 'UTF-8') ?>" type="video/mp4">
-                    Your browser does not support HTML5 video playback.
-                </video>
-                <span class="signal-letterbox signal-letterbox-top" aria-hidden="true"></span>
-                <span class="signal-letterbox signal-letterbox-bottom" aria-hidden="true"></span>
-                <span class="signal-rec" aria-hidden="true"><i></i> REC</span>
-                <span class="signal-timecode" aria-hidden="true">00:00:00:00</span>
-                <span class="signal-brackets" aria-hidden="true"></span>
-                <span class="signal-static" aria-hidden="true"></span>
-                <button class="video-tap-to-play" id="video-tap-to-play" type="button" hidden>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg>
-                    <span>TAP TO PLAY</span>
-                </button>
-            </div>
+    <video id="timeline-player" class="portfolio-video" autoplay muted loop playsinline preload="metadata" poster="<?= htmlspecialchars($portfolioData['videos'][0]['poster'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+        <source src="<?= htmlspecialchars($portfolioData['videos'][0]['src'], ENT_QUOTES, 'UTF-8') ?>" type="video/mp4">
+        Your browser does not support HTML5 video playback.
+    </video>
+    <span class="signal-letterbox signal-letterbox-top" aria-hidden="true"></span>
+    <span class="signal-letterbox signal-letterbox-bottom" aria-hidden="true"></span>
+    <span class="signal-rec" aria-hidden="true"><i></i> REC</span>
+    <span class="signal-timecode" aria-hidden="true">00:00:00:00</span>
+    <span class="signal-brackets" aria-hidden="true"></span>
+    <span class="signal-static" aria-hidden="true"></span>
+    <button class="video-tap-to-play" id="video-tap-to-play" type="button" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg>
+        <span>TAP TO PLAY</span>
+    </button>
+
+    <!-- PASTE HERE: Left & Right Video Navigation Arrows -->
+    <button type="button" class="video-arrow video-arrow-prev" data-clip-step="-1" aria-label="Previous video">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
+    <button type="button" class="video-arrow video-arrow-next" data-clip-step="1" aria-label="Next video">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </button>
+</div>
             <div class="editor-player-caption">
                 <div>
                     <h3 class="project-title" id="timeline-title">Demoreel</h3>
