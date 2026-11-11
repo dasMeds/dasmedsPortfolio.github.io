@@ -12,11 +12,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 initTheme();
 initScroll();
 initScene();
+initCertificateLedger();
+initRepositories();
 initMotion();
 initVideoTimeline();
-initCertificateLedger();
 initPosterBento();
-initRepositories();
 
 const refreshScrollTriggers = () => {
     window.requestAnimationFrame(() => ScrollTrigger.refresh());

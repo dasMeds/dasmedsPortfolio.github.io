@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const specValueOne = document.getElementById('modal-spec-value-one');
         const specLabelTwo = document.getElementById('modal-spec-label-two');
         const specValueTwo = document.getElementById('modal-spec-value-two');
+        const verifyLink = document.getElementById('modal-verify');
         let lastFocusedItem;
         let galleryItems = [];
         let activeGalleryIndex = -1;
@@ -137,6 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
             specValueTwo.textContent = isCertificate
                 ? card.dataset.date || 'Not listed'
                 : card.dataset.intent || 'Details supplied by owner';
+            const verifyUrl = isCertificate ? card.dataset.verifyUrl : '';
+            if (verifyLink) {
+                verifyLink.hidden = !verifyUrl;
+                if (verifyUrl) verifyLink.href = verifyUrl;
+                else verifyLink.removeAttribute('href');
+            }
 
             if (!modal.classList.contains('active')) {
                 bodyOverflowBeforeModal = document.body.style.overflow;
@@ -194,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 stepGallery(1);
             } else if (event.key === 'Tab') {
-                const focusable = [previousButton, closeModalBtn, nextButton];
+                const focusable = [...modal.querySelectorAll('button:not(:disabled), a[href]:not([hidden])')];
                 const first = focusable[0];
                 const last = focusable[focusable.length - 1];
                 if (event.shiftKey && document.activeElement === first) {
@@ -405,7 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
             flipButton.setAttribute('aria-label', flipped ? 'Show pilot profile' : 'Show technical stack');
             profileFace.setAttribute('aria-hidden', String(flipped));
             stackFace.setAttribute('aria-hidden', String(!flipped));
+            profileFace.inert = flipped;
+            stackFace.inert = !flipped;
         };
+        setFlipped(false);
         flipButton.addEventListener('click', () => {
             setFlipped(flipButton.getAttribute('aria-pressed') !== 'true');
         });
@@ -450,9 +460,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const loaderKey = 'dasmeds-portfolio-loader-seen';
-    let showLoader = true;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let showLoader = !reducedMotion;
     try {
-        showLoader = window.sessionStorage.getItem(loaderKey) !== 'true';
+        showLoader = showLoader && window.sessionStorage.getItem(loaderKey) !== 'true';
         if (showLoader) window.sessionStorage.setItem(loaderKey, 'true');
     } catch (error) {
         console.warn('Pre-loader session state could not be saved; this visit will still continue.', error);
@@ -461,54 +472,79 @@ document.addEventListener('DOMContentLoaded', () => {
     if (showLoader) {
         const loader = document.createElement('div');
         loader.id = 'preloader';
-        loader.className = 'site-loader';
+        loader.className = 'site-loader loader-orb';
         loader.setAttribute('role', 'status');
-        loader.setAttribute('aria-label', 'Loading portfolio');
-        loader.innerHTML = '<div><svg class="loader-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6a26 26 0 1 1 0 52 26 26 0 1 1 0-52"/><path d="M23 39V25l9 10 9-10v14"/></svg><p class="loader-caption">DASMEDS / PORTFOLIO</p><p class="loader-progress" aria-hidden="true"><span id="loader-percent">00</span>% <span>→</span> 100%</p><p class="loader-log" id="loader-log" aria-live="polite">INITIALIZING_SYSTEMS...</p></div>';
+        loader.setAttribute('aria-label', 'Loading portfolio systems');
+        loader.innerHTML = `
+            <div class="loader-stage">
+                <svg class="loader-globe" viewBox="0 0 240 240" aria-hidden="true">
+                    <circle class="loader-globe-line" cx="120" cy="120" r="92" pathLength="100"/>
+                    <ellipse class="loader-globe-line" cx="120" cy="120" rx="43" ry="92" pathLength="100"/>
+                    <ellipse class="loader-globe-line" cx="120" cy="120" rx="72" ry="92" pathLength="100"/>
+                    <path class="loader-globe-line" d="M32 120h176M43 82h154M43 158h154" pathLength="100"/>
+                    <path class="loader-globe-line" d="M120 28v184" pathLength="100"/>
+                    <path class="loader-globe-line" d="m55 55 130 130m0-130L55 185" pathLength="100"/>
+                    <circle class="loader-globe-center" cx="120" cy="120" r="4"/>
+                </svg>
+                <div class="loader-console">
+                    <p class="loader-caption">PKM / FLIGHT SYSTEMS</p>
+                    <p class="loader-progress" aria-hidden="true"><span id="loader-percent">000</span><span class="loader-percent-unit">%</span></p>
+                    <ol class="loader-checks" aria-hidden="true">
+                        <li><span class="loader-check-code">01</span><span>NAV / POSITION FIX</span><svg class="loader-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></li>
+                        <li><span class="loader-check-code">02</span><span>GFX / ORB ONLINE</span><svg class="loader-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></li>
+                        <li><span class="loader-check-code">03</span><span>LINK / CHANNEL CLEAR</span><svg class="loader-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></li>
+                    </ol>
+                </div>
+                <span class="loader-coordinate" aria-hidden="true">14° 40′ N / 120° 58′ E</span>
+            </div>`;
         document.body.prepend(loader);
 
-        let dismissed = false;
-        const loaderStart = performance.now();
-        const loaderPercent = document.getElementById('loader-percent');
-        const loaderLog = document.getElementById('loader-log');
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const minimumLoaderTime = reducedMotion ? 120 : 650;
-        const loaderLogMessages = ['INITIALIZING_SYSTEMS...', 'MAPPING_PORTFOLIO...', 'CALIBRATING_VISUALS...', 'COMPILING_VECTORS...', 'SYSTEM_READY'];
+        const loaderPercent = loader.querySelector('#loader-percent');
+        const globeLines = loader.querySelectorAll('.loader-globe-line');
+        const checks = loader.querySelectorAll('.loader-checks li');
+        const checkPaths = loader.querySelectorAll('.loader-check path');
+        const counter = { value: 0 };
+        gsap.set(globeLines, { strokeDasharray: 100, strokeDashoffset: 100 });
+        gsap.set(checks, { y: 6, autoAlpha: 0 });
+        gsap.set(checkPaths, { strokeDasharray: 24, strokeDashoffset: 24 });
 
-        const progressTimer = window.setInterval(() => {
-            const progress = Math.min(99, Math.floor(((performance.now() - loaderStart) / minimumLoaderTime) * 100));
-            loaderPercent.textContent = String(progress).padStart(2, '0');
-            loaderLog.textContent = loaderLogMessages[Math.min(loaderLogMessages.length - 1, Math.floor(progress / 25))];
-        }, 40);
-
-        const dismissPreloader = () => {
-            if (dismissed) return;
-            dismissed = true;
-            window.clearInterval(progressTimer);
-            loaderPercent.textContent = '100';
-            loaderLog.textContent = loaderLogMessages[loaderLogMessages.length - 1];
-            loader.classList.add('dismissed', 'is-hidden');
-            loader.style.opacity = '0';
-            loader.style.pointerEvents = 'none';
-            window.setTimeout(() => {
-                loader.style.display = 'none';
-                loader.remove();
-            }, 280);
-        };
-
-        const finishAfterMinimumTime = () => {
-            window.setTimeout(
-                dismissPreloader,
-                Math.max(0, minimumLoaderTime - (performance.now() - loaderStart))
-            );
-        };
-
-        if (document.readyState === 'complete') {
-            finishAfterMinimumTime();
-        } else {
-            window.addEventListener('load', finishAfterMinimumTime, { once: true });
-        }
-        window.setTimeout(dismissPreloader, 900);
+        const timeline = gsap.timeline({
+            onComplete: () => {
+                loader.classList.add('is-exiting');
+                gsap.to(loader, {
+                    autoAlpha: 0,
+                    duration: 0.3,
+                    ease: 'power1.in',
+                    onComplete: () => loader.remove()
+                });
+            }
+        });
+        timeline
+            .to(globeLines, {
+                strokeDashoffset: 0,
+                duration: 0.82,
+                stagger: 0.055,
+                ease: 'power2.out'
+            }, 0)
+            .to(counter, {
+                value: 100,
+                duration: 1.18,
+                ease: 'power1.inOut',
+                onUpdate: () => { loaderPercent.textContent = String(Math.round(counter.value)).padStart(3, '0'); }
+            }, 0)
+            .to(checks, {
+                y: 0,
+                autoAlpha: 1,
+                duration: 0.2,
+                stagger: 0.18,
+                ease: 'power2.out'
+            }, 0.3)
+            .to(checkPaths, {
+                strokeDashoffset: 0,
+                duration: 0.2,
+                stagger: 0.18,
+                ease: 'power2.out'
+            }, 0.3);
     }
 
     const manilaClock = document.getElementById('manila-clock');

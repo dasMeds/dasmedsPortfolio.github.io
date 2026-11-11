@@ -1,235 +1,272 @@
-import { Flip } from 'gsap/Flip';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { certifications } from './certifications-data.js';
 
-gsap.registerPlugin(Flip, ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
+
+const formatDate = date => new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC'
+}).format(new Date(`${date}T00:00:00Z`));
 
 export function initCertificateLedger() {
     const section = document.querySelector('#certifications');
-    const rows = [...(section?.querySelectorAll('.cert-row') ?? [])];
-    const filters = [...(section?.querySelectorAll('.cert-filter') ?? [])];
-    const tracks = [...(section?.querySelectorAll('.cert-track') ?? [])];
-    const constellation = section?.querySelector('.cert-constellation');
-    const accessibleList = section?.querySelector('.cert-accessible-list');
+    const rowsContainer = section?.querySelector('#cert-rows');
+    const filtersContainer = section?.querySelector('#cert-filters');
+    const sortButton = section?.querySelector('#cert-sort-toggle');
+    const countLabel = section?.querySelector('#cert-total');
     const preview = section?.querySelector('#cert-preview');
     const previewImage = preview?.querySelector('img');
-    if (!section || !rows.length || !filters.length || !preview || !previewImage || !constellation || !accessibleList) return;
+    if (!section || !rowsContainer || !filtersContainer || !sortButton || !countLabel || !preview || !previewImage) return;
+
+    const tracks = [...new Set(certifications.map(certification => certification.track))];
+    const issuerCount = new Set(certifications.map(certification => certification.issuer)).size;
+    const totalStat = document.querySelector('[data-cert-stat="total"]');
+    const issuerStat = document.querySelector('[data-cert-stat="issuers"]');
+    if (totalStat) {
+        totalStat.textContent = String(certifications.length);
+        totalStat.dataset.countTarget = String(certifications.length);
+    }
+    if (issuerStat) {
+        issuerStat.textContent = String(issuerCount);
+        issuerStat.dataset.countTarget = String(issuerCount);
+    }
+    countLabel.textContent = String(certifications.length).padStart(2, '0');
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const simpleLayout = reducedMotion || window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
-    accessibleList.open = simpleLayout;
-    const moveX = gsap.quickTo(preview, 'x', { duration: 0.22, ease: 'power2.out' });
-    const moveY = gsap.quickTo(preview, 'y', { duration: 0.22, ease: 'power2.out' });
+    const moveX = gsap.quickTo(preview, 'x', { duration: 0.2, ease: 'power2.out' });
+    const moveY = gsap.quickTo(preview, 'y', { duration: 0.2, ease: 'power2.out' });
+    const sourceOrder = certifications.map((certification, sourceIndex) => ({ ...certification, sourceIndex }));
     let activeFilter = 'all';
-    const mapNodes = new Map();
+    let newestFirst = false;
+    let hasAnimatedOnEnter = false;
 
-    tracks.forEach((track, trackIndex) => {
-        const trackName = track.querySelector('.cert-track-title')?.childNodes[1]?.textContent.trim() || `Track ${trackIndex + 1}`;
-        const trackRows = [...track.querySelectorAll('.cert-row')];
-        const cluster = document.createElement('div');
-        cluster.className = 'cert-cluster';
-        cluster.dataset.track = track.dataset.track || '';
-        cluster.setAttribute('aria-label', `${trackName} certification constellation`);
-
-        const heading = document.createElement('h3');
-        heading.className = 'cert-cluster-title';
-        heading.textContent = trackName;
-
-        const field = document.createElement('div');
-        field.className = 'cert-cluster-field';
-        const connector = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        connector.setAttribute('viewBox', '0 0 100 100');
-        connector.setAttribute('preserveAspectRatio', 'none');
-        connector.setAttribute('aria-hidden', 'true');
-        connector.classList.add('cert-cluster-links');
-
-        const points = trackRows.map((_, index) => {
-            if (trackRows.length === 1) return [50, 50];
-            const x = 10 + index * (80 / (trackRows.length - 1));
-            const y = index % 2 === 0 ? 30 : 72;
-            return [x, y];
+    const sortedCertifications = () => sourceOrder
+        .filter(certification => activeFilter === 'all' || certification.track === activeFilter)
+        .sort((left, right) => {
+            const dateOrder = left.date.localeCompare(right.date);
+            if (dateOrder === 0) return left.sourceIndex - right.sourceIndex;
+            return (newestFirst ? -1 : 1) * dateOrder;
         });
 
-        points.slice(1).forEach((point, index) => {
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', String(points[index][0]));
-            line.setAttribute('y1', String(points[index][1]));
-            line.setAttribute('x2', String(point[0]));
-            line.setAttribute('y2', String(point[1]));
-            line.classList.add('cert-link');
-            connector.append(line);
+    const animateRows = rows => {
+        if (reducedMotion || !rows.length) return;
+        const flaps = rows.flatMap(row => [...row.querySelectorAll('.cert-flap')]);
+        gsap.fromTo(flaps, {
+            rotationX: -82,
+            y: -4,
+            autoAlpha: 0,
+            transformOrigin: '50% 0%'
+        }, {
+            rotationX: 0,
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.34,
+            stagger: { each: 0.018, from: newestFirst ? 'start' : 'end' },
+            ease: 'power2.out',
+            overwrite: true
         });
-        field.append(connector);
+    };
 
-        trackRows.forEach((row, index) => {
-            const node = document.createElement('button');
-            const [x, y] = points[index];
-            node.type = 'button';
-            node.className = 'cert-node';
-            node.style.setProperty('--node-x', `${x}%`);
-            node.style.setProperty('--node-y', `${y}%`);
-            node.setAttribute('aria-label', `${row.dataset.title || 'Certificate'}, ${row.dataset.issuer || 'issuer not listed'}`);
-            node.dataset.category = row.dataset.category || '';
-            const nodeIndex = document.createElement('span');
-            nodeIndex.textContent = row.querySelector('.cert-row-index')?.textContent.trim().slice(0, 2) ||
-                String(index + 1).padStart(2, '0');
-            node.append(nodeIndex);
-            node.addEventListener('pointerenter', event => showPreview(row, event));
-            node.addEventListener('pointermove', event => {
-                if (preview.classList.contains('is-visible')) {
-                    positionPreview(event.clientX + 24, event.clientY + 18);
-                }
-            });
-            node.addEventListener('pointerleave', () => hidePreview());
-            node.addEventListener('focus', () => showPreview(row));
-            node.addEventListener('blur', () => hidePreview());
-            node.addEventListener('click', () => {
-                document.dispatchEvent(new CustomEvent('portfolio:open-lightbox', {
-                    detail: { card: row }
-                }));
-            });
-            mapNodes.set(row, node);
-            field.append(node);
-        });
+    const positionPreview = (x, y) => {
+        const width = preview.offsetWidth || 260;
+        const height = preview.offsetHeight || 180;
+        moveX(Math.max(12, Math.min(window.innerWidth - width - 12, x)));
+        moveY(Math.max(12, Math.min(window.innerHeight - height - 12, y)));
+    };
 
-        cluster.append(heading, field);
-        constellation.append(cluster);
-
-        if (!reducedMotion && trackRows.length > 1) {
-            gsap.fromTo(connector.querySelectorAll('.cert-link'), {
-                scaleX: 0,
-                autoAlpha: 0,
-                transformOrigin: 'left center'
-            }, {
-                scaleX: 1,
-                autoAlpha: 1,
-                stagger: 0.08,
-                duration: 0.65,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: cluster,
-                    start: 'top 78%',
-                    once: true
-                }
-            });
-        }
-    });
-
-    const setPreviewImage = row => {
+    const showPreview = (row, event) => {
+        if (event && !window.matchMedia('(pointer: fine)').matches) return;
         const source = row.dataset.image;
         if (!source) {
             console.error('Certificate row is missing its preview image.', row);
-            return false;
+            return;
         }
         if (previewImage.getAttribute('src') !== source) {
             previewImage.src = source;
             previewImage.alt = '';
-            previewImage.width = Number(row.dataset.imageWidth) || 320;
-            previewImage.height = Number(row.dataset.imageHeight) || 216;
         }
-        return true;
-    };
-
-    const positionPreview = (x, y) => {
-        const previewWidth = preview.offsetWidth || 260;
-        const previewHeight = preview.offsetHeight || 200;
-        moveX(Math.max(12, Math.min(window.innerWidth - previewWidth - 12, x)));
-        moveY(Math.max(12, Math.min(window.innerHeight - previewHeight - 12, y)));
-    };
-
-    const showPreview = (row, event) => {
-        if (reducedMotion || !window.matchMedia('(pointer: fine)').matches || !setPreviewImage(row)) return;
+        preview.setAttribute('aria-hidden', 'false');
         preview.classList.add('is-visible');
-        gsap.to(preview, { autoAlpha: 1, scale: 1, duration: 0.2, overwrite: true });
         if (event) {
-            positionPreview(event.clientX + 24, event.clientY + 18);
+            positionPreview(event.clientX + 20, event.clientY + 16);
         } else {
             const bounds = row.getBoundingClientRect();
-            positionPreview(bounds.right + 18, bounds.top + bounds.height / 2);
+            positionPreview(bounds.right + 16, bounds.top + bounds.height / 2);
+        }
+        if (reducedMotion) {
+            gsap.set(preview, { autoAlpha: 1, scale: 1 });
+        } else {
+            gsap.to(preview, { autoAlpha: 1, scale: 1, duration: 0.18, overwrite: true });
         }
     };
 
     const hidePreview = () => {
-        if (reducedMotion) return;
+        if (reducedMotion) {
+            preview.classList.remove('is-visible');
+            preview.setAttribute('aria-hidden', 'true');
+            return;
+        }
         gsap.to(preview, {
             autoAlpha: 0,
             scale: 0.98,
-            duration: 0.16,
+            duration: 0.14,
             overwrite: true,
-            onComplete: () => preview.classList.remove('is-visible')
+            onComplete: () => {
+                preview.classList.remove('is-visible');
+                preview.setAttribute('aria-hidden', 'true');
+            }
         });
     };
 
-    rows.forEach(row => {
-        row.addEventListener('pointerenter', event => showPreview(row, event));
-        row.addEventListener('pointermove', event => {
-            if (preview.classList.contains('is-visible')) {
-                positionPreview(event.clientX + 24, event.clientY + 18);
+    const createFilter = (label, value, count) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cert-filter';
+        button.dataset.filter = value;
+        button.setAttribute('aria-pressed', String(value === activeFilter));
+        if (value === activeFilter) button.classList.add('is-active');
+        const name = document.createElement('span');
+        name.textContent = label;
+        const total = document.createElement('span');
+        total.className = 'cert-filter-count';
+        total.textContent = String(count).padStart(2, '0');
+        total.setAttribute('aria-label', `${count} certifications`);
+        button.append(name, total);
+        button.addEventListener('click', () => {
+            if (activeFilter === value) return;
+            activeFilter = value;
+            renderRows(true);
+            refreshFilters();
+        });
+        return button;
+    };
+
+    const refreshFilters = () => {
+        filtersContainer.replaceChildren(
+            createFilter('ALL', 'all', certifications.length),
+            ...tracks.map(track => createFilter(
+                track.toUpperCase(),
+                track,
+                certifications.filter(certification => certification.track === track).length
+            ))
+        );
+    };
+
+    const createRow = (certification, index) => {
+        const row = document.createElement('tr');
+        row.className = 'cert-row';
+        row.tabIndex = 0;
+        row.dataset.id = certification.id;
+        row.dataset.title = certification.title;
+        row.dataset.issuer = certification.issuer;
+        row.dataset.date = formatDate(certification.date);
+        row.dataset.image = certification.image;
+        row.dataset.imageAlt = certification.title;
+        row.dataset.imageWidth = '1240';
+        row.dataset.imageHeight = '835';
+        row.dataset.description = `${certification.track} credential`;
+        if (certification.verifyUrl) row.dataset.verifyUrl = certification.verifyUrl;
+
+        const columns = [
+            { className: 'cert-index', content: String(index + 1).padStart(2, '0') },
+            { className: 'cert-date', content: formatDate(certification.date), dateTime: certification.date },
+            { className: 'cert-title', content: certification.title },
+            { className: 'cert-issuer', content: certification.issuer },
+            { className: 'cert-status-cell', status: true }
+        ];
+
+        columns.forEach(column => {
+            const cell = document.createElement('td');
+            const flap = document.createElement('span');
+            flap.className = 'cert-flap';
+            if (column.status) {
+                const status = document.createElement('span');
+                status.className = `cert-status${certification.verifyUrl ? ' is-verified' : ''}`;
+                if (certification.verifyUrl) {
+                    status.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3.2 3.2L13 4.5"/></svg><span>VERIFIED</span>';
+                } else {
+                    status.textContent = 'LOGGED';
+                }
+                flap.append(status);
+            } else if (column.dateTime) {
+                const time = document.createElement('time');
+                time.dateTime = column.dateTime;
+                time.textContent = column.content;
+                flap.append(time);
+            } else {
+                flap.textContent = column.content;
             }
+            cell.className = column.className;
+            cell.append(flap);
+            row.append(cell);
         });
 
-        mapNodes.forEach((node, row) => {
-            node.classList.toggle(
-                'is-filtered',
-                activeFilter !== 'all' && !row.dataset.category?.split(' ').includes(activeFilter)
-            );
+        row.addEventListener('pointerenter', event => showPreview(row, event));
+        row.addEventListener('pointermove', event => {
+            if (preview.classList.contains('is-visible')) positionPreview(event.clientX + 20, event.clientY + 16);
         });
         row.addEventListener('pointerleave', hidePreview);
         row.addEventListener('focus', () => showPreview(row));
         row.addEventListener('blur', hidePreview);
         row.addEventListener('click', () => {
-            document.dispatchEvent(new CustomEvent('portfolio:open-lightbox', {
-                detail: { card: row }
-            }));
+            document.dispatchEvent(new CustomEvent('portfolio:open-lightbox', { detail: { card: row } }));
         });
-    });
-
-    filters.forEach(filter => {
-        filter.addEventListener('click', () => {
-            const nextFilter = filter.dataset.filter || 'all';
-            if (nextFilter === activeFilter) return;
-            const state = Flip.getState([...rows, ...tracks, ...mapNodes.values()]);
-            activeFilter = nextFilter;
-
-            filters.forEach(button => {
-                const isActive = button === filter;
-                button.classList.toggle('is-active', isActive);
-                button.setAttribute('aria-pressed', String(isActive));
-            });
-
-            rows.forEach(row => {
-                row.classList.toggle('is-filtered', nextFilter !== 'all' && !row.dataset.category?.split(' ').includes(nextFilter));
-            });
-            tracks.forEach(track => {
-                track.classList.toggle('is-filtered', !track.querySelector('.cert-row:not(.is-filtered)'));
-            });
-            mapNodes.forEach((node, row) => {
-                node.classList.toggle(
-                    'is-filtered',
-                    nextFilter !== 'all' && !row.dataset.category?.split(' ').includes(nextFilter)
-                );
-            });
-            constellation.querySelectorAll('.cert-cluster').forEach(cluster => {
-                cluster.classList.toggle('is-filtered', !cluster.querySelector('.cert-node:not(.is-filtered)'));
-            });
-
-            if (!reducedMotion) {
-                Flip.from(state, {
-                    duration: 0.42,
-                    ease: 'power2.inOut',
-                    absolute: false,
-                    onEnter: elements => gsap.fromTo(elements, {
-                        autoAlpha: 0,
-                        y: 8
-                    }, {
-                        autoAlpha: 1,
-                        y: 0,
-                        duration: 0.28,
-                        stagger: 0.025,
-                        overwrite: true
-                    })
-                });
+        row.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                document.dispatchEvent(new CustomEvent('portfolio:open-lightbox', { detail: { card: row } }));
             }
         });
+        return row;
+    };
+
+    function renderRows(animate = false) {
+        const fragment = document.createDocumentFragment();
+        const sorted = sortedCertifications();
+        let lastTrack = '';
+        const renderedRows = [];
+        sorted.forEach((certification, index) => {
+            if (lastTrack !== certification.track) {
+                const gate = document.createElement('tr');
+                gate.className = 'cert-gate';
+                const heading = document.createElement('th');
+                heading.scope = 'rowgroup';
+                heading.colSpan = 5;
+                heading.textContent = `GATE / ${String(tracks.indexOf(certification.track) + 1).padStart(2, '0')} — ${certification.track}`;
+                gate.append(heading);
+                fragment.append(gate);
+                lastTrack = certification.track;
+            }
+            const row = createRow(certification, index);
+            fragment.append(row);
+            renderedRows.push(row);
+        });
+        rowsContainer.replaceChildren(fragment);
+        if (animate) animateRows(renderedRows);
+    }
+
+    sortButton.addEventListener('click', () => {
+        newestFirst = !newestFirst;
+        sortButton.setAttribute('aria-pressed', String(newestFirst));
+        sortButton.setAttribute('aria-label', `Sort ${newestFirst ? 'oldest' : 'newest'} first`);
+        sortButton.textContent = newestFirst ? 'NEWEST FIRST' : 'OLDEST FIRST';
+        section.querySelector('.cert-table thead th[aria-sort]')?.setAttribute('aria-sort', newestFirst ? 'descending' : 'ascending');
+        renderRows(true);
+    });
+
+    refreshFilters();
+    renderRows();
+    ScrollTrigger.create({
+        trigger: section,
+        start: 'top 78%',
+        once: true,
+        onEnter: () => {
+            if (hasAnimatedOnEnter) return;
+            hasAnimatedOnEnter = true;
+            animateRows([...rowsContainer.querySelectorAll('.cert-row')]);
+        }
     });
 }

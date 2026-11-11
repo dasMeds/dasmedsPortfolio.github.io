@@ -232,10 +232,13 @@ export function initScene() {
         const sectionMotion = choreography[section] || choreography.home;
         const isVisualSection = ['posters', 'videos'].includes(section);
         const target = isVisualSection ? accent : base;
-        if (reducedMotion || document.hidden) {
+        if (reducedMotion) {
+            renderStill();
+            return;
+        }
+        if (document.hidden) {
             outer.material.color.copy(target);
             orb.scale.setScalar(sectionMotion.scale);
-            if (reducedMotion) renderStill();
             return;
         }
         gsap.killTweensOf(outer.material.color);
