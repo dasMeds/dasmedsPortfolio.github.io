@@ -57,7 +57,9 @@ export function initScene() {
     const targetPointer = new THREE.Vector2();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let frameId = 0;
+    let rendering = false;
     let scrollTween;
+    let rotationTween;
 
     const viewHalfWidth = () =>
         camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
@@ -68,18 +70,36 @@ export function initScene() {
     });
 
     const renderFrame = () => {
+        frameId = 0;
+        if (!rendering || document.hidden) return;
         pointer.lerp(targetPointer, 0.035);
         sculpture.rotation.x += (pointer.y * 0.12 - sculpture.rotation.x) * 0.025;
         renderer.render(scene, camera);
         frameId = window.requestAnimationFrame(renderFrame);
     };
 
-    const renderStill = () => renderer.render(scene, camera);
+    const renderStill = () => {
+        if (!document.hidden) renderer.render(scene, camera);
+    };
+
+    const startRendering = () => {
+        if (reducedMotion || document.hidden || rendering) return;
+        rendering = true;
+        rotationTween?.resume();
+        frameId = window.requestAnimationFrame(renderFrame);
+    };
+
+    const stopRendering = () => {
+        rendering = false;
+        window.cancelAnimationFrame(frameId);
+        frameId = 0;
+        rotationTween?.pause();
+    };
 
     const resize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.updateProjectionMatrix();
@@ -96,23 +116,19 @@ export function initScene() {
         if (animate && !reducedMotion) {
             gsap.to(outer.material.color, {
                 r: primary.r, g: primary.g, b: primary.b,
-                duration: 0.5,
-                onUpdate: renderStill
+                duration: 0.5
             });
             gsap.to(outer.material, {
                 opacity: primaryOpacity,
-                duration: 0.5,
-                onUpdate: renderStill
+                duration: 0.5
             });
             gsap.to(inner.material.color, {
                 r: secondary.r, g: secondary.g, b: secondary.b,
-                duration: 0.5,
-                onUpdate: renderStill
+                duration: 0.5
             });
             gsap.to(inner.material, {
                 opacity: secondaryOpacity,
-                duration: 0.5,
-                onUpdate: renderStill
+                duration: 0.5
             });
         } else {
             outer.material.color.copy(primary);
@@ -156,13 +172,12 @@ export function initScene() {
         scrollTween = spherePath.scrollTrigger;
 
         // Full rotations return to the same pose, keeping the wireframe turning without a visible reset.
-        gsap.to(sculpture.rotation, {
+        rotationTween = gsap.to(sculpture.rotation, {
             y: Math.PI * 2,
             z: Math.PI * 2,
             duration: 100,
             ease: 'none',
-            repeat: -1,
-            onUpdate: renderStill
+            repeat: -1
         });
 
         window.addEventListener('pointermove', event => {
@@ -172,14 +187,53 @@ export function initScene() {
                 1 - (event.clientY / window.innerHeight) * 2
             );
         }, { passive: true });
-        frameId = window.requestAnimationFrame(renderFrame);
     }
 
+    const handleVisibilityChange = () => {
+        if (document.hidden) {
+            stopRendering();
+        } else if (reducedMotion) {
+            renderStill();
+        } else {
+            startRendering();
+        }
+    };
+
     window.addEventListener('resize', resize, { passive: true });
-    window.addEventListener('portfolio:theme-change', updateTheme);
+    window.addEventListener('portfolio:theme-change', () => updateTheme());
+    window.addEventListener('portfolio:hero-reveal', () => {
+        if (reducedMotion) return;
+        gsap.fromTo(sculpture.scale, {
+            x: 1.78, y: 1.78, z: 1.78
+        }, {
+            x: 1.45, y: 1.45, z: 1.45,
+            duration: 1.15,
+            ease: 'power3.out'
+        });
+    }, { once: true });
+    window.addEventListener('portfolio:section-change', event => {
+        if (reducedMotion || document.hidden) return;
+        const styles = getComputedStyle(document.documentElement);
+        const base = new THREE.Color(styles.getPropertyValue('--orb-primary').trim());
+        const accent = new THREE.Color(styles.getPropertyValue('--accent-color').trim());
+        const isVisualSection = ['posters', 'videos'].includes(event.detail?.id);
+        const target = isVisualSection ? accent : base;
+        gsap.killTweensOf(outer.material.color);
+        gsap.killTweensOf(rotationTween);
+        gsap.to(outer.material.color, {
+            r: target.r, g: target.g, b: target.b,
+            duration: 0.7
+        });
+        gsap.to(rotationTween, {
+            timeScale: isVisualSection ? 1.12 : 0.88,
+            duration: 0.7
+        });
+    });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('pagehide', () => {
-        window.cancelAnimationFrame(frameId);
+        stopRendering();
         scrollTween?.kill();
+        rotationTween?.kill();
         renderer.dispose();
         outer.geometry.dispose();
         inner.geometry.dispose();
@@ -189,4 +243,5 @@ export function initScene() {
 
     resize();
     updateTheme(false);
+    startRendering();
 }

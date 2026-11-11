@@ -1,3 +1,8 @@
+import { Flip } from 'gsap/Flip';
+import { gsap } from 'gsap';
+
+gsap.registerPlugin(Flip);
+
 document.addEventListener('DOMContentLoaded', () => {
 
     /* pop-up window logic */
@@ -6,14 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (modal) {
         // ui element references
-        const modalImg = document.getElementById('modal-img'); 
+        let modalImg = document.getElementById('modal-img');
+        const modalImageContainer = modal.querySelector('.modal-image-container');
+        const modalImagePlaceholder = modalImg;
         const modalImgBg = document.getElementById('modal-img-bg'); 
         const modalTitle = document.getElementById('modal-title'); 
         const modalDesc = document.getElementById('modal-desc');  
         const closeModalBtn = document.querySelector('.close-modal'); 
         const modalBackdrop = document.querySelector('.modal-backdrop');  
-        const posterCards = document.querySelectorAll('.poster-card');  
-        let lastFocusedPoster;
+        const posterCards = document.querySelectorAll('.poster-card');
+        const previousButton = modal.querySelector('.modal-previous');
+        const nextButton = modal.querySelector('.modal-next');
+        const specLabelOne = document.getElementById('modal-spec-label-one');
+        const specValueOne = document.getElementById('modal-spec-value-one');
+        const specLabelTwo = document.getElementById('modal-spec-label-two');
+        const specValueTwo = document.getElementById('modal-spec-value-two');
+        let lastFocusedItem;
+        let galleryItems = [];
+        let activeGalleryIndex = -1;
+        let bodyOverflowBeforeModal = '';
+        let sharedPosterImage;
+        let sharedPosterParent;
+        let sharedPosterNextSibling;
 
         modal.setAttribute('role', 'dialog');
         modal.setAttribute('aria-modal', 'true');
@@ -37,44 +56,154 @@ document.addEventListener('DOMContentLoaded', () => {
             "Masterpiece Sportswear Design Board": `A dynamic, multi-asset design board created to establish a cohesive brand identity for Masterpiece Sportswear. The layout utilizes aggressive sans-serif typography and a strictly monochromatic palette to convey the brand’s "Move Powerful, Play Proud" philosophy through a professional, high-performance lens.\n\nPROJECT CONTEXT:\nThis project serves as a comprehensive exploration of visual strategy in athletic branding. It integrates product renderings, social media posts UI concepts, and logo variations to demonstrate a scalable design ecosystem. The board emphasizes technical precision, highlighting moisture-wicking textures and ergonomic tailoring through a clean, grid-based presentation.\n\nREFERENCE:\nGraphic Design & Branding Project. (2026). Visual Identity Systems: Masterpiece Sportswear.`
             };
 
-        const openPoster = card => {
-                const img = card.querySelector('img');
-                modalImg.src = img.src;
-                modalImgBg.src = img.src; // background blur image
-                modalTitle.textContent = img.alt;
-                
-                // fallback to default text if alt is missing in object
-                modalDesc.innerHTML = posterDescriptions[img.alt] || "A high-quality edit.";
-                
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // lock scroll while viewing
-                lastFocusedPoster = card;
-                closeModalBtn.focus();
+        const restoreSharedPosterImage = animate => {
+            if (!sharedPosterImage || !sharedPosterParent) return;
+            const state = animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? Flip.getState(sharedPosterImage)
+                : null;
+            sharedPosterImage.removeAttribute('id');
+            sharedPosterImage.classList.remove('modal-shared-image');
+            const nextSibling = sharedPosterNextSibling?.parentNode === sharedPosterParent
+                ? sharedPosterNextSibling
+                : null;
+            sharedPosterParent.insertBefore(sharedPosterImage, nextSibling);
+            modalImagePlaceholder.id = 'modal-img';
+            modalImagePlaceholder.hidden = false;
+            modalImg = modalImagePlaceholder;
+            sharedPosterImage = undefined;
+            sharedPosterParent = undefined;
+            sharedPosterNextSibling = undefined;
+            if (state) {
+                Flip.from(state, {
+                    duration: 0.48,
+                    ease: 'power2.inOut',
+                    absolute: true,
+                    scale: true
+                });
+            }
+        };
+
+        const openGalleryItem = (card, focusClose = false) => {
+            const image = card.querySelector('img');
+            const imageSource = card.dataset.image || image?.currentSrc || image?.src;
+            const title = card.dataset.title || image?.alt || 'Portfolio item';
+            const isCertificate = card.matches('.cert-row');
+            if (!imageSource) {
+                console.error('Gallery item is missing its image.', card);
+                return;
+            }
+            if (sharedPosterImage && sharedPosterImage !== image) restoreSharedPosterImage(false);
+
+            galleryItems = [...document.querySelectorAll(isCertificate ? '.cert-row:not([hidden])' : '.poster-card')];
+            activeGalleryIndex = galleryItems.indexOf(card);
+            modalImgBg.src = imageSource;
+            if (!isCertificate && image) {
+                const state = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                    ? Flip.getState(image)
+                    : null;
+                sharedPosterImage = image;
+                sharedPosterParent = image.parentNode;
+                sharedPosterNextSibling = image.nextSibling;
+                modalImagePlaceholder.removeAttribute('id');
+                modalImagePlaceholder.hidden = true;
+                image.id = 'modal-img';
+                image.classList.add('modal-shared-image');
+                modalImageContainer.append(image);
+                modalImg = image;
+                if (state) {
+                    Flip.from(state, {
+                        duration: 0.58,
+                        ease: 'power2.inOut',
+                        absolute: true,
+                        scale: true
+                    });
+                }
+            } else {
+                modalImg.src = imageSource;
+                modalImg.alt = card.dataset.imageAlt || image?.alt || title;
+                modalImg.width = Number(card.dataset.imageWidth) || image?.naturalWidth || 1200;
+                modalImg.height = Number(card.dataset.imageHeight) || image?.naturalHeight || 800;
+            }
+            modalTitle.textContent = title;
+            modalDesc.textContent = card.dataset.description ||
+                (isCertificate
+                    ? `${card.dataset.issuer || ''}${card.dataset.date ? ` · ${card.dataset.date}` : ''}`
+                    : posterDescriptions[title] || 'A high-quality edit.');
+            specLabelOne.textContent = isCertificate ? 'ISSUER' : 'TOOLS';
+            specValueOne.textContent = isCertificate
+                ? card.dataset.issuer || 'Not listed'
+                : card.dataset.tools || 'Details supplied by owner';
+            specLabelTwo.textContent = isCertificate ? 'ISSUED' : 'INTENT';
+            specValueTwo.textContent = isCertificate
+                ? card.dataset.date || 'Not listed'
+                : card.dataset.intent || 'Details supplied by owner';
+
+            if (!modal.classList.contains('active')) {
+                bodyOverflowBeforeModal = document.body.style.overflow;
+                document.body.style.overflow = 'hidden';
+                document.dispatchEvent(new CustomEvent('portfolio:scroll-lock', {
+                    detail: { locked: true }
+                }));
+            }
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            modal.setAttribute('aria-modal', 'true');
+            lastFocusedItem = card;
+            if (focusClose) closeModalBtn.focus();
+        };
+
+        const stepGallery = direction => {
+            if (!galleryItems.length) return;
+            const nextIndex = (activeGalleryIndex + direction + galleryItems.length) % galleryItems.length;
+            openGalleryItem(galleryItems[nextIndex]);
         };
 
         posterCards.forEach(card => {
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.addEventListener('click', () => openPoster(card));
-            card.addEventListener('keydown', event => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    openPoster(card);
-                }
-            });
+            card.addEventListener('click', () => openGalleryItem(card, true));
+        });
+
+        document.addEventListener('portfolio:open-lightbox', event => {
+            if (event.detail?.card) openGalleryItem(event.detail.card, true);
         });
 
         const closeModal = () => {
             modal.classList.remove('active');
-            document.body.style.overflow = ''; // restore scroll
-            lastFocusedPoster?.focus();
+            modal.setAttribute('aria-hidden', 'true');
+            modal.setAttribute('aria-modal', 'false');
+            document.body.style.overflow = bodyOverflowBeforeModal;
+            document.dispatchEvent(new CustomEvent('portfolio:scroll-lock', {
+                detail: { locked: false }
+            }));
+            restoreSharedPosterImage(true);
+            lastFocusedItem?.focus({ preventScroll: true });
         };
 
         closeModalBtn.addEventListener('click', closeModal);
+        previousButton.addEventListener('click', () => stepGallery(-1));
+        nextButton.addEventListener('click', () => stepGallery(1));
         modalBackdrop.addEventListener('click', closeModal);
         document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && modal.classList.contains('active')) {
+            if (!modal.classList.contains('active')) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
                 closeModal();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                stepGallery(-1);
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                stepGallery(1);
+            } else if (event.key === 'Tab') {
+                const focusable = [previousButton, closeModalBtn, nextButton];
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
             }
         });
     }
@@ -229,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (document.body.classList.contains('continuous-portfolio') && 'IntersectionObserver' in window) {
+        let activeSectionId = '';
         const sectionObserver = new IntersectionObserver(entries => {
             const activeEntry = entries
                 .filter(entry => entry.isIntersecting)
@@ -239,7 +369,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 })[0];
 
             if (!activeEntry || !activeEntry.target.id) return;
-            const nextHash = `#${activeEntry.target.id}`;
+            const sectionId = activeEntry.target.id;
+            if (sectionId !== activeSectionId) {
+                activeSectionId = sectionId;
+                window.dispatchEvent(new CustomEvent('portfolio:section-change', {
+                    detail: { id: sectionId }
+                }));
+            }
+            const nextHash = `#${sectionId}`;
             if (window.location.hash !== nextHash) {
                 window.history.replaceState(
                     window.history.state,
@@ -249,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, { threshold: 0, rootMargin: '-40% 0px -59% 0px' });
 
-        document.querySelectorAll('.continuous-sections section[id], #home, #demoreel-card').forEach(section => {
+        document.querySelectorAll('.continuous-sections section[id], #home').forEach(section => {
             sectionObserver.observe(section);
         });
     }
@@ -277,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loaderPercent = document.getElementById('loader-percent');
         const loaderLog = document.getElementById('loader-log');
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const minimumLoaderTime = reducedMotion ? 180 : 1100;
+        const minimumLoaderTime = reducedMotion ? 120 : 650;
         const loaderLogMessages = ['INITIALIZING_SYSTEMS...', 'MAPPING_PORTFOLIO...', 'CALIBRATING_VISUALS...', 'COMPILING_VECTORS...', 'SYSTEM_READY'];
 
         const progressTimer = window.setInterval(() => {
@@ -298,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.setTimeout(() => {
                 loader.style.display = 'none';
                 loader.remove();
-            }, 600);
+            }, 280);
         };
 
         const finishAfterMinimumTime = () => {
@@ -313,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             window.addEventListener('load', finishAfterMinimumTime, { once: true });
         }
-        window.setTimeout(dismissPreloader, 2000);
+        window.setTimeout(dismissPreloader, 900);
     }
 
     const manilaClock = document.getElementById('manila-clock');
@@ -341,81 +478,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateClocks();
         window.setInterval(updateClocks, 1000);
-    }
-
-    const showcaseVideos = document.querySelectorAll('#demoreel-video, .video-card video');
-    // Defer media requests and autoplay to the single video currently closest to the viewport center.
-    showcaseVideos.forEach(video => {
-        video.muted = true;
-        video.playsInline = true;
-        video.addEventListener('error', () => {
-            console.error(
-                'Unable to load showcase video:',
-                video.currentSrc || video.querySelector('source')?.src,
-                video.error
-            );
-        });
-        video.pause();
-        video.autoplay = false;
-        video.preload = 'metadata';
-    });
-
-    if (showcaseVideos.length) {
-        const updateActiveVideo = () => {
-            const viewportCenter = window.innerHeight / 2;
-            const activeVideo = [...showcaseVideos]
-                .map(video => {
-                    const bounds = video.getBoundingClientRect();
-                    const visibleHeight = Math.max(0, Math.min(bounds.bottom, window.innerHeight) - Math.max(bounds.top, 0));
-                    const visibleWidth = Math.max(0, Math.min(bounds.right, window.innerWidth) - Math.max(bounds.left, 0));
-                    const visibleRatio = (visibleHeight * visibleWidth) / Math.max(1, bounds.width * bounds.height);
-                    return { video, bounds, visibleRatio };
-                })
-                .filter(item => item.visibleRatio >= 0.5)
-                .sort((left, right) =>
-                    Math.abs((left.bounds.top + left.bounds.bottom) / 2 - viewportCenter) -
-                    Math.abs((right.bounds.top + right.bounds.bottom) / 2 - viewportCenter)
-                )[0]?.video;
-
-            showcaseVideos.forEach(video => {
-                if (video !== activeVideo) {
-                    video.pause();
-                    video.autoplay = false;
-                    return;
-                }
-
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = 'metadata';
-                video.autoplay = true;
-                if (video.paused) {
-                    const playback = video.play();
-                    if (playback) {
-                        playback.catch(error => {
-                            if (error.name !== 'AbortError') {
-                                console.warn('Showcase video autoplay was blocked by the browser.', error);
-                            }
-                        });
-                    }
-                }
-            });
-        };
-        let updateFrame = 0;
-        const scheduleVideoUpdate = () => {
-            if (updateFrame) return;
-            updateFrame = window.requestAnimationFrame(() => {
-                updateFrame = 0;
-                updateActiveVideo();
-            });
-        };
-
-        if ('IntersectionObserver' in window) {
-            const videoObserver = new IntersectionObserver(scheduleVideoUpdate, {
-                threshold: [0, 0.5, 1]
-            });
-            showcaseVideos.forEach(video => videoObserver.observe(video));
-        }
-        window.addEventListener('scroll', scheduleVideoUpdate, { passive: true });
-        window.addEventListener('resize', scheduleVideoUpdate, { passive: true });
-        updateActiveVideo();
     }

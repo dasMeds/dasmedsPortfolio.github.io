@@ -61,12 +61,10 @@ function wrapHeadingWords(heading, headingIndex) {
         revealTimeline.fromTo(word, {
             yPercent: 110,
             rotation: 5,
-            filter: 'blur(12px)',
             autoAlpha: 0
         }, {
             yPercent: 0,
             rotation: 0,
-            filter: 'blur(0px)',
             autoAlpha: 1,
             duration: 0.8,
             ease: 'power3.out'
@@ -104,13 +102,11 @@ function wrapTextBlock(target, index) {
     gsap.fromTo(words, {
         yPercent: 110,
         rotation: 3,
-        filter: 'blur(12px)',
         autoAlpha: 0
     }, {
         immediateRender: false,
         yPercent: 0,
         rotation: 0,
-        filter: 'blur(0px)',
         autoAlpha: 1,
         duration: 0.72,
         ease: 'power3.out',
@@ -136,13 +132,11 @@ function wrapListItem(item, index) {
     gsap.fromTo(content, {
         yPercent: 110,
         rotation: 5,
-        filter: 'blur(12px)',
         autoAlpha: 0
     }, {
         immediateRender: false,
         yPercent: 0,
         rotation: 0,
-        filter: 'blur(0px)',
         autoAlpha: 1,
         duration: 0.8,
         ease: 'power3.out',
@@ -158,8 +152,7 @@ function wrapListItem(item, index) {
 export function initMotion() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    initHorizontalProjects();
-    initHorizontalPosters();
+    initHeroReveal();
     initAboutMarquee();
 
     document.querySelectorAll(
@@ -177,24 +170,62 @@ export function initMotion() {
     // Split each list item as one unit so icons and labels rise together behind a clipping mask.
     document.querySelectorAll('.stack-list li, .video-tags .tag').forEach(wrapListItem);
 
-    // Reveal large images with an expanding crop instead of a generic opacity fade.
-    document.querySelectorAll(
-        '.cert-img, .about-grid img'
-    ).forEach(media => {
-        media.classList.add('media-reveal-ready');
-        gsap.fromTo(media, {
-            clipPath: 'inset(0 100% 0 0)'
-        }, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 1.05,
-            ease: 'power3.inOut',
+    document.querySelectorAll('[data-count-target]').forEach(counter => {
+        const target = Number(counter.dataset.countTarget);
+        if (!Number.isFinite(target)) return;
+        const count = { value: 0 };
+        gsap.to(count, {
+            value: target,
+            duration: 1.15,
+            ease: 'power2.out',
+            onUpdate: () => { counter.textContent = String(Math.round(count.value)); },
             scrollTrigger: {
-                trigger: media,
-                start: 'top 80%',
+                trigger: counter,
+                start: 'top 90%',
                 once: true
             }
         });
     });
+}
+
+function initHeroReveal() {
+    const hero = document.querySelector('#home.hero-stage');
+    const paths = hero?.querySelectorAll('.hero-coordinate-lines path');
+    if (!hero || !paths?.length) return;
+
+    const readouts = hero.querySelectorAll('.hero-readout, .coordinate-label, .hero-index');
+    const title = hero.querySelector('.hero-title');
+    const copy = hero.querySelector('.hero-copy');
+    const timeline = gsap.timeline({ delay: 0.12 });
+    window.dispatchEvent(new CustomEvent('portfolio:hero-reveal'));
+
+    timeline
+        .fromTo(paths, { scaleX: 0, autoAlpha: 0 }, {
+            scaleX: 1,
+            autoAlpha: 0.72,
+            duration: 0.85,
+            stagger: 0.08,
+            ease: 'power2.out'
+        })
+        .fromTo(readouts, { y: 8, autoAlpha: 0 }, {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.45,
+            stagger: 0.1,
+            ease: 'power2.out'
+        }, 0.2)
+        .fromTo(title, { y: 24, autoAlpha: 0 }, {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: 'power3.out'
+        }, 0.18)
+        .fromTo(copy, { y: 14, autoAlpha: 0 }, {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.65,
+            ease: 'power2.out'
+        }, 0.5);
 }
 
 function initAboutMarquee() {
@@ -235,96 +266,4 @@ function initAboutMarquee() {
         settleSpeed?.kill();
         settleSpeed = gsap.delayedCall(0.2, () => setSpeed(1));
     }, { passive: true });
-}
-
-function initHorizontalPosters() {
-    const section = document.querySelector('#posters');
-    const viewport = section?.querySelector('.poster-viewport');
-    const track = section?.querySelector('.poster-track');
-    const images = [...(section?.querySelectorAll('.poster-card img') ?? [])];
-    if (!section || !viewport || !track || images.length < 2) return;
-
-    ScrollTrigger.matchMedia({
-        '(min-width: 769px)': () => {
-            section.classList.add('is-horizontal-pinned');
-
-            const horizontalDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-            const skewSetters = images.map(image => gsap.quickTo(image, 'skewX', {
-                duration: 0.24,
-                ease: 'power2.out'
-            }));
-            let settleSkew;
-
-            const timeline = gsap.timeline({
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top top',
-                    end: () => `+=${horizontalDistance()}`,
-                    pin: true,
-                    pinSpacing: true,
-                    scrub: 1,
-                    invalidateOnRefresh: true,
-                    anticipatePin: 1,
-                    onUpdate: self => {
-                        const skew = gsap.utils.clamp(-5, 5, self.getVelocity() / 800);
-                        skewSetters.forEach(setSkew => setSkew(skew));
-                        settleSkew?.kill();
-                        settleSkew = gsap.delayedCall(0.12, () => {
-                            skewSetters.forEach(setSkew => setSkew(0));
-                        });
-                    }
-                }
-            });
-
-            timeline.to(track, {
-                x: () => -horizontalDistance(),
-                ease: 'none'
-            });
-
-            return () => {
-                settleSkew?.kill();
-                timeline.scrollTrigger?.kill();
-                timeline.kill();
-                gsap.set(track, { clearProps: 'transform' });
-                gsap.set(images, { skewX: 0 });
-                section.classList.remove('is-horizontal-pinned');
-            };
-        }
-    });
-}
-
-function initHorizontalProjects() {
-    const section = document.querySelector('.horizontal-projects');
-    const viewport = section?.querySelector('.horizontal-projects-viewport');
-    const track = section?.querySelector('.horizontal-projects-track');
-    if (!section || !viewport || !track) return;
-
-    // Keep the repository sequence touch-scrollable on smaller screens where vertical context matters more.
-    ScrollTrigger.matchMedia({
-        '(min-width: 769px)': () => {
-            const horizontalDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
-            const timeline = gsap.timeline({
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top top',
-                    end: () => `+=${horizontalDistance()}`,
-                    pin: section,
-                    pinSpacing: true,
-                    scrub: 1,
-                    invalidateOnRefresh: true,
-                    anticipatePin: 1
-                }
-            });
-
-            timeline.to(track, {
-                x: () => -horizontalDistance(),
-                ease: 'none'
-            });
-
-            return () => {
-                timeline.scrollTrigger?.kill();
-                gsap.set(track, { clearProps: 'transform' });
-            };
-        }
-    });
 }

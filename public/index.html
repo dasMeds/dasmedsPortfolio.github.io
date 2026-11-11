@@ -30,6 +30,7 @@
                 <a href="#home">Home</a>
                 <a href="#about">About</a>
                 <a href="#experience">Experience</a>
+                <a href="#certifications">Certifications</a>
                 <a href="#github-projects">Repositories</a>
                 <a href="#posters">Posters</a>
                 <a href="#videos">Videos</a>
@@ -44,6 +45,13 @@
     </nav>
 
     <div class="ambient-orbit" aria-hidden="true"></div>
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <aside class="scroll-altimeter" aria-hidden="true">
+        <span class="altimeter-section" id="altimeter-section">FLIGHT DECK</span>
+        <span class="altimeter-value" id="altimeter-value">000</span>
+        <span class="altimeter-rail"><span id="altimeter-fill"></span></span>
+        <span class="altimeter-unit">ALT / %</span>
+    </aside>
 
     <!-- Adjust the SVG path coordinates here to reshape the continuous scroll guide. -->
     <svg class="scroll-guide" viewBox="0 0 24 720" preserveAspectRatio="none" aria-hidden="true">
@@ -54,7 +62,8 @@
 
     <div id="page-wrapper">
         <main class="container scroll-story continuous-portfolio-content">
-            <section id="home" class="hero-stage" style="border-top: none;">
+            <section id="home" class="hero-stage">
+                <p class="hero-readout" aria-hidden="true">HUD / 001<br>VISUAL SYSTEMS<br><span>STATUS: READY</span></p>
                 <p class="coordinate-label">[ 14° 40′ N, 120° 58′ E — METRO MANILA ]</p>
                 <svg class="hero-coordinate-lines" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true">
                     <path d="M92 150 280 230 440 110M760 120 910 250 1080 170M110 520 360 430 510 570M850 420 1040 550"/>
@@ -73,8 +82,8 @@
                     </div>
                     <div class="hero-stats">
                         <div class="hero-stat">
-                            <div class="stat-number">0</div>
-                            <div class="stat-label">Years of Experience</div>
+                            <div class="stat-number" data-count-target="9">9</div>
+                            <div class="stat-label">Certifications Logged</div>
                         </div>
                         <div class="hero-stat">
                             <div class="stat-number">9</div>
@@ -83,6 +92,10 @@
                         <div class="hero-stat">
                             <div class="stat-number">400</div>
                             <div class="stat-label">Hours Programming/Scripting</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="stat-number" data-count-target="3">3</div>
+                            <div class="stat-label">Issuing Organizations</div>
                         </div>
                         <div class="stat-card system-card hero-stat">
                             <div class="system-card-heading"><span class="system-indicator"></span> SYSTEM / LOCAL</div>
@@ -96,24 +109,9 @@
                 </div>
                 <p class="hero-index">PKM <span>—</span> ENGINEERING / VISUAL SYSTEMS</p>
             </section>
-        <div id="demoreel-card" class="project-card">
-    <video id="demoreel-video" class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/demoreel-showcase-poster.jpg">
-        <source src="/videos/demoreel-showcase.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <div class="video-info">
-        <h3 class="project-title">Demoreel</h3>
-        <div class="video-tags">
-            <span class="tag">Cinematics</span>
-            <span class="tag">Video Editing</span>
-        </div>
-    </div>
-</div>
-
-
         <div class="continuous-sections">
 <section id="about">
+                <span class="section-coordinate" aria-hidden="true"></span>
                 <span class="section-label">This is me.</span>
                 <div class="about-grid">
                     <div class="about-copy">
@@ -141,7 +139,7 @@
                         </ul>
                     </div>
                     <div class="stack-category">
-                        <h4>Backend</h4>
+                        <h4>Tools</h4>
                         <ul class="stack-list">
                             <li><svg class="tech-icon tech-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> Git / GitHub</li>
                             <li><svg class="tech-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="6" fill="currentColor" fill-opacity=".12"/><text x="16" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="currentColor">CC</text></svg> Capcut</li>
@@ -152,7 +150,8 @@
                 </div>
             </section>
 
-<section id="experience" style="border-top: none; padding-top: 160px; padding-bottom: 40px;">
+<section id="experience">
+    <span class="section-coordinate" aria-hidden="true"></span>
                 <span class="section-label">My Experience</span>
 
                 <div class="job-item">
@@ -166,278 +165,226 @@
 
 <section id="certifications">
     <span class="section-label">Certifications</span>
+    <span class="section-coordinate" aria-hidden="true"></span>
 
-    <div class="projects-grid">
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/getting-started-w-cisco.png" alt="Getting Started with Cisco Packet Tracer" class="cert-img" width="1238" height="838" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Getting Started with Cisco Packet Tracer</h3>
-                <p class="job-role">Issued by: Cisco Networking Academy</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Aug 21, 2025</p>
-                <a href="/images/getting-started-w-cisco.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
+    <div class="cert-ledger-toolbar">
+        <p>QUALIFICATIONS / 09 ITEMS</p>
+        <div class="cert-filters" role="group" aria-label="Filter certifications">
+            <button type="button" class="cert-filter is-active" data-filter="all" aria-pressed="true">All <span>09</span></button>
+            <button type="button" class="cert-filter" data-filter="Cisco" aria-pressed="false">Cisco <span>04</span></button>
+            <button type="button" class="cert-filter" data-filter="CodeSignal" aria-pressed="false">CodeSignal <span>04</span></button>
+            <button type="button" class="cert-filter" data-filter="SQL" aria-pressed="false">SQL <span>04</span></button>
         </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/exploring-net-w-cisco.png" alt="Exploring Networking with Cisco Packet Tracer" class="cert-img" width="1240" height="835" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Exploring Networking</h3>
-                <p class="job-role">Issued by: Cisco Networking Academy</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Aug 21, 2025</p>
-                <a href="/images/exploring-net-w-cisco.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/exploring-iot.png" alt="Exploring Internet of Things with Cisco Packet Tracer" class="cert-img" width="1240" height="835" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Exploring Internet of Things</h3>
-                <p class="job-role">Issued by: Cisco Networking Academy</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Aug 26, 2025</p>
-                <a href="/images/exploring-iot.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/intro-to-packet-tracer.png" alt="Introduction to Packet Tracer Exam" class="cert-img" width="1236" height="836" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Introduction to Packet Tracer Exam</h3>
-                <p class="job-role">Issued by: Cisco Networking Academy</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Aug 26, 2025</p>
-                <a href="/images/intro-to-packet-tracer.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/intro-to-sql-ts.png" alt="Intro to SQL with Taylor Swift" class="cert-img" width="2048" height="1536" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Intro to SQL</h3>
-                <p class="job-role">Issued by: CodeSignal</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Feb 03, 2026</p>
-                <a href="/images/intro-to-sql-ts.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/intro-to-sql-skillup.png" alt="Introduction to SQL - Simplilearn" class="cert-img" width="1120" height="791" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Introduction to SQL</h3>
-                <p class="job-role">Issued by: Simplilearn SkillUp</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Feb 17, 2026</p>
-                <a href="/images/intro-to-sql-skillup.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/learning-sql-joins-w-ts.png" alt="Learning SQL Joins with Taylor Swift" class="cert-img" width="2048" height="1536" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Learning SQL Joins</h3>
-                <p class="job-role">Issued by: CodeSignal</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Feb 19, 2026</p>
-                <a href="/images/learning-sql-joins-w-ts.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/mastering-sql-functs.png" alt="Mastering SQL Functions and Clauses with Taylor Swift" class="cert-img" width="2048" height="1536" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Mastering SQL Functions</h3>
-                <p class="job-role">Issued by: CodeSignal</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Mar 05, 2026</p>
-                <a href="/images/mastering-sql-functs.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
-        <div class="project-card certification-item">
-            <div class="cert-image-container">
-                <img src="/images/python-libraries-for-da.png" alt="Python Libraries for Data Analysis" class="cert-img" width="2048" height="1536" loading="lazy" decoding="async">
-            </div>
-            <div class="cert-info">
-                <h3 class="project-title">Python Libraries for Data Analysis</h3>
-                <p class="job-role">Issued by: CodeSignal</p>
-                <p style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; margin-top: 0.25rem;">Apr 02, 2026</p>
-                <a href="/images/python-libraries-for-da.png" target="_blank" class="btn-outline" style="margin-top: 1.5rem; display: inline-block;">View Full Image</a>
-            </div>
-        </div>
-
     </div>
+
+    <div class="cert-ledger">
+        <div class="cert-track" data-track="networking">
+            <h3 class="cert-track-title"><span>01</span> Networking <small>4 LOGGED</small></h3>
+            <button class="cert-row" type="button" data-category="Cisco" data-track="networking" data-title="Getting Started with Cisco Packet Tracer" data-image-alt="Getting Started with Cisco Packet Tracer" data-image-width="1238" data-image-height="838" data-issuer="Cisco Networking Academy" data-date="Aug 21, 2025" data-image="/images/getting-started-w-cisco.webp">
+                <time datetime="2025-08-21">Aug 21, 2025</time><span class="cert-row-title">Getting Started with Cisco Packet Tracer</span><span class="cert-row-issuer">Cisco Networking Academy</span><span class="cert-row-index">01 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="Cisco" data-track="networking" data-title="Exploring Networking" data-image-alt="Exploring Networking with Cisco Packet Tracer" data-image-width="1240" data-image-height="835" data-issuer="Cisco Networking Academy" data-date="Aug 21, 2025" data-image="/images/exploring-net-w-cisco.webp">
+                <time datetime="2025-08-21">Aug 21, 2025</time><span class="cert-row-title">Exploring Networking</span><span class="cert-row-issuer">Cisco Networking Academy</span><span class="cert-row-index">02 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="Cisco" data-track="networking" data-title="Exploring Internet of Things" data-image-alt="Exploring Internet of Things with Cisco Packet Tracer" data-image-width="1240" data-image-height="835" data-issuer="Cisco Networking Academy" data-date="Aug 26, 2025" data-image="/images/exploring-iot.webp">
+                <time datetime="2025-08-26">Aug 26, 2025</time><span class="cert-row-title">Exploring Internet of Things</span><span class="cert-row-issuer">Cisco Networking Academy</span><span class="cert-row-index">03 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="Cisco" data-track="networking" data-title="Introduction to Packet Tracer Exam" data-image-alt="Introduction to Packet Tracer Exam" data-image-width="1236" data-image-height="836" data-issuer="Cisco Networking Academy" data-date="Aug 26, 2025" data-image="/images/intro-to-packet-tracer.webp">
+                <time datetime="2025-08-26">Aug 26, 2025</time><span class="cert-row-title">Introduction to Packet Tracer Exam</span><span class="cert-row-issuer">Cisco Networking Academy</span><span class="cert-row-index">04 ↗</span>
+            </button>
+        </div>
+        <div class="cert-track" data-track="sql">
+            <h3 class="cert-track-title"><span>02</span> SQL <small>4 LOGGED</small></h3>
+            <button class="cert-row" type="button" data-category="CodeSignal SQL" data-track="sql" data-title="Intro to SQL" data-image-alt="Intro to SQL with Taylor Swift" data-image-width="2048" data-image-height="1536" data-issuer="CodeSignal" data-date="Feb 03, 2026" data-image="/images/intro-to-sql-ts.webp">
+                <time datetime="2026-02-03">Feb 03, 2026</time><span class="cert-row-title">Intro to SQL</span><span class="cert-row-issuer">CodeSignal</span><span class="cert-row-index">05 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="SQL" data-track="sql" data-title="Introduction to SQL" data-image-alt="Introduction to SQL - Simplilearn" data-image-width="1120" data-image-height="791" data-issuer="Simplilearn SkillUp" data-date="Feb 17, 2026" data-image="/images/intro-to-sql-skillup.webp">
+                <time datetime="2026-02-17">Feb 17, 2026</time><span class="cert-row-title">Introduction to SQL</span><span class="cert-row-issuer">Simplilearn SkillUp</span><span class="cert-row-index">06 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="CodeSignal SQL" data-track="sql" data-title="Learning SQL Joins" data-image-alt="Learning SQL Joins with Taylor Swift" data-image-width="2048" data-image-height="1536" data-issuer="CodeSignal" data-date="Feb 19, 2026" data-image="/images/learning-sql-joins-w-ts.webp">
+                <time datetime="2026-02-19">Feb 19, 2026</time><span class="cert-row-title">Learning SQL Joins</span><span class="cert-row-issuer">CodeSignal</span><span class="cert-row-index">07 ↗</span>
+            </button>
+            <button class="cert-row" type="button" data-category="CodeSignal SQL" data-track="sql" data-title="Mastering SQL Functions" data-image-alt="Mastering SQL Functions and Clauses with Taylor Swift" data-image-width="2048" data-image-height="1536" data-issuer="CodeSignal" data-date="Mar 05, 2026" data-image="/images/mastering-sql-functs.webp">
+                <time datetime="2026-03-05">Mar 05, 2026</time><span class="cert-row-title">Mastering SQL Functions</span><span class="cert-row-issuer">CodeSignal</span><span class="cert-row-index">08 ↗</span>
+            </button>
+        </div>
+        <div class="cert-track" data-track="python">
+            <h3 class="cert-track-title"><span>03</span> Python <small>1 LOGGED</small></h3>
+            <button class="cert-row" type="button" data-category="CodeSignal" data-track="python" data-title="Python Libraries for Data Analysis" data-image-alt="Python Libraries for Data Analysis" data-image-width="2048" data-image-height="1536" data-issuer="CodeSignal" data-date="Apr 02, 2026" data-image="/images/python-libraries-for-da.webp">
+                <time datetime="2026-04-02">Apr 02, 2026</time><span class="cert-row-title">Python Libraries for Data Analysis</span><span class="cert-row-issuer">CodeSignal</span><span class="cert-row-index">09 ↗</span>
+            </button>
+        </div>
+    </div>
+    <div class="cert-preview" id="cert-preview" aria-hidden="true"><img alt="" width="320" height="216"></div>
 </section>
 
-<section id="github-projects" class="horizontal-projects top-section">
-    <div class="horizontal-projects-heading">
-        <span class="section-label">Coding Projects</span>
-        <h2 class="section-title">GitHub Repos</h2>
+<section id="github-projects" class="repo-section">
+    <div class="repo-heading">
+        <div><span class="section-label">Coding Projects</span><h2 class="section-title">GitHub Repos</h2></div>
         <span class="section-coordinate" aria-hidden="true"></span>
-        <span class="horizontal-projects-index">01 — 04 / SCROLL THE STORY</span>
     </div>
 
-    <div class="horizontal-projects-viewport">
-        <div class="horizontal-projects-track">
-            <article class="horizontal-project-card project-card">
-                <span class="horizontal-project-number">01 / HTML + CSS</span>
-                <h3 class="project-title">House-of-Origami</h3>
-                <p class="project-desc">An HTML-based project repository.</p>
-                <div class="video-tags">
-                    <span class="tag">HTML</span>
-                    <span class="tag">CSS</span>
-                </div>
-                <a href="https://github.com/dasMeds/House-of-Origami" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
-            </article>
+    <div class="repo-grid">
+        <article class="repo-card" data-repo="House-of-Origami">
+            <div class="repo-card-head"><span class="repo-led">01 / HTML + CSS</span><span class="repo-window-dots" aria-hidden="true">● ● ●</span></div>
+            <div class="repo-screenshot" role="img" aria-label="Screenshot placeholder for House-of-Origami"><span>SCREENSHOT / SLOT OPEN</span></div>
+            <h3 class="project-title">House-of-Origami</h3>
+            <p class="project-desc">An HTML-based project repository.</p>
+            <div class="video-tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
+            <div class="repo-terminal">
+                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/House-of-Origami.git</code>
+                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/House-of-Origami.git" aria-label="Copy clone command for House-of-Origami">COPY</button>
+            </div>
+            <span class="repo-copy-status" aria-live="polite"></span>
+            <a href="https://github.com/dasMeds/House-of-Origami" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
+        </article>
 
-            <article class="horizontal-project-card project-card">
-                <span class="horizontal-project-number">02 / JAVA + SWING</span>
-                <h3 class="project-title">Currency-Exchange-Locator</h3>
-                <p class="project-desc">A desktop application developed for a Data Structures and Algorithms course using Java and Java Swing.</p>
-                <div class="video-tags">
-                    <span class="tag">Java</span>
-                    <span class="tag">Swing</span>
-                </div>
-                <a href="https://github.com/dasMeds/Currency-Exchange-Locator" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
-            </article>
+        <article class="repo-card" data-repo="Currency-Exchange-Locator">
+            <div class="repo-card-head"><span class="repo-led">02 / JAVA + SWING</span><span class="repo-window-dots" aria-hidden="true">● ● ●</span></div>
+            <div class="repo-screenshot" role="img" aria-label="Screenshot placeholder for Currency-Exchange-Locator"><span>SCREENSHOT / SLOT OPEN</span></div>
+            <h3 class="project-title">Currency-Exchange-Locator</h3>
+            <p class="project-desc">A desktop application developed for a Data Structures and Algorithms course using Java and Java Swing.</p>
+            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+            <div class="repo-terminal">
+                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Currency-Exchange-Locator.git</code>
+                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Currency-Exchange-Locator.git" aria-label="Copy clone command for Currency-Exchange-Locator">COPY</button>
+            </div>
+            <span class="repo-copy-status" aria-live="polite"></span>
+            <a href="https://github.com/dasMeds/Currency-Exchange-Locator" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
+        </article>
 
-            <article class="horizontal-project-card project-card">
-                <span class="horizontal-project-number">03 / CURRENCY DATA</span>
-                <h3 class="project-title">Global-Currency-App</h3>
-                <p class="project-desc">A dark-themed Java Swing application for exploring over 180 world currencies.</p>
-                <div class="video-tags">
-                    <span class="tag">Java</span>
-                    <span class="tag">Swing</span>
-                </div>
-                <a href="https://github.com/dasMeds/Global-Currency-App" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
-            </article>
+        <article class="repo-card" data-repo="Global-Currency-App">
+            <div class="repo-card-head"><span class="repo-led">03 / CURRENCY DATA</span><span class="repo-window-dots" aria-hidden="true">● ● ●</span></div>
+            <div class="repo-screenshot" role="img" aria-label="Screenshot placeholder for Global-Currency-App"><span>SCREENSHOT / SLOT OPEN</span></div>
+            <h3 class="project-title">Global-Currency-App</h3>
+            <p class="project-desc">A dark-themed Java Swing application for exploring over 180 world currencies.</p>
+            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+            <div class="repo-terminal">
+                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Global-Currency-App.git</code>
+                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Global-Currency-App.git" aria-label="Copy clone command for Global-Currency-App">COPY</button>
+            </div>
+            <span class="repo-copy-status" aria-live="polite"></span>
+            <a href="https://github.com/dasMeds/Global-Currency-App" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
+        </article>
 
-            <article class="horizontal-project-card project-card">
-                <span class="horizontal-project-number">04 / CULTURE + CODE</span>
-                <h3 class="project-title">Philippine-Festivals-Project</h3>
-                <p class="project-desc">A custom dark-themed Java Swing application designed to catalog cultural events across the Philippines.</p>
-                <div class="video-tags">
-                    <span class="tag">Java</span>
-                    <span class="tag">Swing</span>
-                </div>
-                <a href="https://github.com/dasMeds/Philippine-Festivals-Project" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
-            </article>
-        </div>
+        <article class="repo-card" data-repo="Philippine-Festivals-Project">
+            <div class="repo-card-head"><span class="repo-led">04 / CULTURE + CODE</span><span class="repo-window-dots" aria-hidden="true">● ● ●</span></div>
+            <div class="repo-screenshot" role="img" aria-label="Screenshot placeholder for Philippine-Festivals-Project"><span>SCREENSHOT / SLOT OPEN</span></div>
+            <h3 class="project-title">Philippine-Festivals-Project</h3>
+            <p class="project-desc">A custom dark-themed Java Swing application designed to catalog cultural events across the Philippines.</p>
+            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
+            <div class="repo-terminal">
+                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Philippine-Festivals-Project.git</code>
+                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Philippine-Festivals-Project.git" aria-label="Copy clone command for Philippine-Festivals-Project">COPY</button>
+            </div>
+            <span class="repo-copy-status" aria-live="polite"></span>
+            <a href="https://github.com/dasMeds/Philippine-Festivals-Project" target="_blank" rel="noreferrer" class="btn-outline">View Repo <span aria-hidden="true">↗</span></a>
+        </article>
     </div>
 </section>
-
-<div class="showcase-clearance" aria-hidden="true"></div>
 
 <section id="posters" class="poster-scrollytelling">
-                <span class="section-label">My Designs</span>
-                <h2 class="section-title">Poster Showcase</h2>
-                <span class="section-coordinate" aria-hidden="true"></span>
-
-                <div class="slider-container">
-                    <button class="slider-arrow left-arrow" type="button" aria-label="Previous posters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg></button>
-
-                    <div class="marquee-wrapper poster-viewport">
-                        <div class="marquee-track poster-track" id="poster-track">
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-1.png" alt="F-2 Viper Zero" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-2.png" alt="F-2 Viper Zero Grounded" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-3.png" alt="F-15J Peace Eagle" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-4.png" alt="Above You Behind You" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-5.png" alt="M1A1 Abrams" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-6.png" alt="SU-33 Flanker D" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-7.png" alt="Chicco Promotional Poster" loading="lazy" decoding="async">
-                            </div>
-                            <div class="project-card poster-card">
-                                <img src="/images/poster-showcase-8.png" alt="Masterpiece Sportswear Design Board" loading="lazy" decoding="async">
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <button class="slider-arrow right-arrow" type="button" aria-label="Next posters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg></button>
-                </div>
-            </section>
-
-<div class="showcase-clearance" aria-hidden="true"></div>
+    <span class="section-label">My Designs</span>
+    <h2 class="section-title">Poster Showcase</h2>
+    <span class="section-coordinate" aria-hidden="true"></span>
+    <div class="poster-bento" aria-label="Poster design gallery">
+        <button class="poster-card poster-tile poster-tile-feature" type="button" data-title="F-2 Viper Zero" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-1.webp" alt="F-2 Viper Zero" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">01 / FLIGHT STUDY</span><span class="poster-tile-title">F-2 Viper Zero</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-tall" type="button" data-title="F-2 Viper Zero Grounded" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-2.webp" alt="F-2 Viper Zero Grounded" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">02 / FLIGHT STUDY</span><span class="poster-tile-title">F-2 Viper Zero Grounded</span>
+        </button>
+        <button class="poster-card poster-tile" type="button" data-title="F-15J Peace Eagle" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-3.webp" alt="F-15J Peace Eagle" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">03 / AIRFRAME</span><span class="poster-tile-title">F-15J Peace Eagle</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-wide" type="button" data-title="Above You Behind You" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-4.webp" alt="Above You Behind You" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">04 / COMPOSITION</span><span class="poster-tile-title">Above You Behind You</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-short" type="button" data-title="M1A1 Abrams" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-5.webp" alt="M1A1 Abrams" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">05 / ARMOR STUDY</span><span class="poster-tile-title">M1A1 Abrams</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-tall" type="button" data-title="SU-33 Flanker D" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-6.webp" alt="SU-33 Flanker D" width="1571" height="2000" loading="lazy" decoding="async">
+            <span class="poster-tile-index">06 / AIRFRAME</span><span class="poster-tile-title">SU-33 Flanker D</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-short" type="button" data-title="Chicco Promotional Poster" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-7.webp" alt="Chicco Promotional Poster" width="1920" height="2880" loading="lazy" decoding="async">
+            <span class="poster-tile-index">07 / BRAND SYSTEM</span><span class="poster-tile-title">Chicco Promotional Poster</span>
+        </button>
+        <button class="poster-card poster-tile poster-tile-wide" type="button" data-title="Masterpiece Sportswear Design Board" data-tools="Add tools" data-intent="Add creative intent">
+            <img src="/images/poster-showcase-8.webp" alt="Masterpiece Sportswear Design Board" width="1080" height="1920" loading="lazy" decoding="async">
+            <span class="poster-tile-index">08 / IDENTITY</span><span class="poster-tile-title">Masterpiece Sportswear Design Board</span>
+        </button>
+    </div>
+</section>
 
 <section id="videos">
     <span class="section-label">My Edits</span>
     <h2 class="section-title">Video Showcase</h2>
     <span class="section-coordinate" aria-hidden="true"></span>
 
-    <div class="projects-grid video-grid">
-
-        <div class="project-card video-card">
-            <video class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/video-showcase-1-poster.jpg">
-                <source src="/videos/video-showcase-1.mp4" type="video/mp4">
+    <div class="editor-suite">
+        <div class="editor-player-shell" id="demoreel-card">
+            <div class="editor-toolbar">
+                <span class="reel-readout">01 / MOTION STUDY — DEMOREEL</span>
+                <span class="editor-status" aria-live="polite">SOURCE / READY</span>
+            </div>
+            <video id="timeline-player" class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/demoreel-showcase-poster.jpg">
+                <source src="/videos/demoreel-showcase.mp4" type="video/mp4">
                 Your browser does not support HTML5 video playback.
             </video>
-            <div class="video-info">
-                <h3 class="project-title">Mitsubishi F-2A | War Thunder Edit</h3>
-                <div class="video-tags">
-                    <span class="tag">Capcut</span>
+            <div class="editor-player-caption">
+                <div>
+                    <h3 class="project-title" id="timeline-title">Demoreel</h3>
+                    <div class="video-tags"><span class="tag">Cinematics</span><span class="tag">Video Editing</span></div>
                 </div>
+                <button class="cinema-toggle btn-outline" type="button" aria-pressed="false" aria-label="Enter cinema mode">Cinema mode <span aria-hidden="true">⛶</span></button>
             </div>
         </div>
 
-        <div class="project-card video-card">
-            <video class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/video-showcase-2-poster.jpg">
-                <source src="/videos/video-showcase-2.mp4" type="video/mp4">
-                Your browser does not support HTML5 video playback.
-            </video>
-            <div class="video-info">
-                <h3 class="project-title">McDonnell Douglas - Mitsubishi F-15J | War Thunder Edit</h3>
-                <div class="video-tags">
-                    <span class="tag">Capcut</span>
-                </div>
-            </div>
+        <div class="editor-transport" aria-label="Video playback controls">
+            <button class="editor-step" type="button" data-clip-step="-1" aria-label="Play previous clip">PREV</button>
+            <span class="editor-timecode" aria-live="polite">00:00:00:00 <span> / </span> PORTFOLIO REEL</span>
+            <button class="editor-step" type="button" data-clip-step="1" aria-label="Play next clip">NEXT</button>
         </div>
 
-        <div class="project-card video-card">
-            <video class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/video-showcase-3-poster.jpg">
-                <source src="/videos/video-showcase-3.mp4" type="video/mp4">
-                Your browser does not support HTML5 video playback.
-            </video>
-            <div class="video-info">
-                <h3 class="project-title">Sukhoi Su-30 | War Thunder Edit</h3>
-                <div class="video-tags">
-                    <span class="tag">Capcut</span>
-                </div>
+        <div class="editor-timeline" role="group" aria-label="Choose a portfolio video">
+            <span class="timeline-ruler" aria-hidden="true">V1&nbsp;&nbsp;&nbsp;&nbsp; 00:00&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:45</span>
+            <div class="timeline-track">
+                <button class="timeline-clip is-active" type="button" data-title="Demoreel" data-src="/videos/demoreel-showcase.mp4" data-poster="/images/demoreel-showcase-poster.jpg" aria-pressed="true">
+                    <img src="/images/demoreel-showcase-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                    <span class="timeline-clip-name">Demoreel</span><span class="timeline-clip-meta">CINEMATICS / 01</span>
+                </button>
+                <button class="timeline-clip" type="button" data-title="Mitsubishi F-2A | War Thunder Edit" data-src="/videos/video-showcase-1.mp4" data-poster="/images/video-showcase-1-poster.jpg" aria-pressed="false">
+                    <img src="/images/video-showcase-1-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                    <span class="timeline-clip-name">Mitsubishi F-2A</span><span class="timeline-clip-meta">CAPCUT / 02</span>
+                </button>
+                <button class="timeline-clip" type="button" data-title="McDonnell Douglas - Mitsubishi F-15J | War Thunder Edit" data-src="/videos/video-showcase-2.mp4" data-poster="/images/video-showcase-2-poster.jpg" aria-pressed="false">
+                    <img src="/images/video-showcase-2-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                    <span class="timeline-clip-name">F-15J Peace Eagle</span><span class="timeline-clip-meta">CAPCUT / 03</span>
+                </button>
+                <button class="timeline-clip" type="button" data-title="Sukhoi Su-30 | War Thunder Edit" data-src="/videos/video-showcase-3.mp4" data-poster="/images/video-showcase-3-poster.jpg" aria-pressed="false">
+                    <img src="/images/video-showcase-3-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                    <span class="timeline-clip-name">Sukhoi Su-30</span><span class="timeline-clip-meta">CAPCUT / 04</span>
+                </button>
             </div>
         </div>
     </div>
 </section>
 
-<section id="contact" style="border-top: none; padding-top: 4rem;">
+<section id="contact">
+    <span class="section-coordinate" aria-hidden="true"></span>
 
                 <div class="contact-split-layout">
 
                     <div class="contact-left">
                         <h1 class="hero-title">GET IN <br> TOUCH</h1>
-                        <p class="hero-desc" style="margin-bottom: 2rem;">
+                        <p class="hero-desc contact-intro">
                             Have a question or want to work together? Fill out the form below.
                         </p>
 
@@ -457,7 +404,7 @@
                                 <textarea id="message" name="message" rows="6" required placeholder="How can I help you?"></textarea>
                             </div>
 
-                            <button type="submit" class="btn-solid" style="width: 100%; margin-top: 1rem; cursor: pointer; border: none; font-family: inherit;">Send Message</button>
+                            <button type="submit" class="btn-solid contact-submit">Send Message</button>
                         </form>
                     </div>
 
@@ -467,7 +414,7 @@
                             <a href="mailto:indieharry49@gmail.com">indieharry49@gmail.com</a>
                         </p>
 
-                        <h3 class="side-title" style="margin-top: 2rem;">Socials</h3>
+                        <h3 class="side-title contact-social-heading">Socials</h3>
                         <!-- Social SVG paths are inline and local; verify against current platform brand guides when updating. -->
                     <div class="side-social-links">
                             <a href="https://www.facebook.com/kristian.manalastas.1?rdid=CKX6pbhutJwmxq06&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1CWSYwoSuA%2F" target="_blank" rel="noopener noreferrer" class="social-item">
@@ -502,10 +449,11 @@
         </div>
         </main>
 
-        <div id="poster-modal" class="modal">
+        <div id="poster-modal" class="modal" aria-hidden="true">
         <div class="modal-backdrop"></div>
-        <div class="modal-content">
+        <div class="modal-content" tabindex="-1">
             <button class="close-modal" type="button" aria-label="Close poster details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></svg></button>
+            <button class="modal-previous" type="button" aria-label="Previous item">←</button>
             <div class="modal-image-container">
                 <img class="modal-img-blur" id="modal-img-bg" alt="">
                 <img id="modal-img" alt="">
@@ -513,7 +461,12 @@
             <div class="modal-info">
                 <h3 id="modal-title">Title</h3>
                 <p id="modal-desc"></p>
+                <dl class="modal-datums">
+                    <div><dt id="modal-spec-label-one">ISSUER</dt><dd id="modal-spec-value-one"></dd></div>
+                    <div><dt id="modal-spec-label-two">ISSUED</dt><dd id="modal-spec-value-two"></dd></div>
+                </dl>
             </div>
+            <button class="modal-next" type="button" aria-label="Next item">→</button>
         </div>
     </div>
 

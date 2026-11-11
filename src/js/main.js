@@ -2,11 +2,21 @@ import './interactions.js';
 import { initMotion } from './motion.js';
 import { initScene } from './scene.js';
 import { initTheme } from './theme.js';
+import { initVideoTimeline } from './timeline.js';
+import { initCertificateLedger } from './certificates.js';
+import { initPosterBento } from './posters.js';
+import { initRepositories } from './repositories.js';
+import { initScroll } from './scroll.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 initTheme();
-initMotion();
+initScroll();
 initScene();
+initMotion();
+initVideoTimeline();
+initCertificateLedger();
+initPosterBento();
+initRepositories();
 
 const refreshScrollTriggers = () => {
     window.requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -25,12 +35,3 @@ const refreshAfterMediaChange = event => {
 document.addEventListener('load', refreshAfterMediaChange, true);
 document.addEventListener('loadedmetadata', refreshAfterMediaChange, true);
 document.addEventListener('error', refreshAfterMediaChange, true);
-
-const repositoriesTrack = document.querySelector('.horizontal-projects-track');
-if (repositoriesTrack) {
-    new MutationObserver(refreshScrollTriggers).observe(repositoriesTrack, {
-        childList: true,
-        subtree: true,
-        characterData: true
-    });
-}
