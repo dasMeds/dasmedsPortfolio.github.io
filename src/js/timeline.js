@@ -7,12 +7,25 @@ export function initVideoTimeline() {
     const title = document.querySelector('#timeline-title');
     const status = document.querySelector('.editor-status');
     const timecode = document.querySelector('.editor-timecode');
+    const timelineTrack = document.querySelector('.timeline-track');
+    const playhead = document.querySelector('.timeline-playhead');
     const playerShell = document.querySelector('.editor-player-shell');
     const cinemaToggle = document.querySelector('.cinema-toggle');
     if (!player || !clips.length || !title || !playerShell || !cinemaToggle) return;
 
     let activeIndex = 0;
     let focusBeforeCinema;
+    const movePlayhead = !reducedMotion && playhead
+        ? gsap.quickTo(playhead, 'x', { duration: 0.1, ease: 'none' })
+        : null;
+
+    const updatePlayhead = () => {
+        if (!timelineTrack || !playhead || !Number.isFinite(player.duration) || player.duration <= 0) return;
+        const progress = Math.max(0, Math.min(1, player.currentTime / player.duration));
+        const distance = Math.max(0, timelineTrack.clientWidth - playhead.offsetWidth);
+        if (movePlayhead) movePlayhead(progress * distance);
+        else gsap.set(playhead, { x: progress * distance });
+    };
 
     const formatTimecode = seconds => {
         const wholeSeconds = Math.floor(seconds || 0);
@@ -45,6 +58,7 @@ export function initVideoTimeline() {
         player.autoplay = isDemoreel;
         player.preload = isDemoreel ? 'metadata' : 'auto';
         player.controls = true;
+        updatePlayhead();
 
         if (status) status.textContent = `SOURCE / ${String(index + 1).padStart(2, '0')} — ${isDemoreel ? 'AUTO' : 'ON DEMAND'}`;
         if (player.currentSrc.endsWith(source) && !player.paused) return;
@@ -89,7 +103,11 @@ export function initVideoTimeline() {
 
     player.addEventListener('timeupdate', () => {
         if (timecode) timecode.firstChild.textContent = `${formatTimecode(player.currentTime)} `;
+        updatePlayhead();
     });
+    player.addEventListener('loadedmetadata', updatePlayhead);
+    player.addEventListener('durationchange', updatePlayhead);
+    window.addEventListener('resize', updatePlayhead, { passive: true });
 
     player.addEventListener('error', () => {
         if (status) status.textContent = 'SOURCE / LOAD ERROR';

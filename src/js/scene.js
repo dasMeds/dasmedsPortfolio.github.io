@@ -12,6 +12,10 @@ export function initScene() {
     canvas.setAttribute('aria-hidden', 'true');
     // The canvas sits behind page content and stays decorative for assistive technology.
     document.body.prepend(canvas);
+    const radarPing = document.createElement('div');
+    radarPing.className = 'orb-radar-ping';
+    radarPing.setAttribute('aria-hidden', 'true');
+    document.body.append(radarPing);
 
     let renderer;
     try {
@@ -103,7 +107,6 @@ export function initScene() {
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.updateProjectionMatrix();
-        ScrollTrigger.refresh();
         if (reducedMotion) renderStill();
     };
 
@@ -212,21 +215,55 @@ export function initScene() {
         });
     }, { once: true });
     window.addEventListener('portfolio:section-change', event => {
-        if (reducedMotion || document.hidden) return;
+        const section = event.detail?.id || 'home';
         const styles = getComputedStyle(document.documentElement);
         const base = new THREE.Color(styles.getPropertyValue('--orb-primary').trim());
         const accent = new THREE.Color(styles.getPropertyValue('--accent-color').trim());
-        const isVisualSection = ['posters', 'videos'].includes(event.detail?.id);
+        const choreography = {
+            home: { scale: 1.02, speed: 0.9 },
+            about: { scale: 0.96, speed: 0.76 },
+            experience: { scale: 1, speed: 0.88 },
+            certifications: { scale: 1.04, speed: 0.82 },
+            'github-projects': { scale: 0.98, speed: 0.94 },
+            posters: { scale: 1.08, speed: 1.12 },
+            videos: { scale: 1.05, speed: 1.08 },
+            contact: { scale: 0.97, speed: 0.74 }
+        };
+        const sectionMotion = choreography[section] || choreography.home;
+        const isVisualSection = ['posters', 'videos'].includes(section);
         const target = isVisualSection ? accent : base;
+        if (reducedMotion || document.hidden) {
+            outer.material.color.copy(target);
+            orb.scale.setScalar(sectionMotion.scale);
+            if (reducedMotion) renderStill();
+            return;
+        }
         gsap.killTweensOf(outer.material.color);
-        gsap.killTweensOf(rotationTween);
+        gsap.killTweensOf(orb.scale);
         gsap.to(outer.material.color, {
             r: target.r, g: target.g, b: target.b,
             duration: 0.7
         });
+        gsap.to(orb.scale, {
+            x: sectionMotion.scale,
+            y: sectionMotion.scale,
+            z: sectionMotion.scale,
+            duration: 0.7,
+            ease: 'power2.out'
+        });
         gsap.to(rotationTween, {
-            timeScale: isVisualSection ? 1.12 : 0.88,
+            timeScale: sectionMotion.speed,
             duration: 0.7
+        });
+        gsap.fromTo(radarPing, {
+            scale: 0.24,
+            opacity: 0.34
+        }, {
+            scale: 1.55,
+            opacity: 0,
+            duration: 0.85,
+            ease: 'power2.out',
+            overwrite: true
         });
     });
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -235,6 +272,7 @@ export function initScene() {
         scrollTween?.kill();
         rotationTween?.kill();
         renderer.dispose();
+        radarPing.remove();
         outer.geometry.dispose();
         inner.geometry.dispose();
         outer.material.dispose();

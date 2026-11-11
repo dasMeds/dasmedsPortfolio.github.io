@@ -304,6 +304,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const waveform = contactForm?.querySelector('.waveform-bars');
+    const waveformBars = waveform ? Array.from(waveform.querySelectorAll('i')) : [];
+    if (waveformBars.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        contactForm.addEventListener('input', event => {
+            const target = event.target;
+            if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+            const value = target.value;
+            waveformBars.forEach((bar, index) => {
+                const sample = value.charCodeAt((index * 7) % Math.max(value.length, 1)) || 0;
+                const wave = value.length ? 0.18 + ((sample + index * 19) % 83) / 100 : 0.18;
+                gsap.to(bar, {
+                    scaleY: wave,
+                    opacity: value.length ? 0.42 + wave * 0.55 : 0.35,
+                    duration: 0.18,
+                    overwrite: true
+                });
+            });
+        });
+    }
+
 });
 
 /* mobile logic */
@@ -350,6 +370,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.style.setProperty('--mag-x', '0px');
                 button.style.setProperty('--mag-y', '0px');
             });
+        });
+    }
+
+    const aboutSection = document.querySelector('#about');
+    const aboutGrid = aboutSection?.querySelector('.about-grid');
+    const stackGrid = aboutSection?.querySelector('.stack-grid');
+    if (aboutGrid && stackGrid) {
+        const dossier = document.createElement('div');
+        dossier.className = 'pilot-dossier';
+        const dossierInner = document.createElement('div');
+        dossierInner.className = 'pilot-dossier-inner';
+        const profileFace = document.createElement('div');
+        profileFace.className = 'dossier-face dossier-profile';
+        const stackFace = document.createElement('div');
+        stackFace.className = 'dossier-face dossier-stack';
+        const flipButton = document.createElement('button');
+        flipButton.className = 'dossier-toggle';
+        flipButton.type = 'button';
+        flipButton.textContent = 'View stack loadout';
+        flipButton.setAttribute('aria-pressed', 'false');
+        flipButton.setAttribute('aria-label', 'Show technical stack');
+
+        aboutGrid.before(dossier);
+        dossier.append(dossierInner, flipButton);
+        dossierInner.append(profileFace, stackFace);
+        profileFace.append(aboutGrid);
+        stackFace.append(stackGrid);
+
+        const setFlipped = flipped => {
+            dossier.classList.toggle('is-flipped', flipped);
+            flipButton.setAttribute('aria-pressed', String(flipped));
+            flipButton.textContent = flipped ? 'Return to pilot ID' : 'View stack loadout';
+            flipButton.setAttribute('aria-label', flipped ? 'Show pilot profile' : 'Show technical stack');
+            profileFace.setAttribute('aria-hidden', String(flipped));
+            stackFace.setAttribute('aria-hidden', String(!flipped));
+        };
+        flipButton.addEventListener('click', () => {
+            setFlipped(flipButton.getAttribute('aria-pressed') !== 'true');
         });
     }
 
