@@ -3,12 +3,14 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { PNG } from 'pngjs';
 import { chromium } from 'playwright';
 
-const origin = 'http://127.0.0.1:4173';
+const origin = process.env.ORB_VISIBILITY_URL || 'http://localhost:8000';
 const thresholdRatio = 0.0002;
-const server = spawn('php', ['-S', '127.0.0.1:4173', '-t', 'public'], {
-    stdio: 'ignore',
-    windowsHide: true
-});
+const server = process.env.ORB_VISIBILITY_URL
+    ? null
+    : spawn('php', ['-S', '127.0.0.1:8000', '-t', 'public', 'public/router.php'], {
+        stdio: 'ignore',
+        windowsHide: true
+    });
 
 let browser;
 
@@ -88,5 +90,5 @@ try {
     console.log(`Orb visibility check passed for ${results.length} theme/viewport/section combinations.`);
 } finally {
     await browser?.close();
-    server.kill();
+    server?.kill();
 }

@@ -1,3 +1,23 @@
+<?php
+declare(strict_types=1);
+
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+if ($requestPath === '/api/contact') {
+    require __DIR__ . '/../includes/contact-handler.php';
+    exit;
+}
+if ($requestPath === '/health') {
+    header('Content-Type: application/json');
+    echo '{"status":"ok"}';
+    exit;
+}
+if ($requestPath !== '/' && $requestPath !== '/index.php') {
+    http_response_code(404);
+    echo 'Not found';
+    exit;
+}
+?>
 <?php require __DIR__ . '/../includes/header.php'; ?>
 <?php require __DIR__ . '/../includes/nav.php'; ?>
 <?php require __DIR__ . '/../includes/orb.php'; ?>

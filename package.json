@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "php -S 0.0.0.0:8000 -t public",
+    "dev": "php -S 0.0.0.0:8000 -t public public/router.php",
     "build": "vite build",
     "test:orb-visibility": "node scripts/orb-visibility.mjs"
   },
