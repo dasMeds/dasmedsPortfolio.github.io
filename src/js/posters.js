@@ -3,159 +3,102 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const mod = (value, divisor) => ((value % divisor) + divisor) % divisor;
-
 export function initPosterBento() {
     const section = document.querySelector('#posters');
-    const bento = section?.querySelector('.poster-bento');
-    const ring = bento?.querySelector('.poster-ring');
-    const tiles = [...(ring?.querySelectorAll('.poster-tile') ?? [])];
-    if (!section || !bento || !ring || !tiles.length) return;
+    const gallery = section?.querySelector('.poster-ring');
+    const posters = [...(gallery?.querySelectorAll('.poster-tile') ?? [])];
+    if (!section || !gallery || !posters.length) return;
 
-    const dataPlate = document.createElement('aside');
-    dataPlate.className = 'poster-data-plate';
-    dataPlate.setAttribute('aria-hidden', 'true');
-    dataPlate.innerHTML = `
-        <span class="poster-plate-kicker">TARGET DATA / <span class="poster-plate-index">01</span></span>
-        <strong class="poster-plate-title"></strong>
-        <span class="poster-plate-meta"><span>TOOLS</span><span class="poster-plate-tools"></span></span>
-        <span class="poster-plate-meta"><span>INTENT</span><span class="poster-plate-intent"></span></span>
-    `;
-    bento.append(dataPlate);
-
-    const plateTitle = dataPlate.querySelector('.poster-plate-title');
-    const plateTools = dataPlate.querySelector('.poster-plate-tools');
-    const plateIntent = dataPlate.querySelector('.poster-plate-intent');
-    const plateIndex = dataPlate.querySelector('.poster-plate-index');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const simpleLayout = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
-    const scaleXTo = tiles.map(tile => gsap.quickTo(tile, 'scaleX', {
-        duration: 0.24,
-        ease: 'power2.out'
-    }));
-    const scaleYTo = tiles.map(tile => gsap.quickTo(tile, 'scaleY', {
-        duration: 0.24,
-        ease: 'power2.out'
-    }));
-    let activeIndex = -1;
-    let dragAngle = 0;
-    let scrollAngle = 0;
-    let pointerStartX = 0;
-    let dragStartAngle = 0;
-    let activePointerId = null;
-    let dragging = false;
-    let suppressClickUntil = 0;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    let activeIndex = 0;
 
-    const typeText = (element, value, duration = 0.32) => {
-        if (reducedMotion) {
-            element.textContent = value;
-            return;
-        }
-        const progress = { value: 0 };
-        gsap.killTweensOf(element);
-        gsap.to(progress, {
-            value: value.length,
-            duration,
-            ease: 'none',
-            onUpdate: () => {
-                element.textContent = value.slice(0, Math.floor(progress.value));
-            },
-            onComplete: () => {
-                element.textContent = value;
-            }
+    posters.forEach((poster, index) => {
+        poster.style.setProperty('--poster-tilt', `${((index % 5) - 2) * 0.6}deg`);
+        poster.dataset.parallaxDepth = String((index % 3) + 1);
+    });
+
+    const showPoster = index => {
+        activeIndex = (index + posters.length) % posters.length;
+        const poster = posters[activeIndex];
+        posters.forEach((item, itemIndex) => {
+            item.classList.toggle('is-current', itemIndex === activeIndex);
+        });
+        poster.focus({ preventScroll: true });
+        poster.scrollIntoView({
+            behavior: reducedMotion ? 'auto' : 'smooth',
+            block: 'center',
+            inline: 'nearest'
         });
     };
 
-    const updateFront = angle => {
-        const nextIndex = tiles.reduce((front, _, index) => {
-            const distance = Math.min(
-                mod(index * 360 / tiles.length + angle, 360),
-                mod(-(index * 360 / tiles.length + angle), 360)
-            );
-            return distance < front.distance ? { index, distance } : front;
-        }, { index: 0, distance: Infinity }).index;
-
-        if (activeIndex === nextIndex) return;
-        activeIndex = nextIndex;
-        tiles.forEach((tile, index) => {
-            const isFront = index === nextIndex;
-            tile.classList.toggle('is-front', isFront);
-            const scale = isFront ? 1.08 : 0.78;
-            scaleXTo[index](scale);
-            scaleYTo[index](scale);
+    section.querySelectorAll('[data-poster-step]').forEach(button => {
+        button.addEventListener('click', () => {
+            showPoster(activeIndex + Number(button.dataset.posterStep));
         });
+    });
 
-        const card = tiles[nextIndex];
-        plateIndex.textContent = String(nextIndex + 1).padStart(2, '0');
-        typeText(plateTitle, card.dataset.title || 'Untitled study');
-        typeText(plateTools, card.dataset.tools || 'TOOLS / TBD');
-        typeText(plateIntent, card.dataset.intent || 'INTENT / TBD');
-    };
-
-    const setRotation = () => {
-        const totalAngle = scrollAngle + dragAngle;
-        ring.style.setProperty('--poster-scroll-angle', `${scrollAngle}deg`);
-        ring.style.setProperty('--poster-drag-angle', `${dragAngle}deg`);
-        updateFront(totalAngle);
-    };
-
-    setRotation();
-
-    if (!reducedMotion && !simpleLayout) {
-        const scrollProgress = { angle: 0 };
-        gsap.to(scrollProgress, {
-            angle: -360,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: section,
-                start: 'top 85%',
-                end: 'bottom 15%',
-                scrub: 1,
-                invalidateOnRefresh: true,
-            },
-            onUpdate: () => {
-                scrollAngle = scrollProgress.angle;
-                setRotation();
-            }
-        });
-
-        if (window.matchMedia('(pointer: fine)').matches) {
-            bento.addEventListener('pointerdown', event => {
-                if (!event.isPrimary || event.button !== 0) return;
-                activePointerId = event.pointerId;
-                pointerStartX = event.clientX;
-                dragStartAngle = dragAngle;
-                dragging = false;
+    posters.forEach((poster, index) => {
+        poster.addEventListener('focus', () => {
+            activeIndex = index;
+            posters.forEach((item, itemIndex) => {
+                item.classList.toggle('is-current', itemIndex === index);
             });
+        });
+    });
 
-            bento.addEventListener('pointermove', event => {
-                if (event.pointerId !== activePointerId) return;
-                const delta = event.clientX - pointerStartX;
-                if (!dragging && Math.abs(delta) < 5) return;
-                dragging = true;
-                bento.classList.add('is-dragging');
-                dragAngle = dragStartAngle + delta * 0.22;
-                setRotation();
-            });
-
-            const endDrag = event => {
-                if (event.pointerId !== activePointerId) return;
-                if (dragging) suppressClickUntil = performance.now() + 350;
-                activePointerId = null;
-                dragging = false;
-                bento.classList.remove('is-dragging');
-            };
-            bento.addEventListener('pointerup', endDrag);
-            bento.addEventListener('pointercancel', endDrag);
-            bento.addEventListener('click', event => {
-                if (performance.now() < suppressClickUntil) {
-                    event.preventDefault();
-                    event.stopPropagation();
+    if (!reducedMotion) {
+        gsap.utils.toArray('.poster-tile').forEach((poster, index) => {
+            gsap.to(poster, {
+                '--poster-parallax': `${(index % 3 - 1) * -24}px`,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: poster,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
                 }
-            }, true);
-        }
-    } else {
-        tiles.forEach(tile => tile.classList.remove('is-front'));
-        dataPlate.hidden = true;
+            });
+        });
+        gsap.utils.toArray('.poster-note-arrow path').forEach(path => {
+            const length = path.getTotalLength();
+            gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+            gsap.to(path, {
+                strokeDashoffset: 0,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: path.closest('.poster-tile'),
+                    start: 'top 80%',
+                    end: 'center center',
+                    scrub: true
+                }
+            });
+        });
+    }
+
+    if (finePointer && !reducedMotion) {
+        const loupe = document.createElement('div');
+        loupe.className = 'poster-loupe';
+        loupe.setAttribute('aria-hidden', 'true');
+        document.body.append(loupe);
+
+        posters.forEach(poster => {
+            const image = poster.querySelector('img');
+            if (!image) return;
+            poster.addEventListener('pointerenter', () => {
+                loupe.style.backgroundImage = `url("${image.currentSrc || image.src}")`;
+                loupe.classList.add('is-visible');
+            });
+            poster.addEventListener('pointermove', event => {
+                const bounds = image.getBoundingClientRect();
+                if (!bounds.width || !bounds.height) return;
+                const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+                const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+                loupe.style.left = `${event.clientX + 18}px`;
+                loupe.style.top = `${event.clientY + 18}px`;
+                loupe.style.backgroundPosition = `${x * 100}% ${y * 100}%`;
+            });
+            poster.addEventListener('pointerleave', () => loupe.classList.remove('is-visible'));
+        });
     }
 }

@@ -1,64 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <title>dasmeds | Home</title>
-    <script>
-        try {
-            if (localStorage.getItem('dasmeds-theme') === 'dark') {
-                document.documentElement.dataset.theme = 'dark';
-            }
-        } catch (error) {
-            console.warn('Saved theme could not be read; using the light theme.', error);
-        }
-    </script>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body class="continuous-portfolio">
-
-    <nav>
-        <div class="container nav-inner">
-            <a href="#home" class="logo">DASMEDS<span>.</span></a>
-            <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="nav-links" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="nav-links" id="nav-links">
-                <a href="#home">Home</a>
-                <a href="#about">About</a>
-                <a href="#experience">Experience</a>
-                <a href="#certifications">Certifications</a>
-                <a href="#github-projects">Repositories</a>
-                <a href="#posters">Posters</a>
-                <a href="#videos">Videos</a>
-                <a class="mobile-contact-link" href="#contact">Contact</a>
-            </div>
-            <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"/></svg>
-                <span class="theme-toggle-label">Dark mode</span>
-            </button>
-            <a href="#contact" class="btn-outline">Get In Touch</a>
-        </div>
-    </nav>
-
-    <div class="ambient-orbit" aria-hidden="true"></div>
-    <div class="custom-cursor" aria-hidden="true"></div>
-    <aside class="scroll-altimeter" aria-hidden="true">
-        <span class="altimeter-section" id="altimeter-section">FLIGHT DECK</span>
-        <span class="altimeter-value" id="altimeter-value">000</span>
-        <span class="altimeter-rail"><span id="altimeter-fill"></span></span>
-        <span class="altimeter-unit">ALT / %</span>
-    </aside>
-
-    <!-- Adjust the SVG path coordinates here to reshape the continuous scroll guide. -->
-    <svg class="scroll-guide" viewBox="0 0 24 720" preserveAspectRatio="none" aria-hidden="true">
-        <path class="scroll-guide-track" d="M12 12V708"/>
-        <circle class="scroll-guide-halo" cx="12" cy="12" r="10"/>
-        <circle class="scroll-guide-orb" cx="12" cy="12" r="4"/>
-    </svg>
+<?php require __DIR__ . '/../includes/header.php'; ?>
+<?php require __DIR__ . '/../includes/nav.php'; ?>
+<?php require __DIR__ . '/../includes/orb.php'; ?>
 
     <div id="page-wrapper">
         <main class="container scroll-story continuous-portfolio-content">
@@ -168,15 +110,23 @@
         <div><span class="section-label">Flight log / credentials</span><h2 class="section-title">Certifications</h2></div>
         <p class="section-coordinate">[ 03 / CERTS — <span id="cert-total">--</span> LOGGED ]</p>
     </div>
+    <p class="cert-summary" id="cert-summary"></p>
 
     <div class="cert-board-toolbar">
         <div class="cert-filters" id="cert-filters" role="group" aria-label="Filter certifications"></div>
-        <button type="button" class="cert-sort" id="cert-sort-toggle" aria-pressed="false">OLDEST FIRST</button>
+        <div class="cert-toolbar-actions">
+            <div class="cert-view-toggle" role="group" aria-label="Certification layout">
+                <button type="button" data-cert-view="route" aria-pressed="true">ROUTE</button>
+                <button type="button" data-cert-view="board" aria-pressed="false">BOARD</button>
+            </div>
+            <button type="button" class="cert-sort" id="cert-sort-toggle" aria-pressed="false">OLDEST FIRST</button>
+        </div>
     </div>
 
-    <div class="cert-table-wrap">
+    <div class="cert-route" id="cert-route-view" aria-label="Certification route"></div>
+    <div class="cert-table-wrap" id="cert-board-view" hidden>
         <table class="cert-table" aria-label="Certification flight log">
-            <thead><tr><th scope="col">IDX</th><th scope="col" aria-sort="ascending">DATE</th><th scope="col">CREDENTIAL</th><th scope="col">ISSUER</th><th scope="col">STATUS</th></tr></thead>
+            <thead><tr><th scope="col">IDX</th><th scope="col" aria-sort="ascending">DATE</th><th scope="col">TRACK</th><th scope="col">CREDENTIAL</th><th scope="col">ISSUER</th><th scope="col">STATUS</th></tr></thead>
             <tbody id="cert-rows"></tbody>
         </table>
     </div>
@@ -190,61 +140,34 @@
     </div>
 
     <div class="repo-grid">
-        <article class="repo-card" data-repo="House-of-Origami">
-            <div class="repo-emblem" data-call-sign="PAPER TIGER" data-name="House of Origami" aria-hidden="true"></div>
-            <div class="repo-identity"><span class="repo-callsign">CALLSIGN / PAPER TIGER</span><h3 class="project-title">House-of-Origami</h3>
-            <p class="project-desc repo-objective">An HTML-based project repository.</p>
-            </div><span class="repo-loadout-label">LOADOUT</span>
-            <div class="video-tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
-            <div class="repo-terminal">
-                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/House-of-Origami.git</code>
-                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/House-of-Origami.git" aria-label="Copy clone command for House-of-Origami">COPY</button>
+        <?php foreach ($portfolioData['repositories'] as $repositoryIndex => $repository):
+            $name = htmlspecialchars($repository['name'], ENT_QUOTES, 'UTF-8');
+            $callSign = htmlspecialchars($repository['callSign'], ENT_QUOTES, 'UTF-8');
+            $objective = htmlspecialchars($repository['objective'], ENT_QUOTES, 'UTF-8');
+            $briefingId = 'repo-briefing-' . ($repositoryIndex + 1);
+            $repoUrl = 'https://github.com/dasMeds/' . rawurlencode($repository['name']);
+            $cloneCommand = 'git clone ' . $repoUrl . '.git';
+        ?>
+        <article class="repo-card" data-repo="<?= $name ?>">
+            <button class="repo-row-toggle" type="button" aria-expanded="false" aria-controls="<?= $briefingId ?>">
+            <span class="repo-index" aria-hidden="true"><?= sprintf('%02d', $repositoryIndex + 1) ?></span>
+            <span class="repo-emblem" data-call-sign="<?= $callSign ?>" data-name="<?= $name ?>" aria-hidden="true"></span>
+            <span class="repo-identity"><span class="repo-callsign">CALLSIGN / <?= $callSign ?></span><span class="project-title"><?= $name ?></span>
+            <span class="project-desc repo-objective"><?= $objective ?></span>
+            </span><span class="repo-loadout-label">LOADOUT</span>
+            <span class="video-tags"><?php foreach ($repository['technologies'] as $technology): ?><span class="tag"><?= htmlspecialchars($technology, ENT_QUOTES, 'UTF-8') ?></span><?php endforeach; ?></span>
+            </button>
+            <div class="repo-briefing" id="<?= $briefingId ?>" aria-hidden="true">
+                <p class="repo-full-description"><?= $objective ?></p>
+                <div class="repo-terminal">
+                    <code class="repo-clone-command">$ <?= htmlspecialchars($cloneCommand, ENT_QUOTES, 'UTF-8') ?></code>
+                    <button class="repo-copy" type="button" data-copy-text="<?= htmlspecialchars($cloneCommand, ENT_QUOTES, 'UTF-8') ?>" aria-label="Copy clone command for <?= $name ?>"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3H3v8h2"/></svg><span>COPY</span></button>
+                </div>
+                <span class="repo-copy-status" aria-live="polite"></span>
+                <a href="<?= htmlspecialchars($repoUrl, ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noreferrer" class="btn-outline">View Repo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></a>
             </div>
-            <span class="repo-copy-status" aria-live="polite"></span>
-            <a href="https://github.com/dasMeds/House-of-Origami" target="_blank" rel="noreferrer" class="btn-outline">View Repo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></a>
         </article>
-
-        <article class="repo-card" data-repo="Currency-Exchange-Locator">
-            <div class="repo-emblem" data-call-sign="WAYPOINT" data-name="Currency Exchange Locator" aria-hidden="true"></div>
-            <div class="repo-identity"><span class="repo-callsign">CALLSIGN / WAYPOINT</span><h3 class="project-title">Currency-Exchange-Locator</h3>
-            <p class="project-desc repo-objective">A desktop application developed for a Data Structures and Algorithms course using Java and Java Swing.</p>
-            </div><span class="repo-loadout-label">LOADOUT</span>
-            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
-            <div class="repo-terminal">
-                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Currency-Exchange-Locator.git</code>
-                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Currency-Exchange-Locator.git" aria-label="Copy clone command for Currency-Exchange-Locator">COPY</button>
-            </div>
-            <span class="repo-copy-status" aria-live="polite"></span>
-            <a href="https://github.com/dasMeds/Currency-Exchange-Locator" target="_blank" rel="noreferrer" class="btn-outline">View Repo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></a>
-        </article>
-
-        <article class="repo-card" data-repo="Global-Currency-App">
-            <div class="repo-emblem" data-call-sign="MERIDIAN" data-name="Global Currency App" aria-hidden="true"></div>
-            <div class="repo-identity"><span class="repo-callsign">CALLSIGN / MERIDIAN</span><h3 class="project-title">Global-Currency-App</h3>
-            <p class="project-desc repo-objective">A dark-themed Java Swing application for exploring over 180 world currencies.</p>
-            </div><span class="repo-loadout-label">LOADOUT</span>
-            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
-            <div class="repo-terminal">
-                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Global-Currency-App.git</code>
-                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Global-Currency-App.git" aria-label="Copy clone command for Global-Currency-App">COPY</button>
-            </div>
-            <span class="repo-copy-status" aria-live="polite"></span>
-            <a href="https://github.com/dasMeds/Global-Currency-App" target="_blank" rel="noreferrer" class="btn-outline">View Repo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></a>
-        </article>
-
-        <article class="repo-card" data-repo="Philippine-Festivals-Project">
-            <div class="repo-emblem" data-call-sign="ARCHIPELAGO" data-name="Philippine Festivals Project" aria-hidden="true"></div>
-            <div class="repo-identity"><span class="repo-callsign">CALLSIGN / ARCHIPELAGO</span><h3 class="project-title">Philippine-Festivals-Project</h3>
-            <p class="project-desc repo-objective">A custom dark-themed Java Swing application designed to catalog cultural events across the Philippines.</p>
-            </div><span class="repo-loadout-label">LOADOUT</span>
-            <div class="video-tags"><span class="tag">Java</span><span class="tag">Swing</span></div>
-            <div class="repo-terminal">
-                <code class="repo-clone-command">$ git clone https://github.com/dasMeds/Philippine-Festivals-Project.git</code>
-                <button class="repo-copy" type="button" data-copy-text="git clone https://github.com/dasMeds/Philippine-Festivals-Project.git" aria-label="Copy clone command for Philippine-Festivals-Project">COPY</button>
-            </div>
-            <span class="repo-copy-status" aria-live="polite"></span>
-            <a href="https://github.com/dasMeds/Philippine-Festivals-Project" target="_blank" rel="noreferrer" class="btn-outline">View Repo <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></a>
-        </article>
+        <?php endforeach; ?>
     </div>
 </section>
 
@@ -254,39 +177,34 @@
     <span class="section-coordinate" aria-hidden="true"></span>
     <div class="poster-bento" aria-label="Poster design gallery">
       <div class="poster-ring">
-        <button class="poster-card poster-tile poster-tile-feature" type="button" data-title="F-2 Viper Zero" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-1.webp" alt="F-2 Viper Zero" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">01 / FLIGHT STUDY</span><span class="poster-tile-title">F-2 Viper Zero</span>
+        <?php foreach ($portfolioData['posters'] as $index => $poster):
+            $title = htmlspecialchars($poster['title'], ENT_QUOTES, 'UTF-8');
+            $note = trim($poster['note'] ?? '');
+        ?>
+        <button class="poster-card poster-tile <?= htmlspecialchars($poster['class'], ENT_QUOTES, 'UTF-8') ?>" type="button"
+            data-title="<?= $title ?>"
+            data-tools="<?= htmlspecialchars($poster['tools'], ENT_QUOTES, 'UTF-8') ?>"
+            data-intent="<?= htmlspecialchars($poster['intent'], ENT_QUOTES, 'UTF-8') ?>"
+            <?php if ($note !== ''): ?>data-note="<?= htmlspecialchars($note, ENT_QUOTES, 'UTF-8') ?>"<?php endif; ?>>
+            <img src="<?= htmlspecialchars($poster['image'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= $title ?>" width="<?= (int) $poster['width'] ?>" height="<?= (int) $poster['height'] ?>" loading="lazy" decoding="async">
+            <span class="poster-tile-index"><?= sprintf('%02d', $index + 1) ?> / <?= htmlspecialchars($poster['category'], ENT_QUOTES, 'UTF-8') ?></span><span class="poster-tile-title"><?= $title ?></span>
+            <?php if ($note !== ''): ?>
+            <aside class="poster-note">
+                <svg class="poster-note-arrow" viewBox="0 0 120 48" aria-hidden="true"><path d="M4 35C34 4 77 7 110 21m0 0-17-7m17 7-14 10"/></svg>
+                <span><?= htmlspecialchars($note, ENT_QUOTES, 'UTF-8') ?></span>
+            </aside>
+            <?php endif; ?>
         </button>
-        <button class="poster-card poster-tile poster-tile-tall" type="button" data-title="F-2 Viper Zero Grounded" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-2.webp" alt="F-2 Viper Zero Grounded" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">02 / FLIGHT STUDY</span><span class="poster-tile-title">F-2 Viper Zero Grounded</span>
-        </button>
-        <button class="poster-card poster-tile" type="button" data-title="F-15J Peace Eagle" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-3.webp" alt="F-15J Peace Eagle" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">03 / AIRFRAME</span><span class="poster-tile-title">F-15J Peace Eagle</span>
-        </button>
-        <button class="poster-card poster-tile poster-tile-wide" type="button" data-title="Above You Behind You" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-4.webp" alt="Above You Behind You" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">04 / COMPOSITION</span><span class="poster-tile-title">Above You Behind You</span>
-        </button>
-        <button class="poster-card poster-tile poster-tile-short" type="button" data-title="M1A1 Abrams" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-5.webp" alt="M1A1 Abrams" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">05 / ARMOR STUDY</span><span class="poster-tile-title">M1A1 Abrams</span>
-        </button>
-        <button class="poster-card poster-tile poster-tile-tall" type="button" data-title="SU-33 Flanker D" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-6.webp" alt="SU-33 Flanker D" width="1571" height="2000" loading="lazy" decoding="async">
-            <span class="poster-tile-index">06 / AIRFRAME</span><span class="poster-tile-title">SU-33 Flanker D</span>
-        </button>
-        <button class="poster-card poster-tile poster-tile-short" type="button" data-title="Chicco Promotional Poster" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-7.webp" alt="Chicco Promotional Poster" width="1920" height="2880" loading="lazy" decoding="async">
-            <span class="poster-tile-index">07 / BRAND SYSTEM</span><span class="poster-tile-title">Chicco Promotional Poster</span>
-        </button>
-        <button class="poster-card poster-tile poster-tile-wide" type="button" data-title="Masterpiece Sportswear Design Board" data-tools="TOOLS / TBD" data-intent="INTENT / TBD">
-            <img src="/images/poster-showcase-8.webp" alt="Masterpiece Sportswear Design Board" width="1080" height="1920" loading="lazy" decoding="async">
-            <span class="poster-tile-index">08 / IDENTITY</span><span class="poster-tile-title">Masterpiece Sportswear Design Board</span>
-        </button>
+        <?php endforeach; ?>
       </div>
+    </div>
+    <div class="poster-showcase-controls" aria-label="Poster navigation">
+        <button type="button" data-poster-step="-1" aria-label="Show previous poster">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 4.5-5.5 5.5 5.5 5.5M7.5 10h8"/></svg>
+        </button>
+        <button type="button" data-poster-step="1" aria-label="Show next poster">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 4.5 5.5 5.5-5.5 5.5M12.5 10h-8"/></svg>
+        </button>
     </div>
 </section>
 
@@ -302,8 +220,8 @@
                 <span class="editor-status" aria-live="polite">SOURCE / READY</span>
             </div>
             <div class="signal-frame">
-                <video id="timeline-player" class="portfolio-video" controls autoplay muted loop playsinline preload="metadata" poster="/images/demoreel-showcase-poster.jpg">
-                    <source src="/videos/demoreel-showcase.mp4" type="video/mp4">
+                <video id="timeline-player" class="portfolio-video" autoplay muted loop playsinline preload="metadata" poster="<?= htmlspecialchars($portfolioData['videos'][0]['poster'], ENT_QUOTES, 'UTF-8') ?>">
+                    <source src="<?= htmlspecialchars($portfolioData['videos'][0]['src'], ENT_QUOTES, 'UTF-8') ?>" type="video/mp4">
                     Your browser does not support HTML5 video playback.
                 </video>
                 <span class="signal-letterbox signal-letterbox-top" aria-hidden="true"></span>
@@ -312,14 +230,36 @@
                 <span class="signal-timecode" aria-hidden="true">00:00:00:00</span>
                 <span class="signal-brackets" aria-hidden="true"></span>
                 <span class="signal-static" aria-hidden="true"></span>
+                <button class="video-tap-to-play" id="video-tap-to-play" type="button" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg>
+                    <span>TAP TO PLAY</span>
+                </button>
             </div>
             <div class="editor-player-caption">
                 <div>
                     <h3 class="project-title" id="timeline-title">Demoreel</h3>
                     <div class="video-tags"><span class="tag">Cinematics</span><span class="tag">Video Editing</span></div>
                 </div>
-                <button class="cinema-toggle btn-outline" type="button" aria-pressed="false" aria-label="Enter cinema mode">Cinema mode <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"/></svg></button>
             </div>
+            <div class="video-controls" role="group" aria-label="Video controls">
+                <button class="video-control" id="player-play-toggle" type="button" aria-label="Pause video" aria-pressed="true">
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4v12M14 4v12"/></svg>
+                    <span>PAUSE</span>
+                </button>
+                <button class="video-control" id="player-mute-toggle" type="button" aria-label="Unmute video" aria-pressed="true">
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3Zm10-1 4 6m0-6-4 6"/></svg>
+                    <span>MUTED</span>
+                </button>
+                <button class="video-control" id="player-fullscreen-toggle" type="button" aria-label="Enter fullscreen">
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7V3h4m6 0h4v4m0 6v4h-4m-6 0H3v-4"/></svg>
+                    <span>FULLSCREEN</span>
+                </button>
+            </div>
+            <dl class="video-data-plate">
+                <div><dt>TITLE</dt><dd id="video-cut-title">Demoreel</dd></div>
+                <div><dt>DURATION</dt><dd id="video-duration">--:--</dd></div>
+                <div><dt>SOFTWARE</dt><dd class="video-software">Video Editing</dd></div>
+            </dl>
         </div>
 
         <div class="editor-transport" aria-label="Video playback controls">
@@ -332,22 +272,18 @@
             <span class="timeline-ruler" aria-hidden="true">V1&nbsp;&nbsp;&nbsp;&nbsp; 00:00&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00:45</span>
             <div class="timeline-track">
                 <div class="timeline-playhead" role="slider" tabindex="0" aria-label="Seek within selected video" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0 seconds"></div>
-                <button class="timeline-clip is-active" type="button" data-title="Demoreel" data-src="/videos/demoreel-showcase.mp4" data-poster="/images/demoreel-showcase-poster.jpg" aria-pressed="true">
-                    <img src="/images/demoreel-showcase-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-                    <span class="timeline-clip-name">Demoreel</span><span class="timeline-clip-meta">CINEMATICS / 01</span>
+                <?php foreach ($portfolioData['videos'] as $index => $video): ?>
+                <button class="timeline-clip<?= $index === 0 ? ' is-active' : '' ?>" type="button"
+                    data-title="<?= htmlspecialchars($video['title'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-src="<?= htmlspecialchars($video['src'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-poster="<?= htmlspecialchars($video['poster'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-software="<?= htmlspecialchars(implode(', ', $video['software']), ENT_QUOTES, 'UTF-8') ?>"
+                    aria-pressed="<?= $index === 0 ? 'true' : 'false' ?>">
+                    <img src="<?= htmlspecialchars($video['poster'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                    <span class="timeline-clip-name"><?= htmlspecialchars($video['shortTitle'], ENT_QUOTES, 'UTF-8') ?></span>
+                    <span class="timeline-clip-meta"><?= htmlspecialchars($video['channel'], ENT_QUOTES, 'UTF-8') ?> / <?= sprintf('%02d', $index + 1) ?></span>
                 </button>
-                <button class="timeline-clip" type="button" data-title="Mitsubishi F-2A | War Thunder Edit" data-src="/videos/video-showcase-1.mp4" data-poster="/images/video-showcase-1-poster.jpg" aria-pressed="false">
-                    <img src="/images/video-showcase-1-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-                    <span class="timeline-clip-name">Mitsubishi F-2A</span><span class="timeline-clip-meta">CAPCUT / 02</span>
-                </button>
-                <button class="timeline-clip" type="button" data-title="McDonnell Douglas - Mitsubishi F-15J | War Thunder Edit" data-src="/videos/video-showcase-2.mp4" data-poster="/images/video-showcase-2-poster.jpg" aria-pressed="false">
-                    <img src="/images/video-showcase-2-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-                    <span class="timeline-clip-name">F-15J Peace Eagle</span><span class="timeline-clip-meta">CAPCUT / 03</span>
-                </button>
-                <button class="timeline-clip" type="button" data-title="Sukhoi Su-30 | War Thunder Edit" data-src="/videos/video-showcase-3.mp4" data-poster="/images/video-showcase-3-poster.jpg" aria-pressed="false">
-                    <img src="/images/video-showcase-3-poster.jpg" alt="" width="1280" height="720" loading="lazy" decoding="async">
-                    <span class="timeline-clip-name">Sukhoi Su-30</span><span class="timeline-clip-meta">CAPCUT / 04</span>
-                </button>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
@@ -437,6 +373,8 @@
         <div class="modal-backdrop"></div>
         <div class="modal-content" tabindex="-1">
             <button class="close-modal" type="button" aria-label="Close poster details"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></svg></button>
+            <span class="modal-serial" id="modal-serial" aria-hidden="true" hidden></span>
+            <span class="modal-edition-title" id="modal-edition-title" aria-hidden="true"></span>
             <button class="modal-previous" type="button" aria-label="Previous item"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 4.5-5.5 5.5 5.5 5.5M7.5 10h8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></button>
             <div class="modal-image-container">
                 <img class="modal-img-blur" id="modal-img-bg" alt="">
@@ -445,7 +383,6 @@
             <div class="modal-info">
                 <h3 id="modal-title">Title</h3>
                 <p id="modal-desc"></p>
-                <a class="modal-verify" id="modal-verify" href="#" target="_blank" rel="noopener noreferrer" hidden>Verify credential</a>
                 <dl class="modal-datums">
                     <div><dt id="modal-spec-label-one">ISSUER</dt><dd id="modal-spec-value-one"></dd></div>
                     <div><dt id="modal-spec-label-two">ISSUED</dt><dd id="modal-spec-value-two"></dd></div>
@@ -495,7 +432,4 @@
         </footer>
     </div>
 
-    <script src="/build/main.js"></script>
-
-</body>
-</html>
+    <?php require __DIR__ . '/../includes/footer.php'; ?>

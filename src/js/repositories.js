@@ -117,21 +117,47 @@ function initializeCardMotion() {
         });
     }
 
+    cards.forEach(card => {
+        const briefing = card.querySelector('.repo-briefing');
+        const toggle = card.querySelector('.repo-row-toggle');
+        if (!briefing || !toggle) return;
+        const setExpanded = expanded => {
+            if (toggle.getAttribute('aria-expanded') === String(expanded)) return;
+            toggle.setAttribute('aria-expanded', String(expanded));
+            briefing.setAttribute('aria-hidden', String(!expanded));
+            if (reducedMotion) {
+                gsap.set(briefing, { height: expanded ? 'auto' : 0, autoAlpha: expanded ? 1 : 0 });
+                return;
+            }
+            gsap.to(briefing, {
+                height: expanded ? 'auto' : 0,
+                autoAlpha: expanded ? 1 : 0,
+                duration: 0.38,
+                ease: 'power2.out',
+                overwrite: true
+            });
+        };
+        toggle.addEventListener('click', () => {
+            setExpanded(toggle.getAttribute('aria-expanded') !== 'true');
+        });
+    });
+
     if (reducedMotion || !window.matchMedia('(pointer: fine)').matches) return;
     cards.forEach(card => {
-        gsap.set(card, { transformPerspective: 900, transformOrigin: 'center center' });
-        const rotateX = gsap.quickTo(card, 'rotationX', { duration: 0.24, ease: 'power2.out' });
-        const rotateY = gsap.quickTo(card, 'rotationY', { duration: 0.24, ease: 'power2.out' });
+        const emblem = card.querySelector('.repo-emblem');
+        if (!emblem) return;
+        const moveX = gsap.quickTo(emblem, 'x', { duration: 0.3, ease: 'power2.out' });
+        const moveY = gsap.quickTo(emblem, 'y', { duration: 0.3, ease: 'power2.out' });
         card.addEventListener('pointermove', event => {
             const bounds = card.getBoundingClientRect();
             const x = (event.clientX - bounds.left) / bounds.width - 0.5;
             const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-            rotateX(-y * 5);
-            rotateY(x * 6);
+            moveX(x * 10);
+            moveY(y * 10);
         });
         card.addEventListener('pointerleave', () => {
-            rotateX(0);
-            rotateY(0);
+            moveX(0);
+            moveY(0);
         });
     });
 }
@@ -158,6 +184,7 @@ export function initRepositories() {
         button.addEventListener('click', async () => {
             const command = button.dataset.copyText;
             const status = button.closest('.repo-card')?.querySelector('.repo-copy-status');
+            const label = button.querySelector('span');
             if (!command || !status) {
                 console.error('Repository copy control is missing its command or status element.', button);
                 return;
@@ -169,15 +196,15 @@ export function initRepositories() {
                 } else {
                     copyWithFallback(command);
                 }
-                button.textContent = 'COPIED';
+                if (label) label.textContent = 'COPIED';
                 status.textContent = 'CLONE COMMAND COPIED';
                 window.setTimeout(() => {
-                    button.textContent = 'COPY';
+                    if (label) label.textContent = 'COPY';
                     status.textContent = '';
                 }, 1800);
             } catch (error) {
                 console.error('Unable to copy the repository clone command.', error);
-                button.textContent = 'RETRY';
+                if (label) label.textContent = 'RETRY';
                 status.textContent = 'COPY FAILED — SELECT THE COMMAND ABOVE';
             }
         });

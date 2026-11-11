@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'certifications' => [
+        ['id' => 'cisco-01', 'date' => '2025-08-21', 'title' => 'Getting Started with Cisco Packet Tracer', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/getting-started-w-cisco.png'],
+        ['id' => 'cisco-02', 'date' => '2025-08-21', 'title' => 'Exploring Networking', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-net-w-cisco.png'],
+        ['id' => 'cisco-03', 'date' => '2025-08-26', 'title' => 'Exploring Internet of Things', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-iot.png'],
+        ['id' => 'cisco-04', 'date' => '2025-08-26', 'title' => 'Introduction to Packet Tracer Exam', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/intro-to-packet-tracer.png'],
+        ['id' => 'sql-01', 'date' => '2026-02-03', 'title' => 'Intro to SQL', 'issuer' => 'CodeSignal', 'track' => 'SQL', 'image' => '/images/intro-to-sql-ts.png'],
+        ['id' => 'sql-02', 'date' => '2026-02-17', 'title' => 'Introduction to SQL', 'issuer' => 'Simplilearn SkillUp', 'track' => 'SQL', 'image' => '/images/intro-to-sql-skillup.png'],
+        ['id' => 'sql-03', 'date' => '2026-02-19', 'title' => 'Learning SQL Joins', 'issuer' => 'CodeSignal', 'track' => 'SQL', 'image' => '/images/learning-sql-joins-w-ts.png'],
+        ['id' => 'sql-04', 'date' => '2026-03-05', 'title' => 'Mastering SQL Functions', 'issuer' => 'CodeSignal', 'track' => 'SQL', 'image' => '/images/mastering-sql-functs.png'],
+        ['id' => 'py-01', 'date' => '2026-04-02', 'title' => 'Python Libraries for Data Analysis', 'issuer' => 'CodeSignal', 'track' => 'Python', 'image' => '/images/python-libraries-for-da.png'],
+        ['id' => 'sec-01', 'date' => '2026-06-30', 'title' => 'Foundations of Cybersecurity', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/foundations-of-cybersecurity.webp', 'verifyUrl' => 'https://coursera.org/verify/RJZ3PZALOSO0'],
+        ['id' => 'sec-02', 'date' => '2026-07-16', 'title' => 'Play It Safe: Manage Security Risks', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/play-it-safe-manage-security-risks.webp', 'verifyUrl' => 'https://coursera.org/verify/HG36FIKWS86K'],
+        ['id' => 'sec-03', 'date' => '2026-08-05', 'title' => 'Connect and Protect: Networks and Network Security', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/connect-and-protect-networks.webp', 'verifyUrl' => 'https://coursera.org/verify/56KOG3M3YATW'],
+        ['id' => 'sec-04', 'date' => '2026-09-07', 'title' => 'Tools of the Trade: Linux and SQL', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/tools-of-the-trade-linux-sql.webp', 'verifyUrl' => 'https://coursera.org/verify/S5A8DLS7LF6E'],
+        ['id' => 'data-01', 'date' => '2026-09-11', 'title' => 'Foundations: Data, Data, Everywhere', 'issuer' => 'Google (Coursera)', 'track' => 'Data Analytics', 'image' => '/images/foundations-data-data-everywhere.webp', 'verifyUrl' => 'https://coursera.org/verify/9W8L8V44RZLA'],
+        ['id' => 'data-02', 'date' => '2026-10-12', 'title' => 'Ask Questions to Make Data-Driven Decisions', 'issuer' => 'Google (Coursera)', 'track' => 'Data Analytics', 'image' => '/images/ask-questions-data-driven-decisions.webp', 'verifyUrl' => 'https://coursera.org/verify/O1XPPCSKS6S9'],
+        ['id' => 'sec-05', 'date' => '2026-10-12', 'title' => 'Assets, Threats, and Vulnerabilities', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/assets-threats-vulnerabilities.webp', 'verifyUrl' => 'https://coursera.org/verify/1CMDTM7RGSIT'],
+        ['id' => 'sec-06', 'date' => '2026-11-04', 'title' => 'Sound the Alarm: Detection and Response', 'issuer' => 'Google (Coursera)', 'track' => 'Cybersecurity', 'image' => '/images/sound-the-alarm-detection-response.webp', 'verifyUrl' => 'https://coursera.org/verify/OHS5MXOTCU18'],
+    ],
+    'repositories' => [
+        ['name' => 'House-of-Origami', 'callSign' => 'PAPER TIGER', 'objective' => 'An HTML-based project repository.', 'technologies' => ['HTML', 'CSS']],
+        ['name' => 'Currency-Exchange-Locator', 'callSign' => 'WAYPOINT', 'objective' => 'A desktop application developed for a Data Structures and Algorithms course using Java and Java Swing.', 'technologies' => ['Java', 'Swing']],
+        ['name' => 'Global-Currency-App', 'callSign' => 'MERIDIAN', 'objective' => 'A dark-themed Java Swing application for exploring over 180 world currencies.', 'technologies' => ['Java', 'Swing']],
+        ['name' => 'Philippine-Festivals-Project', 'callSign' => 'ARCHIPELAGO', 'objective' => 'A custom dark-themed Java Swing application designed to catalog cultural events across the Philippines.', 'technologies' => ['Java', 'Swing']],
+    ],
+    'posters' => [
+        ['title' => 'F-2 Viper Zero', 'category' => 'FLIGHT STUDY', 'image' => '/images/poster-showcase-1.webp', 'width' => 1571, 'height' => 2000, 'class' => 'poster-tile-feature', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'F-2 Viper Zero Grounded', 'category' => 'FLIGHT STUDY', 'image' => '/images/poster-showcase-2.webp', 'width' => 1571, 'height' => 2000, 'class' => 'poster-tile-tall', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'F-15J Peace Eagle', 'category' => 'AIRFRAME', 'image' => '/images/poster-showcase-3.webp', 'width' => 1571, 'height' => 2000, 'class' => '', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'Above You Behind You', 'category' => 'COMPOSITION', 'image' => '/images/poster-showcase-4.webp', 'width' => 1571, 'height' => 2000, 'class' => 'poster-tile-wide', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'M1A1 Abrams', 'category' => 'ARMOR STUDY', 'image' => '/images/poster-showcase-5.webp', 'width' => 1571, 'height' => 2000, 'class' => 'poster-tile-short', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'SU-33 Flanker D', 'category' => 'AIRFRAME', 'image' => '/images/poster-showcase-6.webp', 'width' => 1571, 'height' => 2000, 'class' => 'poster-tile-tall', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'Chicco Promotional Poster', 'category' => 'BRAND SYSTEM', 'image' => '/images/poster-showcase-7.webp', 'width' => 1920, 'height' => 2880, 'class' => 'poster-tile-short', 'tools' => '', 'intent' => '', 'note' => ''],
+        ['title' => 'Masterpiece Sportswear Design Board', 'category' => 'IDENTITY', 'image' => '/images/poster-showcase-8.webp', 'width' => 1080, 'height' => 1920, 'class' => 'poster-tile-wide', 'tools' => '', 'intent' => '', 'note' => ''],
+    ],
+    'videos' => [
+        ['title' => 'Demoreel', 'shortTitle' => 'Demoreel', 'src' => '/videos/demoreel-showcase.mp4', 'poster' => '/images/demoreel-showcase-poster.jpg', 'channel' => 'CINEMATICS', 'software' => ['Video Editing']],
+        ['title' => 'Mitsubishi F-2A | War Thunder Edit', 'shortTitle' => 'Mitsubishi F-2A', 'src' => '/videos/video-showcase-1.mp4', 'poster' => '/images/video-showcase-1-poster.jpg', 'channel' => 'CAPCUT', 'software' => ['CapCut']],
+        ['title' => 'McDonnell Douglas - Mitsubishi F-15J | War Thunder Edit', 'shortTitle' => 'F-15J Peace Eagle', 'src' => '/videos/video-showcase-2.mp4', 'poster' => '/images/video-showcase-2-poster.jpg', 'channel' => 'CAPCUT', 'software' => ['CapCut']],
+        ['title' => 'Sukhoi Su-30 | War Thunder Edit', 'shortTitle' => 'Sukhoi Su-30', 'src' => '/videos/video-showcase-3.mp4', 'poster' => '/images/video-showcase-3-poster.jpg', 'channel' => 'CAPCUT', 'software' => ['CapCut']],
+    ],
+];

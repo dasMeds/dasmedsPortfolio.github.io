@@ -4,8 +4,8 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 
 ## Experience and technology
 
-- **Single-page static site:** `public/index.html` serves the complete portfolio, with navigation between sections using page anchors.
-- **Vercel:** serves the static portfolio and the Node.js contact function at `/api/contact`.
+- **Single-page PHP site:** `public/index.php` serves the complete portfolio, with shared templates in `includes/` and structured content in `data/portfolio-data.php`.
+- **Vercel:** runs PHP page entrypoints, serves static assets from `public/`, and keeps the Node.js contact function at `/api/contact`.
 - **Vite:** bundles the JavaScript modules and dependencies into `public/build/main.js`.
 - **GSAP and ScrollTrigger:** reduced-motion-aware text-scramble reveals, clip-path media transitions, a pinned horizontal repository sequence, and a multi-axis scroll-tied orb.
 - **Three.js:** a decorative architectural wireframe orb with light/dark contrast, continuous rotation, and a diagonal scroll trajectory.
@@ -16,8 +16,15 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 
 ```text
 .
+├── data/
+│   └── portfolio-data.php
+├── includes/
+│   ├── header.php
+│   ├── nav.php
+│   ├── orb.php
+│   └── footer.php
 ├── public/
-│   ├── index.html
+│   ├── index.php
 │   ├── styles.css
 │   ├── build/            # generated JavaScript bundle
 │   ├── documents/        # PDF certificates
@@ -59,7 +66,7 @@ Do not edit `public/build/main.js`; it is generated from `src/js/`.
 
 ## Deployment
 
-Deploy the repository to Vercel using the root `vercel.json`. Vercel runs `npm run build` and serves `public/` as the static output directory. Set the `RESEND_API_KEY` and `CONTACT_EMAIL` project environment variables; optionally set `CONTACT_FROM` to a sender address verified with Resend. The contact form uses Resend's HTTP API through `api/contact.js`, so no PHP runtime or SMTP package is required.
+Deploy the repository to Vercel using the root `vercel.json`. PHP entrypoints use `vercel-php@0.9.0`; Vite bundles the browser modules to `public/build/main.js`. Set the `RESEND_API_KEY` and `CONTACT_EMAIL` project environment variables; optionally set `CONTACT_FROM` to a sender address verified with Resend. The contact form uses Resend's HTTP API through `api/contact.js`.
 
 Videos use absolute site-root URLs and are activated by the viewport-aware video controller. MP4 files are tracked with Git LFS; ensure the deployment environment checks out LFS objects rather than pointer files.
 

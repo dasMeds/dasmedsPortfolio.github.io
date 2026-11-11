@@ -841,8 +841,7 @@ footer {
     flex: 0 0 auto;
 }
 
-.repo-card > .btn-outline > svg,
-.cinema-toggle > svg {
+.repo-card > .btn-outline > svg {
     width: 1rem;
     height: 1rem;
     flex: 0 0 auto;
@@ -4174,10 +4173,6 @@ nav {
     margin: 0;
 }
 
-.editor-player-caption .cinema-toggle {
-    flex: 0 0 auto;
-}
-
 .editor-transport {
     min-height: 3.5rem;
     border-bottom: 1px solid var(--hud-rule);
@@ -4284,36 +4279,6 @@ nav {
     letter-spacing: .06em;
 }
 
-.is-cinema::after {
-    position: fixed;
-    z-index: 1999;
-    inset: 0;
-    background: rgba(0, 0, 0, .88);
-    content: "";
-}
-
-.is-cinema .editor-player-shell {
-    position: fixed;
-    z-index: 2000;
-    inset: 50% auto auto 50%;
-    width: min(94vw, 1440px);
-    max-height: 96dvh;
-    overflow: auto;
-    transform: translate(-50%, -50%);
-    border-color: rgba(255, 255, 255, .36);
-    background: #0b0d10;
-    color: #f2f2ef;
-    box-shadow: 0 24px 100px rgba(0, 0, 0, .65);
-}
-
-.is-cinema .editor-player-shell .portfolio-video {
-    max-height: 78dvh;
-}
-
-.is-cinema {
-    overflow: hidden;
-}
-
 @media (max-width: 900px) {
     .timeline-track {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4330,10 +4295,6 @@ nav {
     .editor-player-caption {
         align-items: flex-start;
         flex-direction: column;
-    }
-
-    .editor-player-caption .cinema-toggle {
-        align-self: stretch;
     }
 
     .timeline-track {
@@ -5630,23 +5591,6 @@ section,
     backdrop-filter: blur(7px);
 }
 
-.modal-verify {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.5rem;
-    margin-top: 1rem;
-    border-bottom: 1px solid var(--accent-color);
-    color: var(--accent-color);
-    font: .68rem/1.4 var(--hud-mono);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-}
-
-.modal-verify:hover,
-.modal-verify:focus-visible {
-    color: var(--text-main);
-}
-
 @media (max-width: 680px) {
     #certifications .cert-heading {
         grid-template-columns: 1fr;
@@ -6262,23 +6206,9 @@ section,
 .timeline-clip:hover,
 .timeline-clip:focus-visible,
 .timeline-playhead:focus-visible,
-.editor-step:focus-visible,
-.cinema-toggle:focus-visible {
+.editor-step:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: 3px;
-}
-
-.is-cinema .editor-player-shell {
-    width: min(94vw, 1440px);
-    border: 0;
-    padding: clamp(.6rem, 1.5vw, 1.25rem);
-    background: #080a0c;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-}
-
-.is-cinema .signal-frame {
-    max-height: 78dvh;
 }
 
 @media (max-width: 560px) {

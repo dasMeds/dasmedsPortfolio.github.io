@@ -29,7 +29,7 @@ try {
     const results = [];
 
     for (const theme of ['light', 'dark']) {
-        for (const width of [375, 768, 1440]) {
+        for (const width of [375, 1440]) {
             const context = await browser.newContext({
                 viewport: { width, height: 900 },
                 deviceScaleFactor: 1

@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const specValueOne = document.getElementById('modal-spec-value-one');
         const specLabelTwo = document.getElementById('modal-spec-label-two');
         const specValueTwo = document.getElementById('modal-spec-value-two');
-        const verifyLink = document.getElementById('modal-verify');
+        const modalSerial = document.getElementById('modal-serial');
+        const modalEditionTitle = document.getElementById('modal-edition-title');
         let lastFocusedItem;
         let galleryItems = [];
         let activeGalleryIndex = -1;
@@ -88,14 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const image = card.querySelector('img');
             const imageSource = card.dataset.image || image?.currentSrc || image?.src;
             const title = card.dataset.title || image?.alt || 'Portfolio item';
-            const isCertificate = card.matches('.cert-row');
+            const isCertificate = card.matches('.cert-row, .cert-sticker');
             if (!imageSource) {
                 console.error('Gallery item is missing its image.', card);
                 return;
             }
             if (sharedPosterImage && sharedPosterImage !== image) restoreSharedPosterImage(false);
 
-            galleryItems = [...document.querySelectorAll(isCertificate ? '.cert-row:not([hidden])' : '.poster-card')];
+            galleryItems = [...document.querySelectorAll(
+                isCertificate
+                    ? (card.matches('.cert-sticker') ? '.cert-sticker' : '.cert-row:not([hidden])')
+                    : '.poster-card'
+            )];
             activeGalleryIndex = galleryItems.indexOf(card);
             modalImgBg.src = imageSource;
             if (!isCertificate && image) {
@@ -126,6 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalImg.height = Number(card.dataset.imageHeight) || image?.naturalHeight || 800;
             }
             modalTitle.textContent = title;
+            modal.classList.toggle('is-certificate', isCertificate);
+            if (modalEditionTitle) modalEditionTitle.textContent = isCertificate ? '' : title;
+            if (modalSerial) {
+                modalSerial.hidden = isCertificate;
+                modalSerial.textContent = isCertificate
+                    ? ''
+                    : `POSTER ${String(activeGalleryIndex + 1).padStart(2, '0')} / ${String(galleryItems.length).padStart(2, '0')}`;
+            }
             modalDesc.textContent = card.dataset.description ||
                 (isCertificate
                     ? `${card.dataset.issuer || ''}${card.dataset.date ? ` · ${card.dataset.date}` : ''}`
@@ -138,13 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             specValueTwo.textContent = isCertificate
                 ? card.dataset.date || 'Not listed'
                 : card.dataset.intent || 'Details supplied by owner';
-            const verifyUrl = isCertificate ? card.dataset.verifyUrl : '';
-            if (verifyLink) {
-                verifyLink.hidden = !verifyUrl;
-                if (verifyUrl) verifyLink.href = verifyUrl;
-                else verifyLink.removeAttribute('href');
-            }
-
             if (!modal.classList.contains('active')) {
                 bodyOverflowBeforeModal = document.body.style.overflow;
                 document.body.style.overflow = 'hidden';
@@ -175,6 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const closeModal = () => {
             modal.classList.remove('active');
+            modal.classList.remove('is-certificate');
+            if (modalSerial) modalSerial.hidden = true;
             modal.setAttribute('aria-hidden', 'true');
             modal.setAttribute('aria-modal', 'false');
             document.body.style.overflow = bodyOverflowBeforeModal;

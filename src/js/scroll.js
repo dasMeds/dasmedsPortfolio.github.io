@@ -39,7 +39,6 @@ export function initScroll() {
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) lenis.stop();
             else if (
-                !document.body.classList.contains('is-cinema') &&
                 !document.querySelector('.modal.active')
             ) {
                 lenis.start();

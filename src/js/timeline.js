@@ -13,11 +13,16 @@ export function initVideoTimeline() {
     const playhead = document.querySelector('.timeline-playhead');
     const playerShell = document.querySelector('.editor-player-shell');
     const signalFrame = document.querySelector('.signal-frame');
-    const cinemaToggle = document.querySelector('.cinema-toggle');
-    if (!player || !clips.length || !title || !playerShell || !cinemaToggle) return;
+    const playToggle = document.querySelector('#player-play-toggle');
+    const muteToggle = document.querySelector('#player-mute-toggle');
+    const fullscreenToggle = document.querySelector('#player-fullscreen-toggle');
+    const tapToPlay = document.querySelector('#video-tap-to-play');
+    const cutTitle = document.querySelector('#video-cut-title');
+    const durationLabel = document.querySelector('#video-duration');
+    const softwareLabel = document.querySelector('.video-software');
+    if (!player || !clips.length || !title || !playerShell) return;
 
     let activeIndex = 0;
-    let focusBeforeCinema;
     let transitionTimer;
     let activePointerId = null;
     const movePlayhead = !reducedMotion && playhead
@@ -67,12 +72,15 @@ export function initVideoTimeline() {
             item.setAttribute('aria-pressed', String(itemIndex === index));
         });
         title.textContent = clip.dataset.title || clip.querySelector('.timeline-clip-name')?.textContent || 'Untitled clip';
+        if (cutTitle) cutTitle.textContent = title.textContent;
+        if (softwareLabel) softwareLabel.textContent = clip.dataset.software || '';
+        if (durationLabel) durationLabel.textContent = '--:--';
         player.poster = poster;
         player.loop = isDemoreel;
         player.muted = isDemoreel;
         player.autoplay = isDemoreel;
         player.preload = isDemoreel ? 'metadata' : 'auto';
-        player.controls = true;
+        player.controls = false;
         if (status) status.textContent = `SOURCE / ${String(index + 1).padStart(2, '0')} — ${isDemoreel ? 'AUTO' : 'ON DEMAND'}`;
         if (player.currentSrc.endsWith(source) && !player.paused) return;
 
@@ -100,6 +108,69 @@ export function initVideoTimeline() {
         switchClip(clips[nextIndex]);
         clips[nextIndex].focus({ preventScroll: true });
     };
+
+    const updatePlaybackControls = () => {
+        const isPlaying = !player.paused;
+        if (playToggle) {
+            playToggle.setAttribute('aria-label', isPlaying ? 'Pause video' : 'Play video');
+            playToggle.setAttribute('aria-pressed', String(isPlaying));
+            const label = playToggle.querySelector('span');
+            if (label) label.textContent = isPlaying ? 'PAUSE' : 'PLAY';
+        }
+        if (tapToPlay) tapToPlay.hidden = isPlaying;
+    };
+
+    const updateDuration = () => {
+        if (!durationLabel || !Number.isFinite(player.duration) || player.duration < 0) return;
+        const total = Math.floor(player.duration);
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const seconds = total % 60;
+        durationLabel.textContent = hours
+            ? `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+            : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    };
+
+    const updateMuteControl = () => {
+        if (!muteToggle) return;
+        muteToggle.setAttribute('aria-label', player.muted ? 'Unmute video' : 'Mute video');
+        muteToggle.setAttribute('aria-pressed', String(player.muted));
+        const label = muteToggle.querySelector('span');
+        if (label) label.textContent = player.muted ? 'MUTED' : 'SOUND ON';
+    };
+
+    playToggle?.addEventListener('click', () => {
+        if (player.paused) {
+            player.play()?.catch(error => {
+                if (error.name !== 'AbortError') {
+                    if (tapToPlay) tapToPlay.hidden = false;
+                    console.warn('Video playback could not start.', error);
+                }
+            });
+        } else {
+            player.pause();
+        }
+    });
+    tapToPlay?.addEventListener('click', () => playToggle?.click());
+    muteToggle?.addEventListener('click', () => {
+        player.muted = !player.muted;
+        updateMuteControl();
+    });
+    fullscreenToggle?.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen()?.catch(error => console.warn('Could not exit fullscreen.', error));
+        } else if (signalFrame?.requestFullscreen) {
+            signalFrame.requestFullscreen().catch(error => console.warn('Fullscreen is unavailable.', error));
+        }
+    });
+    player.addEventListener('play', updatePlaybackControls);
+    player.addEventListener('pause', updatePlaybackControls);
+    player.addEventListener('volumechange', updateMuteControl);
+    document.addEventListener('fullscreenchange', () => {
+        if (fullscreenToggle) {
+            fullscreenToggle.setAttribute('aria-label', document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen');
+        }
+    });
 
     clips.forEach(clip => {
         clip.addEventListener('click', () => switchClip(clip));
@@ -154,6 +225,8 @@ export function initVideoTimeline() {
     });
     player.addEventListener('loadedmetadata', updatePlayhead);
     player.addEventListener('durationchange', updatePlayhead);
+    player.addEventListener('loadedmetadata', updateDuration);
+    player.addEventListener('durationchange', updateDuration);
     window.addEventListener('resize', updatePlayhead, { passive: true });
 
     player.addEventListener('error', () => {
@@ -165,43 +238,9 @@ export function initVideoTimeline() {
     playerShell.setAttribute('aria-modal', 'false');
     playerShell.setAttribute('aria-label', 'Portfolio video player');
 
-    const closeCinema = () => {
-        document.body.classList.remove('is-cinema');
-        playerShell.setAttribute('aria-modal', 'false');
-        cinemaToggle.setAttribute('aria-pressed', 'false');
-        cinemaToggle.setAttribute('aria-label', 'Enter cinema mode');
-        document.dispatchEvent(new CustomEvent('portfolio:scroll-lock', {
-            detail: { locked: false }
-        }));
-        cinemaToggle.focus({ preventScroll: true });
-    };
-
-    cinemaToggle.addEventListener('click', () => {
-        if (document.body.classList.contains('is-cinema')) {
-            closeCinema();
-            return;
-        }
-        focusBeforeCinema = document.activeElement;
-        document.body.classList.add('is-cinema');
-        playerShell.setAttribute('aria-modal', 'true');
-        cinemaToggle.setAttribute('aria-pressed', 'true');
-        cinemaToggle.setAttribute('aria-label', 'Exit cinema mode');
-        document.dispatchEvent(new CustomEvent('portfolio:scroll-lock', {
-            detail: { locked: true }
-        }));
-        document.querySelector('[data-clip-step="-1"]')?.focus({ preventScroll: true });
-    });
-
     document.addEventListener('keydown', event => {
         const inPlayer = videoSuite?.contains(document.activeElement);
-        if (!inPlayer && !document.body.classList.contains('is-cinema')) return;
-
-        if (event.key === 'Escape' && document.body.classList.contains('is-cinema')) {
-            event.preventDefault();
-            closeCinema();
-            focusBeforeCinema?.focus({ preventScroll: true });
-            return;
-        }
+        if (!inPlayer) return;
 
         const target = event.target instanceof Element ? event.target : null;
         if (event.key === ' ' && !target?.closest('button, a, input, textarea')) {
@@ -228,8 +267,6 @@ export function initVideoTimeline() {
                 document.exitFullscreen()?.catch(error => console.warn('Could not exit fullscreen.', error));
             } else if (signalFrame?.requestFullscreen) {
                 signalFrame.requestFullscreen().catch(error => console.warn('Fullscreen is unavailable.', error));
-            } else {
-                cinemaToggle.click();
             }
         }
     });
@@ -237,7 +274,10 @@ export function initVideoTimeline() {
     player.play()?.catch(error => {
         if (error.name !== 'AbortError') {
             if (status) status.textContent = 'SOURCE / AUTOPLAY BLOCKED';
+            if (tapToPlay) tapToPlay.hidden = false;
             console.warn('Muted demoreel autoplay could not start.', error);
         }
     });
+    updatePlaybackControls();
+    updateMuteControl();
 }
