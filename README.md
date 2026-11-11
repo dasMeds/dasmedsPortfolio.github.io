@@ -4,8 +4,8 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 
 ## Experience and technology
 
-- **Single-page PHP site:** `public/index.php` serves the complete portfolio, with navigation between sections using page anchors.
-- **PHP:** serves the page and its local assets; use a PHP-capable web host.
+- **Single-page static site:** `public/index.html` serves the complete portfolio, with navigation between sections using page anchors.
+- **Vercel:** serves the static portfolio and the Node.js contact function at `/api/contact`.
 - **Vite:** bundles the JavaScript modules and dependencies into `public/build/main.js`.
 - **GSAP and ScrollTrigger:** reduced-motion-aware text-scramble reveals, clip-path media transitions, a pinned horizontal repository sequence, and a multi-axis scroll-tied orb.
 - **Three.js:** a decorative architectural wireframe orb with light/dark contrast, continuous rotation, and a diagonal scroll trajectory.
@@ -17,13 +17,15 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 ```text
 .
 ├── public/
-│   ├── index.php
+│   ├── index.html
 │   ├── styles.css
 │   ├── build/            # generated JavaScript bundle
 │   ├── documents/        # PDF certificates
 │   ├── fonts/
 │   ├── images/
 │   └── videos/
+├── api/
+│   └── contact.js
 ├── src/
 │   └── js/
 │       ├── interactions.js
@@ -39,7 +41,7 @@ The `public/` directory is the web document root. Static media uses URLs such as
 
 ## Local development
 
-Requirements: PHP 8.0 or newer, Node.js 20 or newer, and npm.
+Requirements: Node.js 20 or newer, npm, and PHP for the optional local PHP development server.
 
 ```sh
 npm install
@@ -57,9 +59,9 @@ Do not edit `public/build/main.js`; it is generated from `src/js/`.
 
 ## Deployment
 
-Deploy the repository to a PHP-capable host, set `public/` as the document root, and run `npm ci && npm run build` during deployment. GitHub Pages and the previous static Vercel configuration do not execute PHP.
+Deploy the repository to Vercel using the root `vercel.json`. Vercel runs `npm run build` and serves `public/` as the static output directory. Set the `RESEND_API_KEY` and `CONTACT_EMAIL` project environment variables; optionally set `CONTACT_FROM` to a sender address verified with Resend. The contact form uses Resend's HTTP API through `api/contact.js`, so no PHP runtime or SMTP package is required.
 
-Videos use absolute site-root URLs and are activated by the viewport-aware video controller. Ensure Git LFS is enabled so MP4 files are deployed as media rather than pointer text.
+Videos use absolute site-root URLs and are activated by the viewport-aware video controller. MP4 files are tracked with Git LFS; ensure the deployment environment checks out LFS objects rather than pointer files.
 
 ## Accessibility and performance
 

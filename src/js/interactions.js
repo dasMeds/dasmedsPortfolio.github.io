@@ -114,6 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const videos = document.querySelectorAll('.video-card video');
 
         videos.forEach(video => {
+            video.muted = true;
+            video.playsInline = true;
+
             // if one video plays, pause all others
             video.addEventListener('play', () => {
                 videos.forEach(otherVideo => {
@@ -140,35 +143,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.querySelector('.contact-form');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            // Stop the default redirect
-            e.preventDefault(); 
-            console.log("Form submission intercepted!"); // Check your browser console for this
+        contactForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = contactForm.querySelector('[type="submit"]');
+            submitButton.disabled = true;
 
-            // Gather the data
-            const formData = new FormData(this);
+            try {
+                const formData = Object.fromEntries(new FormData(contactForm));
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
 
-            // Send to Formspree
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
+                if (!response.ok) {
+                    throw new Error(result.error || 'The message could not be sent.');
                 }
-            }).then(response => {
-                if (response.ok) {
-                    alert("Thanks! Your message has been sent.");
-                    contactForm.reset(); 
-                } else {
-                    response.json().then(data => {
-                        console.error("Formspree Error:", data);
-                        alert("Oops! There was a problem sending your message.");
-                    });
-                }
-            }).catch(error => {
-                console.error("Fetch Error:", error);
-                alert("Oops! There was a problem sending your message.");
-            });
+
+                alert('Thanks! Your message has been sent.');
+                contactForm.reset();
+            } catch (error) {
+                console.error('Contact form submission failed.', error);
+                alert(error.message || 'Oops! There was a problem sending your message.');
+            } finally {
+                submitButton.disabled = false;
+            }
         });
     }
 
@@ -343,11 +346,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const showcaseVideos = document.querySelectorAll('#demoreel-video, .video-card video');
     // Defer media requests and autoplay to the single video currently closest to the viewport center.
     showcaseVideos.forEach(video => {
+        video.muted = true;
+        video.playsInline = true;
+        video.addEventListener('error', () => {
+            console.error(
+                'Unable to load showcase video:',
+                video.currentSrc || video.querySelector('source')?.src,
+                video.error
+            );
+        });
         video.pause();
         video.autoplay = false;
         video.preload = 'metadata';
-        video.muted = true;
-        video.playsInline = true;
     });
 
     if (showcaseVideos.length) {

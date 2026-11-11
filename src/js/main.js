@@ -15,3 +15,22 @@ const refreshScrollTriggers = () => {
 window.addEventListener('load', refreshScrollTriggers, { once: true });
 document.fonts?.ready.then(refreshScrollTriggers);
 window.setTimeout(refreshScrollTriggers, 250);
+
+const refreshAfterMediaChange = event => {
+    if (event.target instanceof HTMLImageElement || event.target instanceof HTMLVideoElement) {
+        refreshScrollTriggers();
+    }
+};
+
+document.addEventListener('load', refreshAfterMediaChange, true);
+document.addEventListener('loadedmetadata', refreshAfterMediaChange, true);
+document.addEventListener('error', refreshAfterMediaChange, true);
+
+const repositoriesTrack = document.querySelector('.horizontal-projects-track');
+if (repositoriesTrack) {
+    new MutationObserver(refreshScrollTriggers).observe(repositoriesTrack, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+}

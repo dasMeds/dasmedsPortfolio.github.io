@@ -2554,8 +2554,8 @@ body {
     position: relative;
     display: grid;
     width: 100vw;
-    height: 100svh;
-    min-height: 640px;
+    height: auto;
+    min-height: max(640px, 100svh);
     grid-template-rows: auto minmax(0, 1fr);
     gap: clamp(1.5rem, 4vh, 3.5rem);
     margin-left: calc(50% - 50vw);
@@ -3754,14 +3754,24 @@ section,
     background-color: var(--bg-color, #0a0a0a);
 }
 
-#github-projects,
-#videos {
+#home {
+    background-color: var(--bg-color, #0a0a0a);
+}
+
+.projects-grid,
+.cert-grid,
+.repo-grid,
+.poster-grid,
+.video-grid,
+#github-projects .horizontal-projects-viewport,
+#posters .poster-viewport {
+    isolation: isolate;
     background-color: var(--bg-color, #0a0a0a);
 }
 
 .story-canvas {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
 }
