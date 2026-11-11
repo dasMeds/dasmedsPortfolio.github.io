@@ -25,7 +25,6 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     <div id="page-wrapper">
         <main class="container scroll-story continuous-portfolio-content">
             <section id="home" class="hero-stage">
-                <p class="hero-readout" aria-hidden="true">HUD / 001<br>VISUAL SYSTEMS<br><span>STATUS: READY</span></p>
                 <p class="coordinate-label">[ 14° 40′ N, 120° 58′ E — METRO MANILA ]</p>
                 <svg class="hero-coordinate-lines" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true">
                     <path d="M92 150 280 230 440 110M760 120 910 250 1080 170M110 520 360 430 510 570M850 420 1040 550"/>

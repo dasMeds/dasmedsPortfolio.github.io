@@ -676,6 +676,95 @@ nav,
     aspect-ratio: 21 / 9;
 }
 
+.cert-board-container,
+.cert-board-table-wrap,
+#cert-board-view {
+  background-color: color-mix(in srgb, var(--bg-color, #0a0c10) 95%, #000 5%);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cert-board-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.cert-board-table tbody tr {
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.cert-board-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   2) LARGER ROUTE STICKER BOXES & THUMBNAILS
+   ========================================================================== */
+.cert-sticker {
+  width: min(100%, 42rem) !important;
+  min-height: 12rem !important;
+  padding: 1.25rem 1.5rem !important;
+  gap: 1.25rem !important;
+}
+
+.cert-sticker-thumb-col {
+  width: 10rem !important;
+  min-width: 10rem !important;
+  height: 7rem !important;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.cert-sticker-thumb-col img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   3) FLOATING CURSOR-FOLLOWING PREVIEW POPOVER
+   ========================================================================== */
+.cert-board-preview-popover {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 280px;
+  padding: 0.6rem;
+  background: color-mix(in srgb, var(--bg-color, #0f1117) 96%, #000 4%);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+  border-radius: 10px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.94);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+
+.cert-board-preview-popover.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.cert-board-preview-popover img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 11;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: #000;
+}
+
 .signal-frame .portfolio-video {
     width: 100%;
     height: 100%;
