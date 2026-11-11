@@ -4,9 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "dev": "php -S 0.0.0.0:8000 -t public",
+    "build": "vite build"
   },
   "dependencies": {
     "gsap": "^3.13.0",

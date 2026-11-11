@@ -2,22 +2,15 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/',
+  publicDir: false,
   build: {
-    rollupOptions: {
-      input: {
-        home: resolve(import.meta.dirname, 'index.html'),
-        about: resolve(import.meta.dirname, 'about.html'),
-        experience: resolve(import.meta.dirname, 'experience.html'),
-        portfolio: resolve(import.meta.dirname, 'portfolio.html'),
-        contact: resolve(import.meta.dirname, 'contact.html')
-      },
-      output: {
-        manualChunks(id) {
-          if (id.includes('/node_modules/three/')) return 'three';
-          if (id.includes('/node_modules/gsap/')) return 'gsap';
-        }
-      }
+    outDir: resolve(import.meta.dirname, 'public/build'),
+    emptyOutDir: true,
+    lib: {
+      entry: resolve(import.meta.dirname, 'src/js/main.js'),
+      name: 'Portfolio',
+      formats: ['iife'],
+      fileName: () => 'main.js'
     }
   }
 });

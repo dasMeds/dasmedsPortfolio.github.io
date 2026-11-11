@@ -4,29 +4,27 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 
 ## Experience and technology
 
-- **Multi-page static site:** semantic HTML pages styled with modular CSS and small JavaScript modules.
-- **Vite:** local development server and optimized multi-page production build. Static files in `public/` are published at the site root.
+- **Single-page PHP site:** `public/index.php` serves the complete portfolio, with navigation between sections using page anchors.
+- **PHP:** serves the page and its local assets; use a PHP-capable web host.
+- **Vite:** bundles the JavaScript modules and dependencies into `public/build/main.js`.
 - **GSAP and ScrollTrigger:** reduced-motion-aware text-scramble reveals, clip-path media transitions, a pinned horizontal repository sequence, and a multi-axis scroll-tied orb.
 - **Three.js:** a decorative architectural wireframe orb with light/dark contrast, continuous rotation, and a diagonal scroll trajectory.
-- **Theme control:** light is the default; the dark theme can be selected and is remembered between pages and visits.
+- **Theme control:** light is the default; the dark theme can be selected and is remembered between visits.
 - **Media:** videos are muted, inline-capable MP4s; poster images preserve their full aspect ratio.
 
 ## Project structure
 
 ```text
 .
-├── about.html
-├── contact.html
-├── experience.html
-├── index.html
-├── portfolio.html
 ├── public/
+│   ├── index.php
+│   ├── styles.css
+│   ├── build/            # generated JavaScript bundle
 │   ├── documents/        # PDF certificates
 │   ├── fonts/
 │   ├── images/
 │   └── videos/
 ├── src/
-│   ├── css/styles.css
 │   └── js/
 │       ├── interactions.js
 │       ├── main.js
@@ -37,43 +35,31 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 └── package.json
 ```
 
-The HTML entry pages remain at the repository root for simple multi-page hosting. Vite copies `public/` files without renaming them, so media can use stable root-relative URLs such as `/images/profile-picture.jpg` and `/videos/demoreel-showcase.mp4`.
+The `public/` directory is the web document root. Static media uses URLs such as `/images/profile-picture.jpg` and `/videos/demoreel-showcase.mp4`.
 
 ## Local development
 
-Requirements: Node.js 20 or newer and npm.
+Requirements: PHP 8.0 or newer, Node.js 20 or newer, and npm.
 
 ```sh
 npm install
+npm run build
 npm run dev
 ```
 
-Open the local URL printed by Vite. To create and preview the production build:
+Open `http://localhost:8000`. The JavaScript bundle must be rebuilt after changing files under `src/js/`:
 
 ```sh
 npm run build
-npm run preview
 ```
 
-The production site is written to `dist/`. Do not edit generated files in `dist/`; make changes in the HTML, `src/`, or `public/` instead.
+Do not edit `public/build/main.js`; it is generated from `src/js/`.
 
 ## Deployment
 
-### Vercel
+Deploy the repository to a PHP-capable host, set `public/` as the document root, and run `npm ci && npm run build` during deployment. GitHub Pages and the previous static Vercel configuration do not execute PHP.
 
-Import the repository into Vercel and use the Vite defaults, or configure:
-
-- Build command: `npm run build`
-- Output directory: `dist`
-- Install command: `npm ci`
-
-Videos use absolute site-root URLs, include the browser-friendly muted/inline playback attributes, and are activated by the viewport-aware video controller. Ensure Git LFS is enabled for deployment so MP4 files are fetched as actual media rather than LFS pointer text.
-
-The current MP4 assets are each larger than 100 MB. Vercel documents a 100 MB source-upload limit for Hobby CLI deployments, so deploying this repository directly with the CLI will require compressing the videos or hosting them externally. For Git-based deployments, confirm the build has access to the LFS objects.
-
-### GitHub Pages
-
-The GitHub Actions workflow builds the site with Node.js and deploys `dist/`. MP4 files are tracked with Git LFS; the workflow checks out LFS content before building.
+Videos use absolute site-root URLs and are activated by the viewport-aware video controller. Ensure Git LFS is enabled so MP4 files are deployed as media rather than pointer text.
 
 ## Accessibility and performance
 

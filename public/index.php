@@ -1,10 +1,13 @@
+<?php
+$pageTitle = 'dasmeds | Home';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <title>dasmeds | Home</title>
+    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
     <script>
         try {
             if (localStorage.getItem('dasmeds-theme') === 'dark') {
@@ -14,14 +17,34 @@
             console.warn('Saved theme could not be read; using the light theme.', error);
         }
     </script>
-    <link rel="stylesheet" href="/src/css/styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="continuous-portfolio">
 
-    <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"/></svg>
-        <span class="theme-toggle-label">Dark mode</span>
-    </button>
+    <nav>
+        <div class="container nav-inner">
+            <a href="#home" class="logo">DASMEDS<span>.</span></a>
+            <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="nav-links" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links" id="nav-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#experience">Experience</a>
+                <a href="#github-projects">Repositories</a>
+                <a href="#posters">Posters</a>
+                <a href="#videos">Videos</a>
+                <a class="mobile-contact-link" href="#contact">Contact</a>
+            </div>
+            <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.6 8.6 0 1 0 20.2 15.4Z"/></svg>
+                <span class="theme-toggle-label">Dark mode</span>
+            </button>
+            <a href="#contact" class="btn-outline">Get In Touch</a>
+        </div>
+    </nav>
 
     <div class="ambient-orbit" aria-hidden="true"></div>
 
@@ -537,7 +560,7 @@
         </footer>
     </div>
 
-    <script type="module" src="/src/js/main.js"></script>
+    <script src="/build/main.js"></script>
 
 </body>
 </html>
