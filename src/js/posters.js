@@ -29,10 +29,13 @@ export function initPosterBento() {
     };
 
     const updatePosition = () => {
-        const center = gallery.scrollLeft + gallery.clientWidth / 2;
+        const bounds = gallery.getBoundingClientRect();
+        const center = bounds.left + gallery.clientLeft + gallery.clientWidth / 2;
         const index = posters.reduce((closestIndex, poster, posterIndex) => {
-            const posterCenter = poster.offsetLeft + poster.offsetWidth / 2;
-            const closestCenter = posters[closestIndex].offsetLeft + posters[closestIndex].offsetWidth / 2;
+            const posterBounds = poster.getBoundingClientRect();
+            const closestBounds = posters[closestIndex].getBoundingClientRect();
+            const posterCenter = posterBounds.left + posterBounds.width / 2;
+            const closestCenter = closestBounds.left + closestBounds.width / 2;
             return Math.abs(posterCenter - center) < Math.abs(closestCenter - center) ? posterIndex : closestIndex;
         }, 0);
         setActivePoster(index);
@@ -43,8 +46,11 @@ export function initPosterBento() {
         const poster = posters[targetIndex];
         setActivePoster(targetIndex);
         poster.focus({ preventScroll: true });
+        const galleryBounds = gallery.getBoundingClientRect();
+        const posterBounds = poster.getBoundingClientRect();
+        const center = galleryBounds.left + gallery.clientLeft + gallery.clientWidth / 2;
         gallery.scrollTo({
-            left: poster.offsetLeft - (gallery.clientWidth - poster.offsetWidth) / 2,
+            left: gallery.scrollLeft + posterBounds.left + posterBounds.width / 2 - center,
             behavior: reducedMotion ? 'auto' : 'smooth',
         });
     };

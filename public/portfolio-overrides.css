@@ -1346,8 +1346,18 @@ nav,
     perspective: 1300px;
     scroll-padding-inline: 50%;
     scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-color) transparent;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.cert-route::-webkit-scrollbar,
+#posters .poster-ring::-webkit-scrollbar {
+    display: none;
+}
+
+#posters .poster-ring {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .cert-route-stop {
@@ -1390,7 +1400,8 @@ nav,
 .cert-carousel-controls {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    width: 100%;
     gap: .7rem;
     margin: .25rem 0 1rem;
     color: var(--text-muted);
@@ -1509,6 +1520,7 @@ nav,
 
 .poster-showcase-controls {
     align-items: center;
+    justify-content: center;
 }
 
 #poster-position {
@@ -1525,6 +1537,17 @@ nav,
 @media (max-width: 760px) {
     .github-live-panel { grid-template-columns: 1fr; }
     .github-live-stats { min-height: 4rem; border-top: 1px solid var(--border-color); border-left: 0; padding-top: 1rem; }
+}
+
+.cert-carousel-controls button:not(:disabled):hover,
+.poster-showcase-controls button:hover {
+    border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-color));
+}
+
+.poster-showcase-controls {
+    justify-content: center;
+    width: 100%;
 }
 
 @media (max-width: 560px) {
@@ -1642,19 +1665,57 @@ nav,
 }
 
 .cert-route-stop {
-    flex-basis: min(82vw, 42rem);
+    flex-basis: min(88vw, 52rem);
 }
 
 .cert-route-stop .cert-sticker {
-    height: 13rem;
-    min-height: 13rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(10rem, .7fr);
+    align-content: center;
+    align-items: center;
+    gap: 1.25rem;
+    height: 18rem;
+    min-height: 18rem !important;
+    padding: 1.5rem;
 }
 
-.cert-sticker-title {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+.cert-sticker-details {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: .8rem;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.cert-sticker-details .cert-leg-marker {
+    grid-column: auto;
+}
+
+.cert-sticker-details .cert-sticker-title {
+    grid-column: auto;
+    align-self: auto;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.cert-sticker-details .cert-sticker-field {
+    grid-column: auto;
+    width: 100%;
+    font-size: .62rem;
+}
+
+.cert-sticker-details .cert-sticker-field strong {
+    max-width: 68%;
+}
+
+.cert-route-stop .cert-sticker-thumb {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-height: 12rem;
+    aspect-ratio: 1.5;
+    object-fit: contain;
 }
 
 .cert-carousel-controls button,
@@ -1665,6 +1726,7 @@ nav,
     min-height: 2.75rem;
     place-items: center;
     padding: 0;
+    border-radius: 50%;
 }
 
 .cert-carousel-controls button svg,
@@ -1700,6 +1762,35 @@ nav,
     }
 
     .cert-route-stop {
-        flex-basis: 86vw;
+        flex-basis: 90vw;
     }
+
+    .cert-route-stop .cert-sticker {
+        grid-template-columns: minmax(0, 1fr) minmax(6rem, 32%);
+        gap: .8rem;
+        height: 16rem;
+        min-height: 16rem !important;
+        padding: 1rem;
+    }
+
+    .cert-sticker-details {
+        gap: .6rem;
+    }
+
+    .cert-sticker-details .cert-sticker-field {
+        font-size: .52rem;
+    }
+
+    .cert-route-stop .cert-sticker-thumb {
+        max-height: 9rem;
+    }
+}
+
+#posters .poster-ring {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#posters .poster-ring::-webkit-scrollbar {
+    display: none;
 }

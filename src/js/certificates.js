@@ -299,11 +299,13 @@ export function initCertificateLedger() {
         sticker.style.setProperty('--sticker-tilt', `${[2, -2.8, 3.2, -3.7][index % 4]}deg`);
         if (certification.verifyUrl) sticker.dataset.verifyUrl = certification.verifyUrl;
 
+        const details = document.createElement('div');
+        details.className = 'cert-sticker-details';
         if (!seenTracks.has(certification.track)) {
             const leg = document.createElement('span');
             leg.className = 'cert-leg-marker';
             leg.textContent = `LEG / ${String(tracks.indexOf(certification.track) + 1).padStart(2, '0')} — ${certification.track}`;
-            sticker.append(leg);
+            details.append(leg);
             seenTracks.add(certification.track);
         }
 
@@ -317,7 +319,8 @@ export function initCertificateLedger() {
         thumb.loading = 'lazy';
         thumb.width = 120;
         thumb.height = 80;
-        sticker.append(title, thumb);
+        details.append(title);
+        sticker.append(thumb);
 
         [
             ['ISSUER', certification.issuer],
@@ -331,8 +334,10 @@ export function initCertificateLedger() {
             const content = document.createElement('strong');
             content.textContent = value;
             field.append(key, content);
-            sticker.append(field);
+            details.append(field);
         });
+
+        sticker.append(details);
 
         if (certification.verifyUrl) {
             const stamp = createStamp();
@@ -361,10 +366,13 @@ export function initCertificateLedger() {
             carouselStatus.textContent = '00 / 00';
             return;
         }
-        const center = routeContainer.scrollLeft + routeContainer.clientWidth / 2;
+        const routeBounds = routeContainer.getBoundingClientRect();
+        const center = routeBounds.left + routeContainer.clientLeft + routeContainer.clientWidth / 2;
         activeCarouselIndex = stops.reduce((closestIndex, stop, index) => {
-            const stopCenter = stop.offsetLeft + stop.offsetWidth / 2;
-            const closestCenter = stops[closestIndex].offsetLeft + stops[closestIndex].offsetWidth / 2;
+            const stopBounds = stop.getBoundingClientRect();
+            const closestBounds = stops[closestIndex].getBoundingClientRect();
+            const stopCenter = stopBounds.left + stopBounds.width / 2;
+            const closestCenter = closestBounds.left + closestBounds.width / 2;
             return Math.abs(stopCenter - center) < Math.abs(closestCenter - center) ? index : closestIndex;
         }, 0);
         stops.forEach((stop, index) => {
@@ -420,8 +428,11 @@ export function initCertificateLedger() {
             if (!stops.length) return;
             const nextIndex = (activeCarouselIndex + Number(button.dataset.certStep) + stops.length) % stops.length;
             const stop = stops[nextIndex];
+            const routeBounds = routeContainer.getBoundingClientRect();
+            const stopBounds = stop.getBoundingClientRect();
+            const center = routeBounds.left + routeContainer.clientLeft + routeContainer.clientWidth / 2;
             routeContainer.scrollTo({
-                left: stop.offsetLeft - (routeContainer.clientWidth - stop.offsetWidth) / 2,
+                left: routeContainer.scrollLeft + stopBounds.left + stopBounds.width / 2 - center,
                 behavior: reducedMotion ? 'auto' : 'smooth'
             });
         });
