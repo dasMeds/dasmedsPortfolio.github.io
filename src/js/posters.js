@@ -18,32 +18,35 @@ export function initPosterBento() {
         poster.dataset.parallaxDepth = String((index % 3) + 1);
     });
 
-    const updatePosition = () => {
-        const center = gallery.scrollLeft + gallery.clientWidth / 2;
-        activeIndex = posters.reduce((closestIndex, poster, index) => {
-            const posterCenter = poster.offsetLeft + poster.offsetWidth / 2;
-            const closestCenter = posters[closestIndex].offsetLeft + posters[closestIndex].offsetWidth / 2;
-            return Math.abs(posterCenter - center) < Math.abs(closestCenter - center) ? index : closestIndex;
-        }, 0);
-        posters.forEach((poster, index) => poster.classList.toggle('is-current', index === activeIndex));
+    const setActivePoster = index => {
+        activeIndex = index;
+        posters.forEach((poster, posterIndex) => {
+            poster.classList.toggle('is-current', posterIndex === activeIndex);
+        });
         if (position) {
             position.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(posters.length).padStart(2, '0')}`;
         }
     };
 
+    const updatePosition = () => {
+        const center = gallery.scrollLeft + gallery.clientWidth / 2;
+        const index = posters.reduce((closestIndex, poster, posterIndex) => {
+            const posterCenter = poster.offsetLeft + poster.offsetWidth / 2;
+            const closestCenter = posters[closestIndex].offsetLeft + posters[closestIndex].offsetWidth / 2;
+            return Math.abs(posterCenter - center) < Math.abs(closestCenter - center) ? posterIndex : closestIndex;
+        }, 0);
+        setActivePoster(index);
+    };
+
     const showPoster = index => {
-        activeIndex = (index + posters.length) % posters.length;
-        const poster = posters[activeIndex];
-        posters.forEach((item, itemIndex) => {
-            item.classList.toggle('is-current', itemIndex === activeIndex);
-        });
+        const targetIndex = (index + posters.length) % posters.length;
+        const poster = posters[targetIndex];
+        setActivePoster(targetIndex);
         poster.focus({ preventScroll: true });
-        poster.scrollIntoView({
+        gallery.scrollTo({
+            left: poster.offsetLeft - (gallery.clientWidth - poster.offsetWidth) / 2,
             behavior: reducedMotion ? 'auto' : 'smooth',
-            block: 'center',
-            inline: 'center'
         });
-        updatePosition();
     };
 
     section.querySelectorAll('[data-poster-step]').forEach(button => {
@@ -54,11 +57,7 @@ export function initPosterBento() {
 
     posters.forEach((poster, index) => {
         poster.addEventListener('focus', () => {
-            activeIndex = index;
-            posters.forEach((item, itemIndex) => {
-                item.classList.toggle('is-current', itemIndex === index);
-            });
-            updatePosition();
+            setActivePoster(index);
         });
     });
 

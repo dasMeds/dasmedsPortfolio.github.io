@@ -155,9 +155,13 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
 
     <div class="cert-route" id="cert-route-view" aria-label="Certification carousel"></div>
     <div class="cert-carousel-controls" aria-label="Certification carousel controls">
-        <button type="button" data-cert-step="-1" aria-label="Previous certification">Previous</button>
+        <button type="button" data-cert-step="-1" aria-label="Previous certification">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 4.5-5.5 5.5 5.5 5.5"/></svg>
+        </button>
         <span id="cert-carousel-position" aria-live="polite">00 / 00</span>
-        <button type="button" data-cert-step="1" aria-label="Next certification">Next</button>
+        <button type="button" data-cert-step="1" aria-label="Next certification">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 4.5 5.5 5.5-5.5 5.5"/></svg>
+        </button>
     </div>
     <div class="cert-table-wrap" id="cert-board-view" hidden>
         <table class="cert-table" aria-label="Certification flight log">
@@ -175,24 +179,21 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     </div>
 
     <section class="github-live-panel" id="github-live" data-github-user="dasmeds" aria-labelledby="github-live-title">
-        <div class="github-live-profile">
-            <img id="github-avatar" src="/images/github-svgrepo-com.svg" alt="" width="72" height="72">
-            <div class="github-live-identity">
-                <span class="section-label">Live profile / GitHub</span>
-                <h3 id="github-live-title">dasMeds</h3>
-                <p id="github-bio">Loading profile…</p>
+        <div class="github-contribution-heading">
+            <div>
+                <span class="section-label">Live activity / GitHub</span>
+                <h3 id="github-live-title">Recent public activity</h3>
             </div>
-            <a id="github-profile-link" class="btn-outline" href="https://github.com/dasMeds" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+            <a class="btn-outline" href="https://github.com/dasMeds" target="_blank" rel="noopener noreferrer">Open GitHub</a>
         </div>
-        <div class="github-live-stats" aria-label="GitHub profile statistics">
-            <div><strong id="github-repos-count">--</strong><span>Public repositories</span></div>
-            <div><strong id="github-followers-count">--</strong><span>Followers</span></div>
-            <div><strong id="github-following-count">--</strong><span>Following</span></div>
+        <div class="github-contribution-scroll">
+            <div class="github-contribution-grid" id="github-contribution-grid" role="img" aria-label="Heatmap of recent public GitHub activity"></div>
         </div>
-        <div class="github-live-activity">
-            <h4>Recently updated repositories</h4>
+        <div class="github-contribution-footer">
             <p class="github-live-status" id="github-live-status" role="status">Connecting to GitHub…</p>
-            <ul id="github-recent-repos"></ul>
+            <div class="github-contribution-legend" aria-label="Activity levels: less to more">
+                <span>Less</span><i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i><span>More</span>
+            </div>
         </div>
     </section>
 
