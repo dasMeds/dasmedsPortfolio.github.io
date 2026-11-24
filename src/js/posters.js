@@ -10,13 +10,26 @@ export function initPosterBento() {
     if (!section || !gallery || !posters.length) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finePointer = window.matchMedia('(pointer: fine)').matches;
     let activeIndex = 0;
+    const position = section.querySelector('#poster-position');
 
     posters.forEach((poster, index) => {
         poster.style.setProperty('--poster-tilt', `${((index % 5) - 2) * 0.6}deg`);
         poster.dataset.parallaxDepth = String((index % 3) + 1);
     });
+
+    const updatePosition = () => {
+        const center = gallery.scrollLeft + gallery.clientWidth / 2;
+        activeIndex = posters.reduce((closestIndex, poster, index) => {
+            const posterCenter = poster.offsetLeft + poster.offsetWidth / 2;
+            const closestCenter = posters[closestIndex].offsetLeft + posters[closestIndex].offsetWidth / 2;
+            return Math.abs(posterCenter - center) < Math.abs(closestCenter - center) ? index : closestIndex;
+        }, 0);
+        posters.forEach((poster, index) => poster.classList.toggle('is-current', index === activeIndex));
+        if (position) {
+            position.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(posters.length).padStart(2, '0')}`;
+        }
+    };
 
     const showPoster = index => {
         activeIndex = (index + posters.length) % posters.length;
@@ -28,8 +41,9 @@ export function initPosterBento() {
         poster.scrollIntoView({
             behavior: reducedMotion ? 'auto' : 'smooth',
             block: 'center',
-            inline: 'nearest'
+            inline: 'center'
         });
+        updatePosition();
     };
 
     section.querySelectorAll('[data-poster-step]').forEach(button => {
@@ -44,8 +58,12 @@ export function initPosterBento() {
             posters.forEach((item, itemIndex) => {
                 item.classList.toggle('is-current', itemIndex === index);
             });
+            updatePosition();
         });
     });
+
+    gallery.addEventListener('scroll', () => requestAnimationFrame(updatePosition), { passive: true });
+    updatePosition();
 
     if (!reducedMotion) {
         gsap.utils.toArray('.poster-tile').forEach((poster, index) => {

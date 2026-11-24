@@ -7,12 +7,18 @@ import { initCertificateLedger } from './certificates.js';
 import { initPosterBento } from './posters.js';
 import { initRepositories } from './repositories.js';
 import { initScroll } from './scroll.js';
+import { initStatsCounter } from './stats.js';
+import { initLiveGithub } from './github.js';
+import { initSpotlightNav } from './spotlight.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 initTheme();
 initScroll();
 initScene();
 initCertificateLedger();
+initStatsCounter();
+initLiveGithub();
+initSpotlightNav();
 initRepositories();
 initMotion();
 initVideoTimeline();

@@ -1,4 +1,4 @@
-<nav>
+<nav data-spotlight-nav>
     <div class="container nav-inner">
         <a href="#home" class="logo">DASMEDS<span>.</span></a>
         <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="nav-links" aria-expanded="false">

@@ -1,11 +1,12 @@
 <?php
 
 return [
+    'resume' => '/documents/Manalastas_PatKristian_Resume.pdf',
     'certifications' => [
-        ['id' => 'cisco-01', 'date' => '2025-08-21', 'title' => 'Getting Started with Cisco Packet Tracer', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/getting-started-w-cisco.png'],
-        ['id' => 'cisco-02', 'date' => '2025-08-21', 'title' => 'Exploring Networking', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-net-w-cisco.png'],
-        ['id' => 'cisco-03', 'date' => '2025-08-26', 'title' => 'Exploring Internet of Things', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-iot.png'],
-        ['id' => 'cisco-04', 'date' => '2025-08-26', 'title' => 'Introduction to Packet Tracer Exam', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/intro-to-packet-tracer.png'],
+        ['id' => 'cisco-01', 'date' => '2025-08-21', 'title' => 'Getting Started with Cisco Packet Tracer', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/getting-started-w-cisco.png', 'document' => '/documents/Getting_Started_with_Cisco_Packet_Tracer_certificate_indieharry49-gmail-com_1c320b14-a8e8-478d-b949-72e45532e518.pdf'],
+        ['id' => 'cisco-02', 'date' => '2025-08-21', 'title' => 'Exploring Networking', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-net-w-cisco.png', 'document' => '/documents/Exploring_Networking_with_Cisco_Packet_Tracer_certificate_indieharry49-gmail-com_2ac8e5b0-a6dd-4916-b589-acc917a201c5.pdf'],
+        ['id' => 'cisco-03', 'date' => '2025-08-26', 'title' => 'Exploring Internet of Things', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/exploring-iot.png', 'document' => '/documents/Exploring_IoT_with_Cisco_Packet_Tracer_certificate_indieharry49-gmail-com_0746d45c-c9e1-44d5-8b3a-727a6db6992e.pdf'],
+        ['id' => 'cisco-04', 'date' => '2025-08-26', 'title' => 'Introduction to Packet Tracer Exam', 'issuer' => 'Cisco Networking Academy', 'track' => 'Networking', 'image' => '/images/intro-to-packet-tracer.png', 'document' => '/documents/Introduction_to_Packet_Tracer_certificate_indieharry49-gmail-com_ebfcb8a7-c853-4769-85d6-9c834cc98bf8.pdf'],
         ['id' => 'sql-01', 'date' => '2026-02-03', 'title' => 'Intro to SQL', 'issuer' => 'CodeSignal', 'track' => 'SQL', 'image' => '/images/intro-to-sql-ts.png'],
         ['id' => 'sql-02', 'date' => '2026-02-17', 'title' => 'Introduction to SQL', 'issuer' => 'Simplilearn SkillUp', 'track' => 'SQL', 'image' => '/images/intro-to-sql-skillup.png'],
         ['id' => 'sql-03', 'date' => '2026-02-19', 'title' => 'Learning SQL Joins', 'issuer' => 'CodeSignal', 'track' => 'SQL', 'image' => '/images/learning-sql-joins-w-ts.png'],

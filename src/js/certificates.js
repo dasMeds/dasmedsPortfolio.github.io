@@ -1,8 +1,7 @@
 import { gsap } from 'gsap';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 const certifications = window.portfolioData.certifications;
 
@@ -23,10 +22,13 @@ export function initCertificateLedger() {
     const routeContainer = section?.querySelector('#cert-route-view');
     const boardContainer = section?.querySelector('#cert-board-view');
     const viewButtons = [...(section?.querySelectorAll('[data-cert-view]') ?? [])];
+    const carouselButtons = [...(section?.querySelectorAll('[data-cert-step]') ?? [])];
+    const carouselStatus = section?.querySelector('#cert-carousel-position');
     const preview = section?.querySelector('#cert-preview');
     const previewImage = preview?.querySelector('img');
     if (!section || !rowsContainer || !filtersContainer || !sortButton || !countLabel || !summary ||
-        !routeContainer || !boardContainer || !viewButtons.length || !preview || !previewImage) return;
+        !routeContainer || !boardContainer || !viewButtons.length || !carouselStatus ||
+        !preview || !previewImage) return;
 
     const tracks = [...new Set(certifications.map(certification => certification.track))];
     const issuerCount = new Set(certifications.map(certification => certification.issuer)).size;
@@ -49,7 +51,8 @@ export function initCertificateLedger() {
     let activeFilter = 'all';
     let newestFirst = false;
     let hasAnimatedOnEnter = false;
-    let routeTimeline;
+    let activeCarouselIndex = 0;
+    let carouselFrame = 0;
 
     const sortedCertifications = () => sourceOrder
         .filter(certification => activeFilter === 'all' || certification.track === activeFilter)
@@ -331,118 +334,60 @@ export function initCertificateLedger() {
             sticker.append(field);
         });
 
-        if (certification.verifyUrl) sticker.append(createStamp());
+        if (certification.verifyUrl) {
+            const stamp = createStamp();
+            stamp.hidden = false;
+            sticker.append(stamp);
+        }
         sticker.addEventListener('click', () => {
             document.dispatchEvent(new CustomEvent('portfolio:open-lightbox', { detail: { card: sticker } }));
         });
         stop.append(sticker);
+        if (certification.document) {
+            const documentLink = document.createElement('a');
+            documentLink.className = 'cert-document-link';
+            documentLink.href = certification.document;
+            documentLink.download = '';
+            documentLink.textContent = 'Download certificate PDF';
+            stop.append(documentLink);
+        }
         return stop;
     };
 
-    const drawRoute = (svg, stops) => {
-        if (!routeContainer.contains(svg)) return;
-        const bounds = routeContainer.getBoundingClientRect();
-        if (!bounds.width || !bounds.height) return;
-        svg.setAttribute('viewBox', `0 0 ${bounds.width} ${bounds.height}`);
-        const points = stops.map(stop => {
-            const pin = stop.querySelector('.cert-route-pin');
-            const pinBounds = pin.getBoundingClientRect();
-            return {
-                x: pinBounds.left + pinBounds.width / 2 - bounds.left,
-                y: pinBounds.top + pinBounds.height / 2 - bounds.top
-            };
-        });
-        if (!points.length) return;
-        const path = points.reduce((pathData, point, index) => {
-            if (index === 0) return `M ${point.x} ${point.y}`;
-            const previous = points[index - 1];
-            const midY = (previous.y + point.y) / 2;
-            return `${pathData} C ${previous.x} ${midY}, ${point.x} ${midY}, ${point.x} ${point.y}`;
-        }, '');
-        const backgroundPath = svg.querySelector('.cert-route-track');
-        const progressPath = svg.querySelector('.cert-route-progress');
-        const plane = svg.querySelector('.cert-route-plane');
-        backgroundPath.setAttribute('d', path);
-        progressPath.setAttribute('d', path);
-        const length = progressPath.getTotalLength();
-        gsap.set(progressPath, {
-            strokeDasharray: length,
-            strokeDashoffset: reducedMotion ? 0 : length
-        });
-
-        routeTimeline?.scrollTrigger?.kill();
-        routeTimeline?.kill();
-        if (reducedMotion) {
-            svg.classList.add('is-static');
-            stops.forEach(stop => {
-                const stamp = stop.querySelector('.cert-stamp');
-                if (stamp) stamp.hidden = false;
-            });
-            plane.hidden = true;
+    const updateCarousel = () => {
+        const stops = [...routeContainer.querySelectorAll('.cert-route-stop')];
+        if (!stops.length) {
+            activeCarouselIndex = 0;
+            carouselStatus.textContent = '00 / 00';
             return;
         }
-
-        if (stops.length < 2) {
-            plane.hidden = true;
-            gsap.set(progressPath, { strokeDashoffset: 0 });
-            return;
-        }
-
-        svg.classList.remove('is-static');
-        plane.hidden = false;
-        let lastStamped = -1;
-        routeTimeline = gsap.timeline({
-            scrollTrigger: {
-                id: 'cert-route-flight',
-                trigger: routeContainer,
-                start: 'top 75%',
-                end: 'bottom 70%',
-                scrub: true,
-                invalidateOnRefresh: true,
-                onUpdate: self => {
-                    const reached = Math.floor(self.progress * stops.length);
-                    for (let index = lastStamped + 1; index < reached; index += 1) {
-                        const stamp = stops[index]?.querySelector('.cert-stamp');
-                        if (!stamp) continue;
-                        stamp.hidden = false;
-                        gsap.fromTo(stamp, { scale: 1.65, rotation: -12, autoAlpha: 0 }, {
-                            scale: 1,
-                            rotation: -12,
-                            autoAlpha: 1,
-                            duration: .32,
-                            ease: 'back.out(2)',
-                            overwrite: true
-                        });
-                    }
-                    lastStamped = Math.max(lastStamped, reached - 1);
-                }
-            }
+        const center = routeContainer.scrollLeft + routeContainer.clientWidth / 2;
+        activeCarouselIndex = stops.reduce((closestIndex, stop, index) => {
+            const stopCenter = stop.offsetLeft + stop.offsetWidth / 2;
+            const closestCenter = stops[closestIndex].offsetLeft + stops[closestIndex].offsetWidth / 2;
+            return Math.abs(stopCenter - center) < Math.abs(closestCenter - center) ? index : closestIndex;
+        }, 0);
+        stops.forEach((stop, index) => {
+            const offset = index - activeCarouselIndex;
+            stop.classList.toggle('is-current', offset === 0);
+            stop.style.opacity = Math.abs(offset) > 2 ? '0.25' : String(1 - Math.abs(offset) * 0.24);
+            stop.style.transform = reducedMotion
+                ? ''
+                : `perspective(1200px) rotateY(${offset * -7}deg) translateZ(${-Math.abs(offset) * 42}px) scale(${1 - Math.min(Math.abs(offset), 2) * 0.045})`;
         });
-        routeTimeline
-            .to(progressPath, { strokeDashoffset: 0, ease: 'none', duration: 1 }, 0)
-            .to(plane, {
-                motionPath: { path: backgroundPath, align: backgroundPath, autoRotate: true, alignOrigin: [.5, .5] },
-                ease: 'none',
-                duration: 1
-            }, 0);
+        carouselStatus.textContent = `${String(activeCarouselIndex + 1).padStart(2, '0')} / ${String(stops.length).padStart(2, '0')}`;
+        carouselButtons.forEach(button => {
+            button.disabled = stops.length < 2;
+        });
     };
 
     function renderRoute(sorted) {
-        routeTimeline?.scrollTrigger?.kill();
-        routeTimeline?.kill();
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.classList.add('cert-route-svg');
-        svg.setAttribute('aria-hidden', 'true');
-        svg.innerHTML = '<path class="cert-route-track"/><path class="cert-route-progress"/><g class="cert-route-plane"><path d="m0-7 22 7-22 7 4-7Z"/></g>';
-
         const seenTracks = new Set();
         const seenYears = new Set();
         const nodes = sorted.map((certification, index) => createStop(certification, index, seenTracks, seenYears));
-        routeContainer.replaceChildren(svg, ...nodes);
-        requestAnimationFrame(() => {
-            drawRoute(svg, nodes);
-            ScrollTrigger.refresh();
-        });
+        routeContainer.scrollLeft = 0;
+        routeContainer.replaceChildren(...nodes);
+        updateCarousel();
     }
 
     function renderRows(animate = false) {
@@ -460,6 +405,27 @@ export function initCertificateLedger() {
         renderRoute(sorted);
         if (animate) animateRows(renderedRows);
     }
+
+    routeContainer.addEventListener('scroll', () => {
+        if (carouselFrame) cancelAnimationFrame(carouselFrame);
+        carouselFrame = requestAnimationFrame(() => {
+            carouselFrame = 0;
+            updateCarousel();
+        });
+    }, { passive: true });
+
+    carouselButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const stops = [...routeContainer.querySelectorAll('.cert-route-stop')];
+            if (!stops.length) return;
+            const nextIndex = (activeCarouselIndex + Number(button.dataset.certStep) + stops.length) % stops.length;
+            const stop = stops[nextIndex];
+            routeContainer.scrollTo({
+                left: stop.offsetLeft - (routeContainer.clientWidth - stop.offsetWidth) / 2,
+                behavior: reducedMotion ? 'auto' : 'smooth'
+            });
+        });
+    });
 
     viewButtons.forEach(button => {
         button.addEventListener('click', () => {

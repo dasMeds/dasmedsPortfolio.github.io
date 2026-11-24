@@ -3,6 +3,14 @@ declare(strict_types=1);
 
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
+if ($requestPath === '/admin') {
+    require __DIR__ . '/admin.php';
+    exit;
+}
+if (str_starts_with($requestPath, '/api/admin/')) {
+    require __DIR__ . '/../includes/admin-handler.php';
+    exit;
+}
 if ($requestPath === '/api/contact') {
     require __DIR__ . '/../includes/contact-handler.php';
     exit;
@@ -39,7 +47,10 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
                         <p class="hero-desc">
                             Hi! I'm Pat Kristian Manalastas. A student taking the program Bachelor of Science in Information Technology and this is my portfolio website. I have listed some of my experience and edits here. Feel free to check them out and contact me if you have any questions or if you want to work together.
                         </p>
-                        <a href="mailto:indieharry49@gmail.com" class="btn-solid">Hire Me</a>
+                        <div class="hero-actions">
+                            <a href="mailto:indieharry49@gmail.com" class="btn-solid">Hire Me</a>
+                            <a href="<?= htmlspecialchars($portfolioData['resume'] ?? '/documents/Manalastas_PatKristian_Resume.pdf', ENT_QUOTES, 'UTF-8') ?>" class="btn-outline" download>Download My Resume</a>
+                        </div>
                     </div>
                     <div class="hero-stats">
                         <div class="hero-stat">
@@ -142,7 +153,12 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
         </div>
     </div>
 
-    <div class="cert-route" id="cert-route-view" aria-label="Certification route"></div>
+    <div class="cert-route" id="cert-route-view" aria-label="Certification carousel"></div>
+    <div class="cert-carousel-controls" aria-label="Certification carousel controls">
+        <button type="button" data-cert-step="-1" aria-label="Previous certification">Previous</button>
+        <span id="cert-carousel-position" aria-live="polite">00 / 00</span>
+        <button type="button" data-cert-step="1" aria-label="Next certification">Next</button>
+    </div>
     <div class="cert-table-wrap" id="cert-board-view" hidden>
         <table class="cert-table" aria-label="Certification flight log">
             <thead><tr><th scope="col">IDX</th><th scope="col" aria-sort="ascending">DATE</th><th scope="col">TRACK</th><th scope="col">CREDENTIAL</th><th scope="col">ISSUER</th><th scope="col">STATUS</th></tr></thead>
@@ -157,6 +173,28 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
         <div><span class="section-label">Coding Projects</span><h2 class="section-title">GitHub Repos</h2></div>
         <span class="section-coordinate" aria-hidden="true"></span>
     </div>
+
+    <section class="github-live-panel" id="github-live" data-github-user="dasmeds" aria-labelledby="github-live-title">
+        <div class="github-live-profile">
+            <img id="github-avatar" src="/images/github-svgrepo-com.svg" alt="" width="72" height="72">
+            <div class="github-live-identity">
+                <span class="section-label">Live profile / GitHub</span>
+                <h3 id="github-live-title">dasMeds</h3>
+                <p id="github-bio">Loading profile…</p>
+            </div>
+            <a id="github-profile-link" class="btn-outline" href="https://github.com/dasMeds" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+        </div>
+        <div class="github-live-stats" aria-label="GitHub profile statistics">
+            <div><strong id="github-repos-count">--</strong><span>Public repositories</span></div>
+            <div><strong id="github-followers-count">--</strong><span>Followers</span></div>
+            <div><strong id="github-following-count">--</strong><span>Following</span></div>
+        </div>
+        <div class="github-live-activity">
+            <h4>Recently updated repositories</h4>
+            <p class="github-live-status" id="github-live-status" role="status">Connecting to GitHub…</p>
+            <ul id="github-recent-repos"></ul>
+        </div>
+    </section>
 
     <div class="repo-grid">
         <?php foreach ($portfolioData['repositories'] as $repositoryIndex => $repository):
@@ -224,6 +262,7 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
         <button type="button" data-poster-step="1" aria-label="Show next poster">
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 4.5 5.5 5.5-5.5 5.5M12.5 10h-8"/></svg>
         </button>
+        <span id="poster-position" aria-live="polite"></span>
     </div>
 </section>
 
@@ -246,7 +285,7 @@ if ($requestPath !== '/' && $requestPath !== '/index.php') {
     <span class="signal-letterbox signal-letterbox-top" aria-hidden="true"></span>
     <span class="signal-letterbox signal-letterbox-bottom" aria-hidden="true"></span>
     <span class="signal-rec" aria-hidden="true"><i></i> REC</span>
-    <span class="signal-timecode" aria-hidden="true">00:00:00:00</span>
+    <span class="signal-timecode" aria-hidden="true">`00`:00:00:00</span>
     <span class="signal-brackets" aria-hidden="true"></span>
     <span class="signal-static" aria-hidden="true"></span>
     <button class="video-tap-to-play" id="video-tap-to-play" type="button" hidden>

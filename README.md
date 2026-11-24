@@ -10,6 +10,9 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 - **GSAP and ScrollTrigger:** reduced-motion-aware text-scramble reveals, clip-path media transitions, a pinned horizontal repository sequence, and a multi-axis scroll-tied orb.
 - **Three.js:** a decorative architectural wireframe orb with light/dark contrast, continuous rotation, and a diagonal scroll trajectory.
 - **Theme control:** light is the default; the dark theme can be selected and is remembered between visits.
+- **Admin editor:** `/admin` uses server-side credentials and commits content and uploaded documents to the configured GitHub branch.
+- **Live GitHub profile:** public profile statistics, recent repositories, and latest public activity refresh from GitHub's API.
+- **Portfolio interactions:** a spotlight navbar, perspective certification carousel, diagonal poster carousel, and reduced-motion-aware stat counters are implemented in the existing PHP/CSS/JavaScript stack.
 - **Media:** videos are muted, inline-capable MP4s when Git LFS objects are present; poster images preserve their full aspect ratio.
 
 ## Project structure
@@ -19,6 +22,7 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 ├── data/
 │   └── portfolio-data.php
 ├── includes/
+│   ├── admin-handler.php
 │   ├── header.php
 │   ├── nav.php
 │   ├── orb.php
@@ -26,6 +30,9 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 │   └── contact-handler.php
 ├── public/
 │   ├── index.php
+│   ├── admin.php
+│   ├── admin.js
+│   ├── admin.css
 │   ├── router.php
 │   ├── styles.css
 │   ├── build/            # generated JavaScript bundle
@@ -41,6 +48,11 @@ A personal portfolio for Pat Kristian Manalastas, bringing together software pro
 ├── src/
 │   └── js/
 │       ├── interactions.js
+│       ├── certificates.js
+│       ├── posters.js
+│       ├── github.js
+│       ├── stats.js
+│       ├── spotlight.js
 │       ├── main.js
 │       ├── motion.js
 │       ├── scene.js
@@ -104,6 +116,35 @@ vercel deploy
 Check `/health`, the generated `/build/main.js`, PHP routes, static asset cache headers, contact-form outcomes, browser console, and orb visibility on the preview URL. Then, only after all preview checks pass, deploy production with `vercel deploy --prod`.
 
 The contact form is routed through `includes/contact-handler.php` and sends mail with Resend. `api/contact.js` is retained during the preview migration and is not the container's request handler.
+
+## Portfolio admin
+
+Open `/admin` and sign in with the server-side `ADMIN_USERNAME` and `ADMIN_PASSWORD`. The editor can update certifications, repositories, posters, videos, and the resume path; it can also upload certificate PDFs and showcase images. Saves and uploads are committed to the repository through GitHub's Contents API. The public site reflects a commit after its deployment finishes.
+
+Configure these values in Vercel for both Preview and Production (or as local server environment variables):
+
+- `ADMIN_USERNAME` and `ADMIN_PASSWORD`: use a unique username and a long, unique password. Never put real values in `.env.example` or source control.
+- `ADMIN_SESSION_SECRET`: a random secret of at least 32 characters used to sign eight-hour, HTTP-only admin cookies. Signed cookies avoid relying on instance-local PHP session files.
+- `GITHUB_CONTENTS_TOKEN`: a fine-grained GitHub token restricted to this repository with **Contents: Read and write** permission (metadata read is required by GitHub). This token stays on the server and is never sent to the browser.
+- `GITHUB_REPOSITORY`: `owner/repository` (defaults to this repository).
+- `GITHUB_BRANCH`: the branch the editor should update (defaults to `main`).
+
+Add these values to both Vercel environments; each command prompts for the value:
+
+```sh
+vercel env add ADMIN_USERNAME production
+vercel env add ADMIN_PASSWORD production
+vercel env add ADMIN_SESSION_SECRET production
+vercel env add GITHUB_CONTENTS_TOKEN production
+vercel env add ADMIN_USERNAME preview
+vercel env add ADMIN_PASSWORD preview
+vercel env add ADMIN_SESSION_SECRET preview
+vercel env add GITHUB_CONTENTS_TOKEN preview
+```
+
+When the Vercel project is connected to that branch, GitHub commits can trigger the normal deployment. Protect the branch or use a separate editor branch if changes should be reviewed before deployment. Uploaded PDFs and images are limited to 4 MB per file.
+
+The GitHub panel uses public GitHub REST endpoints and refreshes every five minutes. It displays public repository/follower/following totals, recent repositories, and recent public activity. GitHub does not expose the contribution calendar through its unauthenticated public REST API, so the panel does not fabricate a contribution graph.
 
 Videos use absolute site-root URLs and are activated by the viewport-aware video controller. MP4 files are tracked with Git LFS. The Docker build removes unresolved LFS pointer files instead of publishing them; real video playback in the deployment therefore depends on the build context containing the actual LFS objects. Confirm the MP4 routes in the Preview deployment before promoting it.
 

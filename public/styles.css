@@ -452,10 +452,6 @@ section {
 
 /* mobile Tweak */
 @media (max-width: 768px) {
-    .scroll-altimeter {
-        display: none;
-    }
-
     #experience {
         padding: 6rem 0 2rem;
     }
@@ -3302,51 +3298,6 @@ body,
         margin-top: 2rem;
     }
 
-    .scroll-altimeter {
-        position: fixed;
-        z-index: 8;
-        top: 50%;
-        right: max(1.25rem, calc((100vw - var(--content-width)) / 2 - 3.5rem));
-        display: grid;
-        justify-items: center;
-        gap: .45rem;
-        color: var(--hud-dim);
-        font: .55rem/1.2 var(--hud-mono);
-        letter-spacing: .1em;
-        pointer-events: none;
-        translate: 0 -50%;
-    }
-
-    .altimeter-section,
-    .altimeter-unit {
-        writing-mode: vertical-rl;
-        text-transform: uppercase;
-    }
-
-    .altimeter-value {
-        color: var(--text-main);
-        font-size: .72rem;
-        font-variant-numeric: tabular-nums;
-        writing-mode: vertical-rl;
-    }
-
-    .altimeter-rail {
-        position: relative;
-        display: block;
-        width: 1px;
-        height: 7rem;
-        background: var(--hud-rule);
-    }
-
-    #altimeter-fill {
-        position: absolute;
-        inset: 0;
-        display: block;
-        background: var(--accent-color);
-        transform: scaleY(0);
-        transform-origin: bottom;
-    }
-
     .custom-cursor {
         position: fixed;
         z-index: 1200;
@@ -4882,10 +4833,6 @@ nav {
 }
 
 @media (max-width: 768px) {
-    .scroll-altimeter {
-        display: none;
-    }
-
     #experience {
         padding: 6rem 0 2rem;
     }

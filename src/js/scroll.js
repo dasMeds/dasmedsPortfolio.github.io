@@ -6,27 +6,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function initScroll() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const altimeterValue = document.querySelector('#altimeter-value');
-    const altimeterFill = document.querySelector('#altimeter-fill');
     let lenis;
-
-    const updateAltimeter = progress => {
-        const percentage = Math.round(Math.max(0, Math.min(1, progress)) * 100);
-        if (altimeterValue) altimeterValue.textContent = String(percentage).padStart(3, '0');
-        if (altimeterFill) altimeterFill.style.transform = `scaleY(${percentage / 100})`;
-    };
-
-    const updateFromNativeScroll = () => {
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        updateAltimeter(maxScroll > 0 ? window.scrollY / maxScroll : 0);
-    };
 
     if (!reducedMotion) {
         lenis = new Lenis({ autoRaf: false, anchors: true, syncTouch: false });
-        lenis.on('scroll', event => {
-            ScrollTrigger.update();
-            updateAltimeter(event.limit > 0 ? event.scroll / event.limit : 0);
-        });
+        lenis.on('scroll', () => ScrollTrigger.update());
 
         const tick = time => lenis.raf(time * 1000);
         gsap.ticker.add(tick);
@@ -43,32 +27,12 @@ export function initScroll() {
             ) {
                 lenis.start();
             }
-        });
+        }),
         window.addEventListener('pagehide', () => {
             gsap.ticker.remove(tick);
             lenis.destroy();
         }, { once: true });
-    } else {
-        window.addEventListener('scroll', updateFromNativeScroll, { passive: true });
-        window.addEventListener('resize', updateFromNativeScroll, { passive: true });
-        updateFromNativeScroll();
     }
-
-    window.addEventListener('portfolio:section-change', event => {
-        const label = document.querySelector('#altimeter-section');
-        if (!label) return;
-        const labels = {
-            home: 'FLIGHT DECK',
-            about: 'PROFILE',
-            experience: 'SERVICE',
-            certifications: 'CERTS',
-            'github-projects': 'REPOS',
-            posters: 'VISUALS',
-            videos: 'MOTION',
-            contact: 'CONTACT'
-        };
-        label.textContent = labels[event.detail?.id] || 'PORTFOLIO';
-    });
 
     const cursor = document.querySelector('.custom-cursor');
     const finePointer = window.matchMedia('(pointer: fine)').matches;
